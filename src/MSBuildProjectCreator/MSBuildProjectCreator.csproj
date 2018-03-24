@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.5;netstandard2.0;net46</TargetFrameworks>
+    <RootNamespace>Microsoft.Build.Utilities.ProjectCreation</RootNamespace>
+    <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A fluent interface for generation MSBuild project files.</Description>
+    <PackageId>Microsoft.Build.Utilities.ProjectCreation</PackageId>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="Resources\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+
+    <Compile Include="..\Shared\GlobalSuppressions.cs">
+      <Link>Shared\GlobalSuppressions.cs</Link>
+    </Compile>
+    <AdditionalFiles Include="..\Shared\stylecop.json">
+      <Link>Shared\stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
+
+</Project>

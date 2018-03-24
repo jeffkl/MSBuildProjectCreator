@@ -1,0 +1,20 @@
+{
+  "version": "1.0-dev",
+  "assemblyVersion": "1.0",
+  "nugetPackageVersion": {
+    "semVer": 1
+  },
+  "publicReleaseRefSpec": [
+    "^refs/tags/v\\d+\\.\\d+"
+  ],
+  "cloudBuild": {
+    "setVersionVariables": true,
+    "buildNumber": {
+      "enabled": false,
+      "includeCommitId": {
+        "when": "nonPublicReleaseOnly",
+        "where": "buildMetadata"
+      }
+    }
+  }
+}
