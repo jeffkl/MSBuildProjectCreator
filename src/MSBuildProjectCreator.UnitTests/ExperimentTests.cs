@@ -47,7 +47,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             ProjectCreator
                 .Templates
-                .LogsMessage("abc.proj", "Hello World")
+                .LogsMessage("Hello World", path: "abc.proj")
                 .TryBuild(out bool _, out BuildOutput _);
         }
     }
