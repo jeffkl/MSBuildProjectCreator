@@ -3,10 +3,12 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -36,6 +38,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private readonly List<BuildWarningEventArgs> _warnings = new List<BuildWarningEventArgs>();
 
         /// <summary>
+        /// Stores all build events.
+        /// </summary>
+        private ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
+
+        /// <summary>
         /// Stores the <see cref="BuildFinishedEventArgs"/> that were logged when the build finished.
         /// </summary>
         private BuildFinishedEventArgs _buildFinished;
@@ -43,6 +50,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private BuildOutput()
         {
         }
+
+        /// <summary>
+        /// Gets all events that were logged.
+        /// </summary>
+        public IReadOnlyCollection<BuildEventArgs> AllEvents => _allEvents;
 
         /// <summary>
         /// Gets the errors that were logged.
@@ -106,6 +118,75 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             _errors.Clear();
             _messages.Clear();
             _warnings.Clear();
+            _allEvents = null;
+        }
+
+        /// <summary>
+        /// Gets the current build output in the format of a console log.
+        /// </summary>
+        /// <param name="verbosity">The logger verbosity to use.</param>
+        /// <returns>The build output in the format of a console log.</returns>
+        public string GetConsoleLog(LoggerVerbosity verbosity = LoggerVerbosity.Normal)
+        {
+            StringBuilder sb = new StringBuilder(_allEvents.Count * 300);
+
+            ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.AppendLine(message), color => { }, () => { });
+
+            foreach (BuildEventArgs buildEventArgs in _allEvents)
+            {
+                switch (buildEventArgs)
+                {
+                    case BuildMessageEventArgs buildMessageEventArgs:
+                        logger.MessageHandler(logger, buildMessageEventArgs);
+                        break;
+
+                    case BuildErrorEventArgs buildErrorEventArgs:
+                        logger.ErrorHandler(logger, buildErrorEventArgs);
+                        break;
+
+                    case BuildWarningEventArgs buildWarningEventArgs:
+                        logger.WarningHandler(logger, buildWarningEventArgs);
+                        break;
+
+                    case BuildStartedEventArgs buildStartedEventArgs:
+                        logger.BuildStartedHandler(logger, buildStartedEventArgs);
+                        break;
+
+                    case BuildFinishedEventArgs buildFinishedEventArgs:
+                        logger.BuildFinishedHandler(logger, buildFinishedEventArgs);
+                        break;
+
+                    case ProjectStartedEventArgs projectStartedEventArgs:
+                        logger.ProjectStartedHandler(logger, projectStartedEventArgs);
+                        break;
+
+                    case ProjectFinishedEventArgs projectFinishedEventArgs:
+                        logger.ProjectFinishedHandler(logger, projectFinishedEventArgs);
+                        break;
+
+                    case TargetStartedEventArgs targetStartedEventArgs:
+                        logger.TargetStartedHandler(logger, targetStartedEventArgs);
+                        break;
+
+                    case TargetFinishedEventArgs targetFinishedEventArgs:
+                        logger.TargetFinishedHandler(logger, targetFinishedEventArgs);
+                        break;
+
+                    case TaskStartedEventArgs taskStartedEventArgs:
+                        logger.TaskStartedHandler(logger, taskStartedEventArgs);
+                        break;
+
+                    case TaskFinishedEventArgs taskFinishedEventArgs:
+                        logger.TaskFinishedHandler(logger, taskFinishedEventArgs);
+                        break;
+
+                    case CustomBuildEventArgs customBuildEventArgs:
+                        logger.CustomEventHandler(logger, customBuildEventArgs);
+                        break;
+                }
+            }
+
+            return sb.ToString();
         }
 
         /// <inheritdoc cref="ILogger.Initialize"/>
@@ -116,11 +197,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             eventSource.MessageRaised += OnMessageRaised;
             eventSource.ProjectFinished += OnProjectFinished;
             eventSource.WarningRaised += OnWarningRaised;
+            eventSource.AnyEventRaised += OnAnyEventRaised;
         }
 
         /// <inheritdoc cref="ILogger.Shutdown"/>
         public void Shutdown()
         {
+        }
+
+        private void OnAnyEventRaised(object sender, BuildEventArgs e)
+        {
+            _allEvents.Enqueue(e);
         }
 
         private void OnBuildFinished(object sender, BuildFinishedEventArgs args) => _buildFinished = args;

@@ -40,27 +40,37 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public void OnBuildFinished(bool succeeded, string message = null, string helpKeyword = null)
         {
-            BuildFinished?.Invoke(this, new BuildFinishedEventArgs(message, helpKeyword, succeeded));
+            BuildFinishedEventArgs args = new BuildFinishedEventArgs(message, helpKeyword, succeeded);
+            BuildFinished?.Invoke(this, args);
+            OnAnyEventRaised(args);
         }
 
         public void OnErrorRaised(string message, string code = null, string file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string helpKeyword = null, string senderName = null)
         {
-            ErrorRaised?.Invoke(this, new BuildErrorEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName));
+            BuildErrorEventArgs args = new BuildErrorEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName);
+            ErrorRaised?.Invoke(this, args);
+            OnAnyEventRaised(args);
         }
 
         public void OnMessageRaised(string message, MessageImportance importance = MessageImportance.Normal)
         {
-            MessageRaised?.Invoke(this, new BuildMessageEventArgs(message, null, null, importance));
+            BuildMessageEventArgs args = new BuildMessageEventArgs(message, null, null, importance);
+            MessageRaised?.Invoke(this, args);
+            OnAnyEventRaised(args);
         }
 
         public void OnProjectFinished(string projectFile, bool succeeded, string message = null, string helpKeyword = null)
         {
-            ProjectFinished?.Invoke(this, new ProjectFinishedEventArgs(message, helpKeyword, projectFile, succeeded));
+            ProjectFinishedEventArgs args = new ProjectFinishedEventArgs(message, helpKeyword, projectFile, succeeded);
+            ProjectFinished?.Invoke(this, args);
+            OnAnyEventRaised(args);
         }
 
         public void OnWarningRaised(string message, string code = null, string file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string helpKeyword = null, string senderName = null)
         {
-            WarningRaised?.Invoke(this, new BuildWarningEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName));
+            BuildWarningEventArgs args = new BuildWarningEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName);
+            WarningRaised?.Invoke(this, args);
+            OnAnyEventRaised(args);
         }
 
         // ReSharper disable once UnusedMember.Local
