@@ -62,14 +62,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include=""Microsoft.CSharp"" />
     <Reference Include=""System"" />
     <Reference Include=""System.Core"" />
-    <Reference Include=""System.Data"" />
+    <Reference Include=""System.Xml.Linq"" />
     <Reference Include=""System.Data.DataSetExtensions"" />
+    <Reference Include=""Microsoft.CSharp"" />
+    <Reference Include=""System.Data"" />
     <Reference Include=""System.Net.Http"" />
     <Reference Include=""System.Xml"" />
-    <Reference Include=""System.Xml.Linq"" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include=""Class1.cs"" />

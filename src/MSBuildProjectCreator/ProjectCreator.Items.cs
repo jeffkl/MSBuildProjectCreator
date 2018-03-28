@@ -282,7 +282,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string keepDuplicates = null,
             string keepMetadata = null)
         {
-            ProjectItemElement item = itemGroup.AddItem(itemType, include, metadata);
+            ProjectItemElement item = RootElement.CreateItemElement(itemType, include);
+
+            itemGroup.AppendChild(item);
+
+            if (metadata != null)
+            {
+                foreach (KeyValuePair<string, string> metadatum in metadata)
+                {
+                    item.AddMetadata(metadatum.Key, metadatum.Value);
+                }
+            } // ProjectItemElement item = itemGroup.AddItem(itemType, include, metadata);
 
             item.Condition = condition;
             item.Exclude = exclude;
