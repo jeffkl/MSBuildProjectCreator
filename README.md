@@ -1,7 +1,7 @@
 # Overview
 [![Build status](https://ci.appveyor.com/api/projects/status/39naoww2fy6xslt7/branch/master?svg=true)](https://ci.appveyor.com/project/CBT/msbuildprojectcreator/branch/master)
-[![NuGet](https://img.shields.io/nuget/v/Microsoft.Build.Utilities.ProjectCreation.svg)](https://www.nuget.org/packages/Microsoft.Build.Utilities.ProjectCreation)
-[![NuGet](https://img.shields.io/nuget/dt/Microsoft.Build.Utilities.ProjectCreation.svg)](https://www.nuget.org/packages/Microsoft.Build.Utilities.ProjectCreation)
+[![NuGet](https://img.shields.io/nuget/v/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
+[![NuGet](https://img.shields.io/nuget/dt/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 
 This class library is a [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface) for generating MSBuild projects.  Its primarily for unit tests that need MSBuild projects to do their testing.
 
