@@ -28,13 +28,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             buildOutput.GetConsoleLog()
 #pragma warning disable SA1116 // Split parameters must start on line after declaration
                 .ShouldBe(@"7B07B020E38343A89B3FA844A40895E4(1,2): error 6496288436BE4E7CAE014F163914063C: FDC8FB4F8E084055974580DF7CD7531E
-
 C455F26F4D4543E78F109BCB00F02BE2(1,2): warning 56206897E63F44159603D22BB7C08145: E00BBDAEEFAB45949AFEE1BF792B1691
-
 55B991507D52403295E92E4FFA8704F3
-
 FA7FCCBE43B741998BAB399E74F2997D
-
 ",
 #pragma warning restore SA1116 // Split parameters must start on line after declaration
                     StringCompareShould.IgnoreLineEndings);

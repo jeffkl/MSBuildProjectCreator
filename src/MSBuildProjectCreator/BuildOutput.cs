@@ -130,7 +130,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             StringBuilder sb = new StringBuilder(_allEvents.Count * 300);
 
-            ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.AppendLine(message), color => { }, () => { });
+            ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.Append(message), color => { }, () => { });
 
             foreach (BuildEventArgs buildEventArgs in _allEvents)
             {
