@@ -6,7 +6,7 @@
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>A fluent interface for generation MSBuild project files.</Description>
-    <PackageId>Microsoft.Build.Utilities.ProjectCreation</PackageId>
+    <PackageId>MSBuild.ProjectCreation</PackageId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
