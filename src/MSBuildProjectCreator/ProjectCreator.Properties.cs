@@ -25,7 +25,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Adds a property element to the current &lt;PropertyGroup /&gt;.  A property group is automatically added if necessary.
+        /// Adds a property element to the current &lt;PropertyGroup /&gt;.  A property group is automatically added if necessary.  if <paramref name="unevaluatedValue"/> is <code>null</code>, the property is not added.
         /// </summary>
         /// <param name="propertyGroup">The <see cref="ProjectPropertyGroupElement"/> to add the property to.</param>
         /// <param name="name">The name of the property.</param>
@@ -38,6 +38,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </remarks>
         private ProjectCreator Property(ProjectPropertyGroupElement propertyGroup, string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false)
         {
+            if (unevaluatedValue == null)
+            {
+                return this;
+            }
+
             ProjectPropertyElement propertyElement = propertyGroup.AddProperty(name, unevaluatedValue);
 
             if (setIfEmpty && condition != null)

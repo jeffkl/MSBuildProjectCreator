@@ -116,6 +116,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void ItemIncludeNotAddedIfNull()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemInclude("D7DAD38333D04A5999F9791575DBB57D", null)
+                .ItemInclude("FDA04096ED074663997F13D37E81E87A", "CBCFA7D42A3B4A1B93127FAFA13CD3DB")
+                .Xml
+                .ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <FDA04096ED074663997F13D37E81E87A Include=""CBCFA7D42A3B4A1B93127FAFA13CD3DB"" />
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
         public void NoneItem()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
