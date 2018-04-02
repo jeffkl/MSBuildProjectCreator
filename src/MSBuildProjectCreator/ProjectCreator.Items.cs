@@ -76,7 +76,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Adds an item to the current item group.
+        /// Adds an item to the current item group.  If <paramref name="include"/> is null, the item is not added.
         /// </summary>
         /// <param name="itemType">The type of the item to add.</param>
         /// <param name="include">The file or wildcard to include in the list of items.</param>
@@ -91,7 +91,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             IDictionary<string, string> metadata = null,
             string condition = null)
         {
-            return Item(LastItemGroup, itemType, include, exclude, metadata, null, null, condition);
+            return
+                include == null
+                    ? this
+                    : Item(LastItemGroup, itemType, include, exclude, metadata, null, null, condition);
         }
 
         /// <summary>

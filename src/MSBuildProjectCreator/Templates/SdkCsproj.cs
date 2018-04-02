@@ -37,28 +37,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             ProjectCollection projectCollection = null,
             NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None)
         {
-            ProjectCreator creator = ProjectCreator.Create(
-                path,
-                sdk: sdk,
-                defaultTargets: defaultTargets,
-                initialTargets: initialTargets,
-                treatAsLocalProperty: treatAsLocalProperty,
-                projectCollection: projectCollection,
-                projectFileOptions: projectFileOptions);
-
-            if (targetFramework != null)
-            {
-                creator.Property("TargetFramework", targetFramework);
-            }
-
-            if (outputType != null)
-            {
-                creator.Property("OutputType", outputType);
-            }
-
-            projectCreator?.Invoke(creator);
-
-            return creator;
+            return ProjectCreator.Create(
+                    path,
+                    sdk: sdk,
+                    defaultTargets: defaultTargets,
+                    initialTargets: initialTargets,
+                    treatAsLocalProperty: treatAsLocalProperty,
+                    projectCollection: projectCollection,
+                    projectFileOptions: projectFileOptions)
+                .Property("TargetFramework", targetFramework)
+                .Property("OutputType", outputType)
+                .CustomAction(projectCreator);
         }
 
         /// <summary>
@@ -87,25 +76,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             ProjectCollection projectCollection = null,
             NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None)
         {
-            ProjectCreator creator = SdkCsproj(
-                path: path,
-                sdk: sdk,
-                targetFramework: null,
-                outputType: outputType,
-                defaultTargets: defaultTargets,
-                initialTargets: initialTargets,
-                treatAsLocalProperty: treatAsLocalProperty,
-                projectCollection: projectCollection,
-                projectFileOptions: projectFileOptions);
-
-            if (targetFrameworks != null)
-            {
-                creator.Property("TargetFrameworks", String.Join(";", targetFrameworks));
-            }
-
-            projectCreator?.Invoke(creator);
-
-            return creator;
+            return SdkCsproj(
+                    path: path,
+                    sdk: sdk,
+                    targetFramework: null,
+                    outputType: outputType,
+                    defaultTargets: defaultTargets,
+                    initialTargets: initialTargets,
+                    treatAsLocalProperty: treatAsLocalProperty,
+                    projectCollection: projectCollection,
+                    projectFileOptions: projectFileOptions)
+                .Property("TargetFrameworks", targetFrameworks == null ? null : String.Join(";", targetFrameworks))
+                .CustomAction(projectCreator);
         }
     }
 }
