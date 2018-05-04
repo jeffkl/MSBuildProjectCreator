@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class LinqTests
+    public class LinqTests : MSBuildTestBase
     {
         [Fact]
         public void ForEachItems()

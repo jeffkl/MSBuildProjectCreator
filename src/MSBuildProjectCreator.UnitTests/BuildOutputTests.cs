@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class BuildOutputTests
+    public class BuildOutputTests : MSBuildTestBase
     {
         [Fact]
         public void ConsoleLog()

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class SdkCsprojTests
+    public class SdkCsprojTests : MSBuildTestBase
     {
         [Fact]
         public void CustomSdk()

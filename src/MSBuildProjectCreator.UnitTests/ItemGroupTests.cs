@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class ItemGroupTests
+    public class ItemGroupTests : MSBuildTestBase
     {
         [Fact]
         public void ItemGroupCondition()

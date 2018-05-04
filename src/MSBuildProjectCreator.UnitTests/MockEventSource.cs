@@ -6,7 +6,7 @@ using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public sealed class MockEventSource : IEventSource2
+    internal sealed class MockEventSource : IEventSource2
     {
         public event AnyEventHandler AnyEventRaised;
 

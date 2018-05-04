@@ -9,5 +9,7 @@
     <PackageTags>MSBuild project creator generator</PackageTags>
 
     <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
+
+    <DefaultItemExcludes>*log</DefaultItemExcludes>
   </PropertyGroup>
 </Project>

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class LegacyCsProjTests
+    public class LegacyCsProjTests : MSBuildTestBase
     {
         [Fact]
         public void TemplateWithCustomContents()

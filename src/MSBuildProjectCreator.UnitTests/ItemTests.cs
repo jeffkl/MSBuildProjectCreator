@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class ItemTests
+    public class ItemTests : MSBuildTestBase
     {
         [Fact]
         public void CompileItem()

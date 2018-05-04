@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class TaskTests
+    public class TaskTests : MSBuildTestBase
     {
         [Fact]
         public void TaskComplex()

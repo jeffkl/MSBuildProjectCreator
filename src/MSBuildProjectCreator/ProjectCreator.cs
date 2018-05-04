@@ -35,7 +35,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             RootElement = rootElement;
 
-            _projectLazy = new Lazy<Project>(() => new Project(RootElement), isThreadSafe: true);
+            _projectLazy = new Lazy<Project>(
+                () => new Project(
+                    RootElement,
+                    ProjectCollection.GlobalProperties,
+                    String.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion,
+                    ProjectCollection),
+                isThreadSafe: true);
         }
 
         /// <summary>
@@ -55,6 +61,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 return _projectLazy.Value;
             }
         }
+
+        /// <summary>
+        /// Gets the <see cref="ProjectCollection"/> for the current project.
+        /// </summary>
+        public ProjectCollection ProjectCollection { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="ProjectRootElement"/> instance for the current project.
@@ -88,7 +99,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             ProjectCollection projectCollection = null,
             NewProjectFileOptions? projectFileOptions = null)
         {
-            ProjectRootElement rootElement = projectFileOptions == null ? ProjectRootElement.Create(projectCollection ?? ProjectCollection.GlobalProjectCollection) : ProjectRootElement.Create(projectCollection ?? ProjectCollection.GlobalProjectCollection, projectFileOptions.Value);
+            if (projectCollection == null)
+            {
+                projectCollection = ProjectCollection.GlobalProjectCollection;
+            }
+
+            ProjectRootElement rootElement = projectFileOptions == null ? ProjectRootElement.Create(projectCollection) : ProjectRootElement.Create(projectCollection, projectFileOptions.Value);
 
             if (path != null)
             {
@@ -117,7 +133,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 rootElement.TreatAsLocalProperty = treatAsLocalProperty;
             }
 
-            return new ProjectCreator(rootElement);
+            return new ProjectCreator(rootElement)
+            {
+                ProjectCollection = projectCollection
+            };
         }
 
         /// <summary>
