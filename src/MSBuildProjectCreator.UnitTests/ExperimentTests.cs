@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class ExperimentTests
+    public class ExperimentTests : MSBuildTestBase
     {
 #if DEBUG
         [Fact]

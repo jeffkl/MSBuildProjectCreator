@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class ExtensibilityTests
+    public class ExtensibilityTests : MSBuildTestBase
     {
         /// <summary>
         /// Proves that <see cref="ProjectCreator"/> can be extended by and end user through extension methods.

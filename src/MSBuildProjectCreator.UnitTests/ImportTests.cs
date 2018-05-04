@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class ImportTests
+    public class ImportTests : MSBuildTestBase
     {
         [Fact]
         public void ImportComplex()

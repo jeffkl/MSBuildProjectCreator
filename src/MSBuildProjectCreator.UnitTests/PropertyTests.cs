@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class PropertyTests
+    public class PropertyTests : MSBuildTestBase
     {
         [Fact]
         public void ProjectPropertySetIfEmpty()

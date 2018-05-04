@@ -22,6 +22,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="targetFrameworkVersion">An optional target framework version for the project.</param>
         /// <param name="rootNamespace">An optional root namespace for the project.</param>
         /// <param name="assemblyName">An optional assembly name for the project.</param>
+        /// <param name="defaultConfiguration">An optional default value for the Configuration property.</param>
+        /// <param name="defaultPlatform">An optional default value for the Platform property.</param>
         /// <param name="projectGuid">An optional GUID for the project.  If none is specified, one is generated.</param>
         /// <param name="fileAlignment">An optional file alignment for the project.</param>
         /// <param name="projectCreator">An optional <see cref="Action{ProjectCreator}"/> delegate to call in the body of the project.</param>
@@ -38,6 +40,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string targetFrameworkVersion = "v4.6",
             string rootNamespace = "ClassLibrary",
             string assemblyName = "ClassLibrary",
+            string defaultConfiguration = "Debug",
+            string defaultPlatform = "AnyCPU",
             string projectGuid = null,
             string fileAlignment = "512",
             Action<ProjectCreator> projectCreator = null,
@@ -64,8 +68,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     projectFileOptions: projectFileOptions)
                 .Import(@"$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props", conditionOnExistence: true)
                 .PropertyGroup()
-                    .Property("Configuration", "Debug", setIfEmpty: true)
-                    .Property("Platform", "AnyCPU", setIfEmpty: true)
+                    .Property("Configuration", defaultConfiguration, setIfEmpty: true)
+                    .Property("Platform", defaultPlatform, setIfEmpty: true)
                     .Property("ProjectGuid", projectGuid ?? Guid.NewGuid().ToString("B").ToUpperInvariant())
                     .Property("OutputType", outputType)
                     .Property("RootNamespace", rootNamespace)
