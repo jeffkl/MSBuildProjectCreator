@@ -64,7 +64,7 @@ public static class ExtensionsMethods
 {
     public ProjectCreator ItemMyCustomType(this ProjectCreator creator, string include, string param1, string param2, string condition = null)
     {
-        return ItemInclude(
+        return creator.ItemInclude(
             "MyCustomType",
             include,
             new Dictionary<string, string>
