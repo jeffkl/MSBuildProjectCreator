@@ -5,6 +5,7 @@
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -291,7 +292,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             if (metadata != null)
             {
-                foreach (KeyValuePair<string, string> metadatum in metadata)
+                foreach (KeyValuePair<string, string> metadatum in metadata.Where(i => i.Value != null))
                 {
                     item.AddMetadata(metadatum.Key, metadatum.Value);
                 }

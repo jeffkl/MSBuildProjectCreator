@@ -132,6 +132,29 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void MetadataNotAddedIfNull()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemInclude(
+                    itemType: "DB5003A476FA461EB0452DDDCCE7F802",
+                    include: "303F33834A6843EDB44DB8D3186E97E0",
+                    metadata: new Dictionary<string, string>
+                    {
+                        { "CDBA5A760C9C45CFB2E9532D4B4AE2B7", "D6A68EA723C848E19D2E17C09F7F2532" },
+                        { "FDD9C6C5582B404188CD8C938DB2CDD9", null }
+                    })
+                .Xml.ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <DB5003A476FA461EB0452DDDCCE7F802 Include=""303F33834A6843EDB44DB8D3186E97E0"">
+      <CDBA5A760C9C45CFB2E9532D4B4AE2B7>D6A68EA723C848E19D2E17C09F7F2532</CDBA5A760C9C45CFB2E9532D4B4AE2B7>
+    </DB5003A476FA461EB0452DDDCCE7F802>
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
         public void NoneItem()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
