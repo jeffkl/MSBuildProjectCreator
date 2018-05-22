@@ -42,7 +42,7 @@ FA7FCCBE43B741998BAB399E74F2997D
         {
             BuildOutput buildOutput = GetProjectLoggerWithEvents(eventSource => { eventSource.OnErrorRaised(expectedMessage, expectedCode); });
 
-            BuildErrorEventArgs args = buildOutput.Errors.ShouldHaveSingleItem();
+            BuildErrorEventArgs args = buildOutput.ErrorEvents.ShouldHaveSingleItem();
 
             args.Message.ShouldBe(expectedMessage);
 
@@ -61,20 +61,20 @@ FA7FCCBE43B741998BAB399E74F2997D
 
             var actualItem = buildOutput.Messages.ShouldHaveSingleItem();
 
-            actualItem.Message.ShouldBe(expectedMessage);
+            actualItem.ShouldBe(expectedMessage);
 
             switch (importance)
             {
                 case MessageImportance.High:
-                    buildOutput.MessagesHighImportance.ShouldHaveSingleItem().ShouldBe(actualItem);
+                    buildOutput.Messages.High.ShouldHaveSingleItem().ShouldBe(actualItem);
                     break;
 
                 case MessageImportance.Normal:
-                    buildOutput.MessagesNormalImportance.ShouldHaveSingleItem().ShouldBe(actualItem);
+                    buildOutput.Messages.Normal.ShouldHaveSingleItem().ShouldBe(actualItem);
                     break;
 
                 case MessageImportance.Low:
-                    buildOutput.MessagesLowImportance.ShouldHaveSingleItem().ShouldBe(actualItem);
+                    buildOutput.Messages.Low.ShouldHaveSingleItem().ShouldBe(actualItem);
                     break;
             }
         }
@@ -110,7 +110,7 @@ FA7FCCBE43B741998BAB399E74F2997D
         {
             BuildOutput buildOutput = GetProjectLoggerWithEvents(eventSource => { eventSource.OnWarningRaised(expectedMessage, expectedCode); });
 
-            BuildWarningEventArgs args = buildOutput.Warnings.ShouldHaveSingleItem();
+            BuildWarningEventArgs args = buildOutput.WarningEvents.ShouldHaveSingleItem();
 
             args.Message.ShouldBe(expectedMessage);
 

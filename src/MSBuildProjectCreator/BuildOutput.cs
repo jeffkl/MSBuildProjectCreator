@@ -20,12 +20,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the errors that were logged.
         /// </summary>
-        private readonly List<BuildErrorEventArgs> _errors = new List<BuildErrorEventArgs>();
+        private readonly List<BuildErrorEventArgs> _errorEvents = new List<BuildErrorEventArgs>();
 
         /// <summary>
         /// Stores the messages that were logged.
         /// </summary>
-        private readonly List<BuildMessageEventArgs> _messages = new List<BuildMessageEventArgs>(50);
+        private readonly List<BuildMessageEventArgs> _messageEvents = new List<BuildMessageEventArgs>(50);
 
         /// <summary>
         /// Stores the results by project.
@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the warnings that were logged.
         /// </summary>
-        private readonly List<BuildWarningEventArgs> _warnings = new List<BuildWarningEventArgs>();
+        private readonly List<BuildWarningEventArgs> _warningEvents = new List<BuildWarningEventArgs>();
 
         /// <summary>
         /// Stores all build events.
@@ -49,6 +49,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private BuildOutput()
         {
+            MessageEvents = new BuildOutputMessageEvents(_messageEvents);
+            Messages = new BuildOutputMessages(this);
         }
 
         /// <summary>
@@ -57,29 +59,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public IReadOnlyCollection<BuildEventArgs> AllEvents => _allEvents;
 
         /// <summary>
-        /// Gets the errors that were logged.
+        /// Gets the error events that were logged.
         /// </summary>
-        public IReadOnlyCollection<BuildErrorEventArgs> Errors => _errors;
+        public IReadOnlyCollection<BuildErrorEventArgs> ErrorEvents => _errorEvents;
+
+        /// <summary>
+        /// Gets the error messages that were logged.
+        /// </summary>
+        public IReadOnlyCollection<string> Errors => _errorEvents.Select(i => i.Message).ToList();
 
         /// <summary>
         /// Gets the messages that were logged.
         /// </summary>
-        public IReadOnlyCollection<BuildMessageEventArgs> Messages => _messages;
+        public BuildOutputMessageEvents MessageEvents { get; }
 
         /// <summary>
-        /// Gets the messages that were logged with <see cref="MessageImportance.High"/>.
+        /// Gets a <see cref="BuildOutputMessages"/> object that gets the messages from the build.
         /// </summary>
-        public IReadOnlyCollection<BuildMessageEventArgs> MessagesHighImportance => _messages.Where(i => i.Importance == MessageImportance.High).ToList();
-
-        /// <summary>
-        /// Gets the messages that were logged with <see cref="MessageImportance.Low"/>.
-        /// </summary>
-        public IReadOnlyCollection<BuildMessageEventArgs> MessagesLowImportance => _messages.Where(i => i.Importance == MessageImportance.Low).ToList();
-
-        /// <summary>
-        /// Gets the messages that were logged with <see cref="MessageImportance.Normal"/>.
-        /// </summary>
-        public IReadOnlyCollection<BuildMessageEventArgs> MessagesNormalImportance => _messages.Where(i => i.Importance == MessageImportance.Normal).ToList();
+        public BuildOutputMessages Messages { get; }
 
         /// <inheritdoc cref="ILogger.Parameters"/>
         public string Parameters { get; set; }
@@ -98,9 +95,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public LoggerVerbosity Verbosity { get; set; }
 
         /// <summary>
-        /// Gets the warnings that were logged.
+        /// Gets the warning events that were logged.
         /// </summary>
-        public IReadOnlyCollection<BuildWarningEventArgs> Warnings => _warnings;
+        public IReadOnlyCollection<BuildWarningEventArgs> WarningEvents => _warningEvents;
+
+        /// <summary>
+        /// Gets the warning messages that were logged.
+        /// </summary>
+        public IReadOnlyCollection<string> Warnings => _warningEvents.Select(i => i.Message).ToList();
 
         /// <summary>
         /// Creates an instance of the <see cref="BuildOutput"/> class.
@@ -115,9 +117,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public void Dispose()
         {
             _buildFinished = null;
-            _errors.Clear();
-            _messages.Clear();
-            _warnings.Clear();
+            _errorEvents.Clear();
+            _messageEvents.Clear();
+            _warningEvents.Clear();
             _allEvents = null;
         }
 
@@ -212,12 +214,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private void OnBuildFinished(object sender, BuildFinishedEventArgs args) => _buildFinished = args;
 
-        private void OnErrorRaised(object sender, BuildErrorEventArgs args) => _errors.Add(args);
+        private void OnErrorRaised(object sender, BuildErrorEventArgs args) => _errorEvents.Add(args);
 
-        private void OnMessageRaised(object sender, BuildMessageEventArgs args) => _messages.Add(args);
+        private void OnMessageRaised(object sender, BuildMessageEventArgs args) => _messageEvents.Add(args);
 
         private void OnProjectFinished(object sender, ProjectFinishedEventArgs e) => _resultsByProject.AddOrUpdate(e.ProjectFile, e.Succeeded, (projectFile, succeeded) => succeeded && e.Succeeded);
 
-        private void OnWarningRaised(object sender, BuildWarningEventArgs args) => _warnings.Add(args);
+        private void OnWarningRaised(object sender, BuildWarningEventArgs args) => _warningEvents.Add(args);
     }
 }
