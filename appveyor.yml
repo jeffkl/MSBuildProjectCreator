@@ -14,4 +14,4 @@ artifacts:
 - path: '**\*.nupkg'
   name: NuGet Packages
 on_failure:
-- ps: Get-ChildItem .\*.log -Recursive | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+- ps: Get-ChildItem .\*log -Recurse | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
