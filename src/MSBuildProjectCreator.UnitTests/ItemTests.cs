@@ -267,5 +267,53 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
+
+        [Fact]
+        public void RemoveItem()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemRemove(
+                    itemType: "F10988936B3B421BB4FD7E33B9C0DEC9",
+                    remove: "52CE3EA8F90F44779EC543225D6F182A",
+                    metadata: new Dictionary<string, string>
+                    {
+                        { "CCBE2A083AF44A1A8DD0AB38F174D983", "7D228EF67CC648E98D7D46BFFEF935FE" }
+                    },
+                    condition: "5E1B774BD945407CA45227EE8BF5737A")
+                .Xml
+                .ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <F10988936B3B421BB4FD7E33B9C0DEC9 Remove=""52CE3EA8F90F44779EC543225D6F182A"" Condition=""5E1B774BD945407CA45227EE8BF5737A"">
+      <CCBE2A083AF44A1A8DD0AB38F174D983>7D228EF67CC648E98D7D46BFFEF935FE</CCBE2A083AF44A1A8DD0AB38F174D983>
+    </F10988936B3B421BB4FD7E33B9C0DEC9>
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void UpdateItem()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemUpdate(
+                    itemType: "E8517D605F70454BA7095F64B0EEB526",
+                    update: "F58734B746BF4E76AB71E4151BB15A6F",
+                    metadata: new Dictionary<string, string>
+                    {
+                        { "EDD4A94F3C1241B4A6543E60C96FF51D", "10A8CF193EE54D679F25A8E1F83E0097" }
+                    },
+                    condition: "8DAE9F4AB6264A9CB2435C482C8B3DBB")
+                .Xml
+                .ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <E8517D605F70454BA7095F64B0EEB526 Update=""F58734B746BF4E76AB71E4151BB15A6F"" Condition=""8DAE9F4AB6264A9CB2435C482C8B3DBB"">
+      <EDD4A94F3C1241B4A6543E60C96FF51D>10A8CF193EE54D679F25A8E1F83E0097</EDD4A94F3C1241B4A6543E60C96FF51D>
+    </E8517D605F70454BA7095F64B0EEB526>
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
     }
 }

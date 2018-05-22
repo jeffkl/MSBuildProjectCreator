@@ -261,6 +261,60 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Remove items in the current item group.  If <paramref name="remove"/> is <code>null</code>, the item is not added.
+        /// </summary>
+        /// <param name="itemType">The type of the item to remove items from.</param>
+        /// <param name="remove">The file or wildcard to remove in the list of items.</param>
+        /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
+        /// <param name="condition">An optional condition to add to the item.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator ItemRemove(
+            string itemType,
+            string remove,
+            IDictionary<string, string> metadata = null,
+            string condition = null)
+        {
+            return remove == null
+                    ? this
+                    : Item(
+                        itemGroup: LastItemGroup,
+                        itemType: itemType,
+                        include: null,
+                        exclude: null,
+                        metadata: metadata,
+                        remove: remove,
+                        update: null,
+                        condition: condition);
+        }
+
+        /// <summary>
+        /// Updates items in the current item group.  If <paramref name="update"/> is <code>null</code>, the item is not added.
+        /// </summary>
+        /// <param name="itemType">The type of the item to update items in.</param>
+        /// <param name="update">The file or wildcard to update in the list of items.</param>
+        /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
+        /// <param name="condition">An optional condition to add to the item.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator ItemUpdate(
+            string itemType,
+            string update,
+            IDictionary<string, string> metadata = null,
+            string condition = null)
+        {
+            return update == null
+                    ? this
+                    : Item(
+                        itemGroup: LastItemGroup,
+                        itemType: itemType,
+                        include: null,
+                        exclude: null,
+                        metadata: metadata,
+                        remove: null,
+                        update: update,
+                        condition: condition);
+        }
+
+        /// <summary>
         /// Adds an item to the current item group.
         /// </summary>
         /// <param name="itemGroup">The parent item group to add the item to.</param>
@@ -286,8 +340,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string keepDuplicates = null,
             string keepMetadata = null)
         {
-            ProjectItemElement item = RootElement.CreateItemElement(itemType, include);
+            ProjectItemElement item = include == null
+                ? RootElement.CreateItemElement(itemType)
+                : RootElement.CreateItemElement(itemType, include);
 
+            item.Remove = remove;
+            item.Update = update;
+
+            // Item must be added after Include, Update, or Remove is set but before metadata is added
             itemGroup.AppendChild(item);
 
             if (metadata != null)
@@ -296,7 +356,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     item.AddMetadata(metadatum.Key, metadatum.Value);
                 }
-            } // ProjectItemElement item = itemGroup.AddItem(itemType, include, metadata);
+            }
 
             item.Condition = condition;
             item.Exclude = exclude;
@@ -310,9 +370,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 item.KeepMetadata = keepMetadata;
             }
-
-            item.Remove = remove;
-            item.Update = update;
 
             return this;
         }
