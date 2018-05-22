@@ -62,11 +62,12 @@ You can implement a method that adds a known item type with metadata.  It is rec
 ```C#
 public static class ExtensionsMethods
 {
-    public ProjectCreator ItemMyCustomType(this ProjectCreator creator, string include, string param1, string param2, string condition = null)
+    public static ProjectCreator ItemMyCustomType(this ProjectCreator creator, string include, string param1, string param2, string condition = null)
     {
         return creator.ItemInclude(
             "MyCustomType",
             include,
+            null,
             new Dictionary<string, string>
             {
                 { "Metadata1", param1 },
