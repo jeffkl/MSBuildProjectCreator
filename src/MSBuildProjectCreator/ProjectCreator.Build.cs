@@ -2,6 +2,8 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Execution;
+
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class ProjectCreator
@@ -14,7 +16,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(string target, out bool result)
         {
-            result = Project.Build(target);
+            lock (BuildManager.DefaultBuildManager)
+            {
+                result = Project.Build(target);
+            }
 
             return this;
         }
@@ -30,7 +35,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             buildOutput = BuildOutput.Create();
 
-            result = Project.Build(target, buildOutput.AsEnumerable());
+            lock (BuildManager.DefaultBuildManager)
+            {
+                result = Project.Build(target, buildOutput.AsEnumerable());
+            }
 
             return this;
         }
@@ -42,7 +50,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(out bool result)
         {
-            result = Project.Build();
+            lock (BuildManager.DefaultBuildManager)
+            {
+                result = Project.Build();
+            }
 
             return this;
         }
@@ -57,7 +68,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             buildOutput = BuildOutput.Create();
 
-            result = Project.Build(buildOutput.AsEnumerable());
+            lock (BuildManager.DefaultBuildManager)
+            {
+                result = Project.Build(buildOutput.AsEnumerable());
+            }
 
             return this;
         }
