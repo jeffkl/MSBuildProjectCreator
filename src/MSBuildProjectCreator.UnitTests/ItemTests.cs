@@ -5,6 +5,7 @@
 using Microsoft.Build.Evaluation;
 using Shouldly;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -290,6 +291,54 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   </ItemGroup>
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void TryGetItemsCustomSelector()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemInclude("MyItem", "3F114C1509CF4D499A44F986BEBD5707")
+                .ItemInclude("MyItem", "8A9654A639F5429AB1C7A8F2AE9639D8")
+                .TryGetItems("MyItem", i => i.EvaluatedInclude, out IReadOnlyCollection<string> items);
+
+            items.ShouldBe(new List<string>
+            {
+                "3F114C1509CF4D499A44F986BEBD5707",
+                "8A9654A639F5429AB1C7A8F2AE9639D8"
+            });
+        }
+
+        [Fact]
+        public void TryGetItemsDictionary()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemInclude("MyItem", "A9AA54F5E51E4C0A966A5F5CDBD5EC9D", metadata: new Dictionary<string, string> { ["MyMetadata"] = "A3A33B3B55A841D883A05F6CA920AC1F" })
+                .ItemInclude("MyItem", "910E2DA9075043AA850D923E8E3EE398", metadata: new Dictionary<string, string> { ["MyMetadata"] = "EF8E0862B0A946D98DA7082E70AEC3E9" })
+                .TryGetItems("MyItem", "MyMetadata", out IReadOnlyDictionary<string, string> items);
+
+            items.ShouldBe(new Dictionary<string, string>
+            {
+                ["A9AA54F5E51E4C0A966A5F5CDBD5EC9D"] = "A3A33B3B55A841D883A05F6CA920AC1F",
+                ["910E2DA9075043AA850D923E8E3EE398"] = "EF8E0862B0A946D98DA7082E70AEC3E9"
+            });
+        }
+
+        [Fact]
+        public void TryGetItemsProjectItems()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemInclude("MyItem", "B39E047FC97A48E3964EEA70C46F4E35")
+                .ItemInclude("MyItem", "E0FA8DA2551F4EE18D2102149D3049D4")
+                .TryGetItems("MyItem", out IReadOnlyCollection<ProjectItem> items);
+
+            items
+                .Select(i => i.EvaluatedInclude)
+                .ToList()
+                .ShouldBe(new List<string>
+                {
+                    "B39E047FC97A48E3964EEA70C46F4E35",
+                    "E0FA8DA2551F4EE18D2102149D3049D4"
+                });
         }
 
         [Fact]

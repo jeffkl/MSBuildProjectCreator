@@ -93,5 +93,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
+
+        [Fact]
+        public void TryGetPropertyValueSimple()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .Property("E7A39154F5AB476A928067251F88FFCE", "E8F579A7E3374F389120CF6D888E74B9")
+                .Property("FAB58E5B32D14990ACE2490D7593FDF6", "60F55FB14D2E44B2BA4EC91488D9FF8F")
+                .TryGetPropertyValue("E7A39154F5AB476A928067251F88FFCE", out string property1)
+                .TryGetPropertyValue("FAB58E5B32D14990ACE2490D7593FDF6", out string property2);
+
+            property1.ShouldBe("E8F579A7E3374F389120CF6D888E74B9");
+            property2.ShouldBe("60F55FB14D2E44B2BA4EC91488D9FF8F");
+        }
     }
 }
