@@ -12,4 +12,10 @@
 
     <DefaultItemExcludes>*log</DefaultItemExcludes>
   </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <PackageReference>
+      <PrivateAssets>Compile</PrivateAssets>
+    </PackageReference>
+  </ItemDefinitionGroup>
 </Project>
