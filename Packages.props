@@ -2,28 +2,20 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ItemGroup>
-    <!-- Implicit Package References -->
-    <PackageVersion Include="Microsoft.NETCore.App" Version="[2.0.5]" />
-    <PackageVersion Include="NETStandard.Library" Version="[1.6.1]" Condition=" '$(TargetFramework)' == 'netstandard1.5'" />
-    <PackageVersion Include="NETStandard.Library" Version="[2.0.1]" PrivateAssets="All" Condition=" '$(TargetFramework)' == 'netstandard2.0'" />
-
-    <PackageVersion Include="Microsoft.Build" Version="15.6.82" ExcludeAssets="Runtime" />
-    <PackageVersion Include="Microsoft.Build.Framework" Version="15.6.82" ExcludeAssets="Runtime" />
-    <PackageVersion Include="Microsoft.Build.Locator" Version="[1.0.13]" PrivateAssets="All" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="[15.6.1]" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="[1.1.18]" />
-    <PackageVersion Include="MSTest.TestFramework" Version="[1.1.18]" />
-    <PackageVersion Include="Shouldly" Version="[3.0.0]" />
-    <PackageVersion Include="xunit" Version="[2.3.1]" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="[2.3.1]" />
+    <PackageReference Update="Microsoft.Build" Version="15.6.82"  />
+    <PackageReference Update="Microsoft.Build.Framework" Version="15.6.82" />
+    <PackageReference Update="Microsoft.Build.Locator" Version="[1.0.13]" PrivateAssets="All" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="[15.6.1]" />
+    <PackageReference Update="MSTest.TestAdapter" Version="[1.1.18]" />
+    <PackageReference Update="MSTest.TestFramework" Version="[1.1.18]" />
+    <PackageReference Update="Shouldly" Version="[3.0.0]" />
+    <PackageReference Update="xunit" Version="[2.3.1]" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="[2.3.1]" />
   </ItemGroup>
   
   <ItemGroup Label="Packages to add to all projects" Condition=" '$(IsTraversal)' != 'true' ">
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Condition=" '$(EnableGitVersioning)' != 'false' " />
-    <PackageVersion Include="Nerdbank.GitVersioning" Version="[2.1.16]" PrivateAssets="All" />
-
-    <GlobalPackageReference Include="StyleCop.Analyzers" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
-    <PackageVersion Include="StyleCop.Analyzers" Version="[1.0.2]" PrivateAssets="All" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="[2.1.16]" Condition=" '$(EnableGitVersioning)' != 'false' " />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="[1.0.2]" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
   </ItemGroup>
 
 </Project>
