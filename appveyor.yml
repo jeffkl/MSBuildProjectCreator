@@ -11,7 +11,7 @@ build_script:
 
     MSBuild MSBuildProjectCreator.sln /BinaryLogger /Logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 artifacts:
-- path: '**\*.nupkg'
+- path: 'src\**\*.nupkg'
   name: NuGet Packages
 on_failure:
 - ps: Get-ChildItem .\*log -Recurse | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }

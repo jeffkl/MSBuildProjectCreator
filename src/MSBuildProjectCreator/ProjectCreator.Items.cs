@@ -4,6 +4,7 @@
 
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -312,6 +313,58 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         remove: null,
                         update: update,
                         condition: condition);
+        }
+
+        /// <summary>
+        /// Gets a list of items in the project.
+        /// </summary>
+        /// <param name="itemType">The item type.</param>
+        /// <param name="items">A <see cref="IReadOnlyCollection{ProjectItem}"/> containing the items.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryGetItems(string itemType, out IReadOnlyCollection<ProjectItem> items)
+        {
+            items = Project.GetItems(itemType).ToList();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets a list of items in the project.
+        /// </summary>
+        /// <typeparam name="T">The type of the object that the selector will return.</typeparam>
+        /// <param name="itemType">The item type.</param>
+        /// <param name="selector">A <see cref="Func{ProjectItem, T}"/> that gets the desired return object.</param>
+        /// <param name="items">A <see cref="IReadOnlyCollection{T}"/> containing the items.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryGetItems<T>(string itemType, Func<ProjectItem, T> selector, out IReadOnlyCollection<T> items)
+        {
+            if (selector == null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
+
+            items = Project.GetItems(itemType).Select(selector).ToList();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets a list of items in the project.
+        /// </summary>
+        /// <param name="itemType">The item type.</param>
+        /// <param name="metadataName">The name of a metadata item to get.</param>
+        /// <param name="items">A <see cref="IReadOnlyDictionary{String,String}"/> containing the ItemSpec and metadata value.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryGetItems(string itemType, string metadataName, out IReadOnlyDictionary<string, string> items)
+        {
+            if (String.IsNullOrWhiteSpace(metadataName))
+            {
+                throw new ArgumentNullException(nameof(metadataName));
+            }
+
+            items = Project.GetItems(itemType).ToDictionary(i => i.EvaluatedInclude, i => i.GetMetadataValue(metadataName));
+
+            return this;
         }
 
         /// <summary>

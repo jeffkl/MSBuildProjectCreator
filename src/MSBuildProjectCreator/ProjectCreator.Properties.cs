@@ -25,6 +25,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Attempts to get the specified evaluated property value.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The evaluated value of the property</param>
+        /// <returns>The unescaped value of the property if it exists, otherwise an empty string.</returns>
+        public ProjectCreator TryGetPropertyValue(string name, out string value)
+        {
+            value = Project.GetPropertyValue(name);
+
+            return this;
+        }
+
+        /// <summary>
         /// Adds a property element to the current &lt;PropertyGroup /&gt;.  A property group is automatically added if necessary.  if <paramref name="unevaluatedValue"/> is <code>null</code>, the property is not added.
         /// </summary>
         /// <param name="propertyGroup">The <see cref="ProjectPropertyGroupElement"/> to add the property to.</param>
