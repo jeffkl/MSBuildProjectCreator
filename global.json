@@ -1,5 +1,5 @@
 {
   "msbuild-sdks": {
-    "Microsoft.Build.CentralPackageVersions": "2.0.1-preview-ge283ca7a38"
+    "Microsoft.Build.CentralPackageVersions": "2.0.1"
   }
 }
