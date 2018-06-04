@@ -16,4 +16,13 @@
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="2.1.23" Condition=" '$(EnableGitVersioning)' != 'false' " />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.0.2" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(EnableStyleCopAnalyzers)' != 'false' ">
+    <Compile Include="..\Shared\GlobalSuppressions.cs">
+      <Link>Shared\GlobalSuppressions.cs</Link>
+    </Compile>
+    <AdditionalFiles Include="..\Shared\stylecop.json">
+      <Link>Shared\stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
 </Project>

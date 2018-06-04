@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation</RootNamespace>
@@ -15,25 +14,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" />
-  </ItemGroup>
 
-  <ItemGroup>
     <EmbeddedResource Update="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+
     <Compile Update="Resources\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-
-    <Compile Include="..\Shared\GlobalSuppressions.cs">
-      <Link>Shared\GlobalSuppressions.cs</Link>
-    </Compile>
-    <AdditionalFiles Include="..\Shared\stylecop.json">
-      <Link>Shared\stylecop.json</Link>
-    </AdditionalFiles>
   </ItemGroup>
-
 </Project>
