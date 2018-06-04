@@ -8,4 +8,21 @@
     <DebugType Condition=" '$(Configuration)' == 'Debug' ">Full</DebugType>
   </PropertyGroup>
 
+  <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec" Condition="'$(NuspecProperties)' != ''">
+
+    <ItemGroup>
+      <_NuspecProperties Include="$(NuspecProperties)" />
+      <NuspecProperties Include="%(_NuspecProperties.Identity)=$(%(_NuspecProperties.Identity))" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <NuspecProperties>@(NuspecProperties)</NuspecProperties>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_NuspecProperties Remove="@(_NuspecProperties)" />
+      <NuspecProperties Remove="@(NuspecProperties)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

@@ -9,6 +9,8 @@
     <PackageId>MSBuild.ProjectCreation</PackageId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <NuspecProperties>Configuration;PackageId;NuGetPackageVersion;Authors;PackageLicenseUrl;PackageProjectUrl;PackageDescription;Copyright;PackageTags;RepositoryUrl;AssemblyName;PackageRequireLicenseAcceptance</NuspecProperties>
   </PropertyGroup>
 
   <ItemGroup>
