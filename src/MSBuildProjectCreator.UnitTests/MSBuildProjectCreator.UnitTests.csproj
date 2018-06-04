@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -15,20 +14,7 @@
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
-  </ItemGroup>
-
-  <ItemGroup>
+  
     <ProjectReference Include="..\MSBuildProjectCreator\MSBuildProjectCreator.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
-    <Compile Include="..\Shared\GlobalSuppressions.cs">
-      <Link>Shared\GlobalSuppressions.cs</Link>
-    </Compile>
-    <AdditionalFiles Include="..\Shared\stylecop.json">
-      <Link>Shared\stylecop.json</Link>
-    </AdditionalFiles>
-  </ItemGroup>
-
 </Project>
