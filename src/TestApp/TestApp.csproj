@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>
+    <EnableStyleCopAnalyzers>false</EnableStyleCopAnalyzers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSBuild.ProjectCreation" VersionOverride="1.1.7-g22c0c666fa" />
+  </ItemGroup>
+
+</Project>
