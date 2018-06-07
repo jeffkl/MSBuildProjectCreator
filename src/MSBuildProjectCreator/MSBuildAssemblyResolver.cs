@@ -34,9 +34,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     return Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", "15.0", "Bin");
                 }
 
+                foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? String.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (File.Exists(Path.Combine(path, "MSBuild.exe")))
+                    {
+                        return path;
+                    }
+                }
+
                 return null;
             },
             isThreadSafe: true);
+
+        private static readonly char[] PathSplitChars = { Path.PathSeparator };
 
         /// <summary>
         /// Gets the full path to the MSBuild directory used.
