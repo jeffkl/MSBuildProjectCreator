@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Authors>jeffkl</Authors>
-    <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
-    <PackageLicenseUrl>https://github.com/jeffkl/MSBuildProjectCreator/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
-    <PackageTags>MSBuild project creator generator</PackageTags>
-
-    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
-
     <DefaultItemExcludes>*log</DefaultItemExcludes>
+    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
   </PropertyGroup>
-
-  <ItemDefinitionGroup>
-    <PackageReference>
-      <PrivateAssets>Compile</PrivateAssets>
-    </PackageReference>
-  </ItemDefinitionGroup>
 </Project>
