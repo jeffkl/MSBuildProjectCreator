@@ -63,11 +63,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             AssemblyName assemblyName = new AssemblyName(args.Name);
 
-            if (!assemblyName.Name.StartsWith("Microsoft.Build") || !MicrosoftPublicKeyToken.SequenceEqual(assemblyName.GetPublicKeyToken()) || String.IsNullOrWhiteSpace(MSBuildDirectoryLazy.Value))
-            {
-                return null;
-            }
-
             FileInfo fileInfo = new FileInfo(Path.Combine(MSBuildDirectoryLazy.Value, $"{assemblyName.Name}.dll"));
 
             if (!fileInfo.Exists)
@@ -75,7 +70,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 return null;
             }
 
-            return Assembly.LoadFrom(fileInfo.FullName);
+            return !assemblyName.FullName.Equals(AssemblyName.GetAssemblyName(fileInfo.FullName).FullName) ? null : Assembly.LoadFrom(fileInfo.FullName);
         }
     }
 }
