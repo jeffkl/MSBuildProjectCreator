@@ -163,6 +163,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Saves the project to the specified path.
+        /// </summary>
+        /// <param name="path">The path to save the file to.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator Save(string path)
+        {
+            RootElement.Save(path);
+
+            return this;
+        }
+
+        /// <summary>
         /// Adds a top-level element to the project after the most recently added top-level element.
         /// </summary>
         /// <typeparam name="T">The type of the element.</typeparam>

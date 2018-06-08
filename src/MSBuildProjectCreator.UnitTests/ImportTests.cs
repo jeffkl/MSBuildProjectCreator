@@ -47,6 +47,51 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void ImportProject()
+        {
+            ProjectCreator project1 = ProjectCreator.Create("B2EE38CD5D1E4B228655A95B2B7224BA");
+
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .Import(project1.Project, condition: "8D9C051BE69C4EB99B7C4A53C80A625D")
+                .Xml
+                .ShouldBe(
+                    $@"<Project>
+  <Import Project=""{project1.FullPath}"" Condition=""8D9C051BE69C4EB99B7C4A53C80A625D"" />
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void ImportProjectCreator()
+        {
+            ProjectCreator project1 = ProjectCreator.Create("A4DD67D773834B24AC6AEA317653AD28");
+
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .Import(project1, condition: "E4E4F3ECECF444D28D65F5A59D4B2E89")
+                .Xml
+                .ShouldBe(
+                    $@"<Project>
+  <Import Project=""{project1.FullPath}"" Condition=""E4E4F3ECECF444D28D65F5A59D4B2E89"" />
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void ImportProjectRootElement()
+        {
+            ProjectCreator project1 = ProjectCreator.Create("24775F0E17A348979DB4DF3D357621F9");
+
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .Import(project1.RootElement, condition: "5884085731AB4A588AC8337069C3223B")
+                .Xml
+                .ShouldBe(
+                    $@"<Project>
+  <Import Project=""{project1.FullPath}"" Condition=""5884085731AB4A588AC8337069C3223B"" />
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
         public void ImportSdk()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
@@ -68,6 +113,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ShouldBe(
 @"<Project>
   <Import Project=""8F66583869B84CE89D72FF6DAC8A3C66"" Sdk=""8E35FA0BABDB4488AA096CCF6C82C37A"" Version=""E8835BFC0CF949BFB63AB3917294C41A"" />
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void ImportSdkTest()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ImportSdk("B8E5AE4F7DBF4688B0A3F0E07C73FDE2", "BF3306138DB942BDB330230D07A2A8AD", version: "5D31D10637474DE3ADE35AF5236D7D6B", condition: "4A4274FD1456435EB6D059F91A8C279B")
+                .Xml
+                .ShouldBe(
+                    @"<Project>
+  <Import Project=""B8E5AE4F7DBF4688B0A3F0E07C73FDE2"" Condition=""4A4274FD1456435EB6D059F91A8C279B"" Sdk=""BF3306138DB942BDB330230D07A2A8AD"" Version=""5D31D10637474DE3ADE35AF5236D7D6B"" />
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
