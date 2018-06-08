@@ -11,17 +11,17 @@ using System.Linq;
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     /// <summary>
-    /// Represents the messages that were logged during a build.
+    /// Represents the messages that were logged.
     /// </summary>
-    public sealed class BuildOutputMessages : IReadOnlyCollection<string>
+    public sealed class BuildMessageCollection : IReadOnlyCollection<string>
     {
-        private readonly BuildOutput _buildOutput;
+        private readonly BuildEventArgsCollection _buildOutput;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildOutputMessages"/> class.
+        /// Initializes a new instance of the <see cref="BuildMessageCollection"/> class.
         /// </summary>
-        /// <param name="buildOutput">The <see cref="BuildOutput"/> object that has message events.</param>
-        internal BuildOutputMessages(BuildOutput buildOutput)
+        /// <param name="buildOutput">The <see cref="BuildEventArgsCollection"/> object that has message events.</param>
+        internal BuildMessageCollection(BuildEventArgsCollection buildOutput)
         {
             _buildOutput = buildOutput ?? throw new ArgumentNullException(nameof(buildOutput));
         }
