@@ -50,16 +50,18 @@ FA7FCCBE43B741998BAB399E74F2997D
         }
 
         [Theory]
-        [InlineData(MessageImportance.High)]
-        [InlineData(MessageImportance.Normal)]
-        [InlineData(MessageImportance.Low)]
-        public void MessagesByImportance(MessageImportance importance)
+        [InlineData("High")]
+        [InlineData("Normal")]
+        [InlineData("Low")]
+        public void MessagesByImportance(string value)
         {
             const string expectedMessage = "A7E9F67E46A64181B25DC136A786F480";
 
+            MessageImportance importance = (MessageImportance)Enum.Parse(typeof(MessageImportance), value);
+
             BuildOutput buildOutput = GetProjectLoggerWithEvents(eventSource => { eventSource.OnMessageRaised(expectedMessage, importance); });
 
-            var actualItem = buildOutput.Messages.ShouldHaveSingleItem();
+            string actualItem = buildOutput.Messages.ShouldHaveSingleItem();
 
             actualItem.ShouldBe(expectedMessage);
 
