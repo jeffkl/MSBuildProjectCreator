@@ -14,11 +14,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public static class MSBuildAssemblyResolver
     {
-        /// <summary>
-        /// The MSBuild public key token b03f5f7f11d50a3a.
-        /// </summary>
-        private static readonly byte[] MicrosoftPublicKeyToken = { 0xB0, 0x3F, 0x5F, 0x7F, 0x11, 0xD5, 0x0A, 0x3A };
-
         private static readonly Lazy<string> MSBuildDirectoryLazy = new Lazy<string>(
             () =>
             {
@@ -63,7 +58,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             AssemblyName assemblyName = new AssemblyName(args.Name);
 
-            FileInfo fileInfo = new FileInfo(Path.Combine(MSBuildDirectoryLazy.Value, $"{assemblyName.Name}.dll"));
+            FileInfo fileInfo = new FileInfo(Path.Combine(MSBuildPath, $"{assemblyName.Name}.dll"));
 
             if (!fileInfo.Exists)
             {
