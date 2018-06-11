@@ -18,11 +18,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     public partial class ProjectCreator
     {
         /// <summary>
-        /// Stores the <see cref="Lazy{Project}"/> instance used to create a <see cref="Project"/> object lazily.
-        /// </summary>
-        private readonly Lazy<Project> _projectLazy;
-
-        /// <summary>
         /// Stores the last top-level element added to the project XML.
         /// </summary>
         private ProjectElement _lastTopLevelElement;
@@ -34,33 +29,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private ProjectCreator(ProjectRootElement rootElement)
         {
             RootElement = rootElement;
-
-            _projectLazy = new Lazy<Project>(
-                () => new Project(
-                    RootElement,
-                    ProjectCollection.GlobalProperties,
-                    String.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion,
-                    ProjectCollection),
-                isThreadSafe: true);
         }
 
         /// <summary>
         /// Gets the full path to the project file. If the project has not been loaded from disk and has not been given a path, returns null. If the project has not been loaded from disk but has been given a path, this path may not exist. Setter renames the project, if it already had a name.
         /// </summary>
         public string FullPath => RootElement.FullPath;
-
-        /// <summary>
-        /// Gets the <see cref="Project"/> instance for the current project.  The project is re-evaluated if necessary every time this property is accessed.
-        /// </summary>
-        public Project Project
-        {
-            get
-            {
-                _projectLazy.Value.ReevaluateIfNecessary();
-
-                return _projectLazy.Value;
-            }
-        }
 
         /// <summary>
         /// Gets the <see cref="ProjectCollection"/> for the current project.

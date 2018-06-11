@@ -130,6 +130,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Adds an &lt;OnError /&gt; element to the current target.
+        /// </summary>
+        /// <param name="executeTargets">The targets to execute if a task fails. Separate multiple targets with semicolons. Multiple targets are executed in the order specified.</param>
+        /// <param name="condition">Condition to be evaluated.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TargetOnError(string executeTargets, string condition = null)
+        {
+            ProjectOnErrorElement onErrorElement = RootElement.CreateOnErrorElement(executeTargets);
+
+            LastTarget.AppendChild(onErrorElement);
+
+            onErrorElement.Condition = condition;
+
+            return this;
+        }
+
+        /// <summary>
         /// Adds a property element to the current &lt;PropertyGroup /&gt; of the current target.  A property group is automatically added if necessary.
         /// </summary>
         /// <param name="name">The name of the property.</param>

@@ -122,5 +122,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
+
+        [Fact]
+        public void TargetWithOnError()
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .Target("80A389DEE56C4DFE9D81CCC9B176C09E")
+                .TargetOnError("CA51741A444D4B718A83E2364FE7DC98", "2F8BF0791F8F45AFB2F8D9338ECFDBA1")
+                .Xml
+                .ShouldBe(
+                    @"<Project>
+  <Target Name=""80A389DEE56C4DFE9D81CCC9B176C09E"">
+    <OnError ExecuteTargets=""CA51741A444D4B718A83E2364FE7DC98"" Condition=""2F8BF0791F8F45AFB2F8D9338ECFDBA1"" />
+  </Target>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
     }
 }

@@ -88,7 +88,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator ImportSdk(string project, string name, string version = null, string condition = null)
         {
-            return Import(project, condition, name, version, false);
+            return Import(project, condition, name, version);
         }
     }
 }
