@@ -204,7 +204,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             if (_lastWhen == null)
             {
-                throw new ProjectCreatorException(Strings.ErrorWhenPropertyGroupRequiresWhen);
+                throw new ProjectCreatorException(Strings.ErrorWhenItemGroupRequiresWhen);
             }
 
             _lastWhenItemGroup = ItemGroup(_lastWhen, condition);
