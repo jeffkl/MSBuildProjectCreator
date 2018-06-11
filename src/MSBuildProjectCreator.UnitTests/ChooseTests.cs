@@ -235,6 +235,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void WhenItemGroupGroupThowsIfNoWhen()
+        {
+            Assert.Throws<ProjectCreatorException>(() =>
+                    ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                        .WhenItemGroup())
+                .Message
+                .ShouldBe("You must add a When before adding a When ItemGroup.");
+        }
+
+        [Fact]
         public void WhenOtherwiseSimple()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
