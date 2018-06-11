@@ -42,5 +42,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return this;
         }
+
+        /// <summary>
+        /// Adds a &lt;PropertyGroup /&gt; element to the specified <see cref="ProjectElementContainer"/>.
+        /// </summary>
+        /// <param name="parent">The parent <see cref="ProjectElementContainer"/> to add the property group to.</param>
+        /// <param name="condition">An optional condition to add to the property group.</param>
+        /// <returns>The <see cref="ProjectElementContainer"/> that was added.</returns>
+        protected ProjectPropertyGroupElement PropertyGroup(ProjectElementContainer parent, string condition = null)
+        {
+            ProjectPropertyGroupElement propertyGroup = RootElement.CreatePropertyGroupElement();
+
+            parent.AppendChild(propertyGroup);
+
+            propertyGroup.Condition = condition;
+
+            return propertyGroup;
+        }
     }
 }

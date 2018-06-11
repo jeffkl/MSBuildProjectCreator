@@ -21,7 +21,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 eventSource.OnErrorRaised("FDC8FB4F8E084055974580DF7CD7531E", "6496288436BE4E7CAE014F163914063C", "7B07B020E38343A89B3FA844A40895E4", 1, 2, 0, 0);
                 eventSource.OnWarningRaised("E00BBDAEEFAB45949AFEE1BF792B1691", "56206897E63F44159603D22BB7C08145", "C455F26F4D4543E78F109BCB00F02BE2", 1, 2, 0, 0);
                 eventSource.OnMessageRaised("55B991507D52403295E92E4FFA8704F3", MessageImportance.High);
-                eventSource.OnMessageRaised("FA7FCCBE43B741998BAB399E74F2997D", MessageImportance.Normal);
+                eventSource.OnMessageRaised("FA7FCCBE43B741998BAB399E74F2997D");
                 eventSource.OnMessageRaised("67C0E0E52F2A45A981F3143BAF00A4A3", MessageImportance.Low);
             });
 

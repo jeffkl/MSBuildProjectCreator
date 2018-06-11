@@ -90,9 +90,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TargetItemGroup(string condition = null)
         {
-            _lastTargetItemGroup = LastTarget.AddItemGroup();
-
-            _lastTargetItemGroup.Condition = condition;
+            _lastTargetItemGroup = ItemGroup(LastTarget, condition);
 
             return this;
         }
@@ -130,6 +128,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Adds an &lt;OnError /&gt; element to the current target.
+        /// </summary>
+        /// <param name="executeTargets">The targets to execute if a task fails. Separate multiple targets with semicolons. Multiple targets are executed in the order specified.</param>
+        /// <param name="condition">Condition to be evaluated.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TargetOnError(string executeTargets, string condition = null)
+        {
+            ProjectOnErrorElement onErrorElement = RootElement.CreateOnErrorElement(executeTargets);
+
+            LastTarget.AppendChild(onErrorElement);
+
+            onErrorElement.Condition = condition;
+
+            return this;
+        }
+
+        /// <summary>
         /// Adds a property element to the current &lt;PropertyGroup /&gt; of the current target.  A property group is automatically added if necessary.
         /// </summary>
         /// <param name="name">The name of the property.</param>
@@ -157,11 +172,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TargetPropertyGroup(string condition = null)
         {
-            _lastTargetPropertyGroup = RootElement.CreatePropertyGroupElement();
-
-            LastTarget.AppendChild(_lastTargetPropertyGroup);
-
-            _lastTargetPropertyGroup.Condition = condition;
+            _lastTargetPropertyGroup = PropertyGroup(LastTarget, condition);
 
             return this;
         }
