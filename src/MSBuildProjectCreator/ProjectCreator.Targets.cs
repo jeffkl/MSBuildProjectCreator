@@ -90,9 +90,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TargetItemGroup(string condition = null)
         {
-            _lastTargetItemGroup = LastTarget.AddItemGroup();
-
-            _lastTargetItemGroup.Condition = condition;
+            _lastTargetItemGroup = ItemGroup(LastTarget, condition);
 
             return this;
         }
@@ -174,11 +172,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TargetPropertyGroup(string condition = null)
         {
-            _lastTargetPropertyGroup = RootElement.CreatePropertyGroupElement();
-
-            LastTarget.AppendChild(_lastTargetPropertyGroup);
-
-            _lastTargetPropertyGroup.Condition = condition;
+            _lastTargetPropertyGroup = PropertyGroup(LastTarget, condition);
 
             return this;
         }

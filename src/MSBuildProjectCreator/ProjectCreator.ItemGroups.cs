@@ -42,5 +42,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return this;
         }
+
+        /// <summary>
+        /// Adds an &lt;ItemGroup /&gt; element to the specifed parent.
+        /// </summary>
+        /// <param name="parent">A parent <see cref="ProjectElementContainer"/> to add the item group to.</param>
+        /// <param name="condition">An optional condition to add to the item group.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        protected ProjectItemGroupElement ItemGroup(ProjectElementContainer parent, string condition = null)
+        {
+            ProjectItemGroupElement itemGroup = RootElement.CreateItemGroupElement();
+
+            parent.AppendChild(itemGroup);
+
+            itemGroup.Condition = condition;
+
+            return itemGroup;
+        }
     }
 }

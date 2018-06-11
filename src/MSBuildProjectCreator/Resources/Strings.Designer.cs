@@ -10,7 +10,6 @@
 
 namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -40,7 +39,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Build.Utilities.ProjectCreation.Resources.Strings", typeof(Strings).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Build.Utilities.ProjectCreation.Resources.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -58,6 +57,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can only add one Otherwise to a Choose..
+        /// </summary>
+        internal static string ErrorOtherwiseCanOnlyBeSetOnce {
+            get {
+                return ResourceManager.GetString("ErrorOtherwiseCanOnlyBeSetOnce", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must add a When before adding an Otherwise..
+        /// </summary>
+        internal static string ErrorOtherwiseRequresWhen {
+            get {
+                return ResourceManager.GetString("ErrorOtherwiseRequresWhen", resourceCulture);
             }
         }
         
@@ -103,6 +120,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         internal static string ErrorUsingTaskParameterRequiresUsingTask {
             get {
                 return ResourceManager.GetString("ErrorUsingTaskParameterRequiresUsingTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must add a When before adding a When ItemGroup..
+        /// </summary>
+        internal static string ErrorWhenItemGroupRequiresWhen {
+            get {
+                return ResourceManager.GetString("ErrorWhenItemGroupRequiresWhen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must add a When before adding a When PropertyGroup..
+        /// </summary>
+        internal static string ErrorWhenPropertyGroupRequiresWhen {
+            get {
+                return ResourceManager.GetString("ErrorWhenPropertyGroupRequiresWhen", resourceCulture);
             }
         }
     }

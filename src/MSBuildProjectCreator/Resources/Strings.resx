@@ -117,7 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- ReSharper disable DuplicateResource -->
+  <data name="ErrorOtherwiseCanOnlyBeSetOnce" xml:space="preserve">
+    <value>You can only add one Otherwise to a Choose.</value>
+  </data>
+  <data name="ErrorOtherwiseRequresWhen" xml:space="preserve">
+    <value>You must add a When before adding an Otherwise.</value>
+  </data>
   <data name="ErrorTaskOutputItemRequiresTask" xml:space="preserve">
     <value>You must add a Task by before you can add an output item.</value>
   </data>
@@ -132,5 +137,11 @@
   </data>
   <data name="ErrorUsingTaskParameterRequiresUsingTask" xml:space="preserve">
     <value>You must add a UsingTask before adding a UsingTask parameter.</value>
+  </data>
+  <data name="ErrorWhenItemGroupRequiresWhen" xml:space="preserve">
+    <value>You must add a When before adding a When ItemGroup.</value>
+  </data>
+  <data name="ErrorWhenPropertyGroupRequiresWhen" xml:space="preserve">
+    <value>You must add a When before adding a When PropertyGroup.</value>
   </data>
 </root>
