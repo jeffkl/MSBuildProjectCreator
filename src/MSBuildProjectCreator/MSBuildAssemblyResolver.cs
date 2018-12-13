@@ -17,15 +17,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             () =>
             {
                 string visualStudioDirectory;
+                string msbuildVersionDirectory = Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0";
+
+                if (Version.TryParse(msbuildVersionDirectory, out Version visualStudioVersion) && visualStudioVersion.Major >= 16)
+                {
+                    msbuildVersionDirectory = "Current";
+                }
 
                 if (!String.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
                 {
-                    return Path.Combine(visualStudioDirectory, "MSBuild", "15.0", "Bin");
+                    return Path.Combine(visualStudioDirectory, "MSBuild", msbuildVersionDirectory, "Bin");
                 }
 
                 if (!String.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSAPPIDDIR")))
                 {
-                    return Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", "15.0", "Bin");
+                    return Path.GetFullPath(Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", msbuildVersionDirectory, "Bin"));
                 }
 
                 foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? String.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
