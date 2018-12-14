@@ -13,7 +13,7 @@
     <Description>A fluent interface for generation MSBuild project files.</Description>
     <Authors>jeffkl</Authors>
     <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
-    <PackageLicenseUrl>https://github.com/jeffkl/MSBuildProjectCreator/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
     <PackageTags>MSBuild project creator generator</PackageTags>
