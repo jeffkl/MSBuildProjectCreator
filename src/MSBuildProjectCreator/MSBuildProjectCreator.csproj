@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net46'" />
 
     <EmbeddedResource Update="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

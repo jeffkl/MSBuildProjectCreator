@@ -4,7 +4,11 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+#if NET46
+using Microsoft.VisualStudio.Setup.Configuration;
+#endif
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -17,21 +21,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             () =>
             {
                 string visualStudioDirectory;
-                string msbuildVersionDirectory = Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0";
-
-                if (Version.TryParse(msbuildVersionDirectory, out Version visualStudioVersion) && visualStudioVersion.Major >= 16)
-                {
-                    msbuildVersionDirectory = "Current";
-                }
 
                 if (!String.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
                 {
-                    return Path.Combine(visualStudioDirectory, "MSBuild", msbuildVersionDirectory, "Bin");
+                    return Path.Combine(visualStudioDirectory, "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin");
                 }
 
                 if (!String.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSAPPIDDIR")))
                 {
-                    return Path.GetFullPath(Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", msbuildVersionDirectory, "Bin"));
+                    return Path.GetFullPath(Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin"));
                 }
 
                 foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? String.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
@@ -41,7 +39,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         return path;
                     }
                 }
-
+#if NET46
+                if (!String.IsNullOrWhiteSpace(visualStudioDirectory = MSBuildAssemblyResolver.GetPathOfFirstInstalledVisualStudioInstance()))
+                {
+                    return visualStudioDirectory;
+                }
+#endif
                 return null;
             },
             isThreadSafe: true);
@@ -63,6 +66,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             AssemblyName assemblyName = new AssemblyName(args.Name);
 
+            if (MSBuildPath == null)
+            {
+                return null;
+            }
+
             FileInfo fileInfo = new FileInfo(Path.Combine(MSBuildPath, $"{assemblyName.Name}.dll"));
 
             if (!fileInfo.Exists)
@@ -72,5 +80,58 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return !assemblyName.FullName.Equals(AssemblyName.GetAssemblyName(fileInfo.FullName).FullName) ? null : Assembly.LoadFrom(fileInfo.FullName);
         }
+
+        private static string GetMSBuildVersionDirectory(string version)
+        {
+            if (Version.TryParse(version, out Version visualStudioVersion) && visualStudioVersion.Major >= 16)
+            {
+                return "Current";
+            }
+
+            return version;
+        }
+
+#if NET46
+        private static string GetPathOfFirstInstalledVisualStudioInstance()
+        {
+            Tuple<Version, string> highestVersion = null;
+
+            try
+            {
+                IEnumSetupInstances setupInstances = new SetupConfiguration().EnumAllInstances();
+
+                ISetupInstance[] instances = new ISetupInstance[1];
+
+                for (setupInstances.Next(1, instances, out int fetched); fetched > 0; setupInstances.Next(1, instances, out fetched))
+                {
+                    ISetupInstance2 instance = (ISetupInstance2)instances.First();
+
+                    if (instance.GetState() == InstanceState.Complete)
+                    {
+                        string installationPath = instance.GetInstallationPath();
+
+                        if (!String.IsNullOrWhiteSpace(installationPath) && Version.TryParse(instance.GetInstallationVersion(), out Version version))
+                        {
+                            if (highestVersion == null || version > highestVersion.Item1)
+                            {
+                                highestVersion = new Tuple<Version, string>(version, installationPath);
+                            }
+                        }
+                    }
+                }
+
+                if (highestVersion != null)
+                {
+                    return Path.Combine(highestVersion.Item2, "MSBuild", GetMSBuildVersionDirectory($"{highestVersion.Item1.Major}.{highestVersion.Item1.Minor}"), "Bin");
+                }
+            }
+            catch
+            {
+                // Ignored
+            }
+
+            return null;
+        }
+#endif
     }
 }
