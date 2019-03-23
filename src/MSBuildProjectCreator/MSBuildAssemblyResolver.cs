@@ -122,7 +122,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 if (highestVersion != null)
                 {
-                    return Path.Combine(highestVersion.Item2, "MSBuild", GetMSBuildVersionDirectory($"{highestVersion.Item1.Major}.{highestVersion.Item1.Minor}"), "Bin");
+                    return Path.Combine(highestVersion.Item2, "MSBuild", GetMSBuildVersionDirectory($"{highestVersion.Item1.Major}.0"), "Bin");
                 }
             }
             catch
