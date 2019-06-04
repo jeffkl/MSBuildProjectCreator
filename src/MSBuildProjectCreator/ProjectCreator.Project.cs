@@ -24,7 +24,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 if (_project == null)
                 {
-                    TryGetProject(out _project, ProjectCollection.GlobalProperties, String.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion, ProjectCollection);
+                    TryGetProject(out _project, ProjectCollection.GlobalProperties, string.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion, ProjectCollection);
                 }
 
                 _project.ReevaluateIfNecessary();

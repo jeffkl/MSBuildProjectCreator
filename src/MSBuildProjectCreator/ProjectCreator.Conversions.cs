@@ -39,10 +39,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Defines an implicit conversion of a <see cref="ProjectCreator"/> to a <see cref="String"/>.
+        /// Defines an implicit conversion of a <see cref="ProjectCreator"/> to a <see cref="string"/>.
         /// </summary>
         /// <param name="creator">A <see cref="ProjectCreator"/> to convert.</param>
-        public static implicit operator String(ProjectCreator creator)
+        public static implicit operator string(ProjectCreator creator)
         {
             return creator.FullPath;
         }

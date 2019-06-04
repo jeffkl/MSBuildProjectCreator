@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             ProjectCreator creator = ProjectCreator.Create(projectCollection: projectCollection);
 
-            creator.Project.GetPropertyValue("Property1").ShouldBe(String.Empty);
+            creator.Project.GetPropertyValue("Property1").ShouldBe(string.Empty);
 
             creator.Project.SetGlobalProperty("Property1", "8AD6F0530E774E468DBBD5B4143A1B1D");
 
@@ -32,7 +32,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
             {
-                ["Property1"] = "5DFF776EBCFF4173B0E14160C2191402"
+                ["Property1"] = "5DFF776EBCFF4173B0E14160C2191402",
             });
 
             ProjectCreator creator = ProjectCreator.Create(projectCollection: projectCollection);
@@ -65,7 +65,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Property("Foo", "E82055CD4BBE40E58DF224A8734E75AC", setIfEmpty: true)
                 .TryGetProject(out Project project, new Dictionary<string, string>
                 {
-                    ["Foo"] = "CF8CBA9CEA034D2AB1704B11287579C8"
+                    ["Foo"] = "CF8CBA9CEA034D2AB1704B11287579C8",
                 });
 
             project.GetPropertyValue("Foo").ShouldBe("CF8CBA9CEA034D2AB1704B11287579C8");
@@ -76,7 +76,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             ProjectCollection expectedProjectCollection = new ProjectCollection(new Dictionary<string, string>
             {
-                ["Foo"] = "CF3478738DC04B3C9358FE0D23456BCD"
+                ["Foo"] = "CF3478738DC04B3C9358FE0D23456BCD",
             });
 
             ProjectCreator.Create()

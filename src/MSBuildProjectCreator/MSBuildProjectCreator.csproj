@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net46;netcoreapp2.1;net472</TargetFrameworks>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation</RootNamespace>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -19,10 +19,19 @@
     <PackageTags>MSBuild project creator generator</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net46'" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net46'">
+    <PackageReference Include="Microsoft.Build" VersionOverride="15.9.20" />
+  </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net46'" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>

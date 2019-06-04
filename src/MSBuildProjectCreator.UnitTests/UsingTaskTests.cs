@@ -59,7 +59,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ShouldBe(
                     $@"<Project>
   <UsingTask TaskName=""3F8912C263CA4DAB96C6B72FFCA2564A"" AssemblyFile=""592F50D5289944D78130E4F3B2B2535D"" TaskFactory=""BA02FBBDEAC84D03AD178D376BEB376F"">
-    <Task{(evaluate == null ? String.Empty : $@" Evaluate=""{evaluate.ToString()}""")}><![CDATA[ED112A59822C469D93E9A7E336AE1D96 3986160EE9614D4FB4CA838AC9558E5C 6A170187A26A46D3B3A8CB5D00097F2B]]></Task>
+    <Task{(evaluate == null ? string.Empty : $@" Evaluate=""{evaluate.ToString()}""")}><![CDATA[ED112A59822C469D93E9A7E336AE1D96 3986160EE9614D4FB4CA838AC9558E5C 6A170187A26A46D3B3A8CB5D00097F2B]]></Task>
   </UsingTask>
 </Project>",
                     StringCompareShould.IgnoreLineEndings);

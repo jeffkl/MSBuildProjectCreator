@@ -86,7 +86,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     treatAsLocalProperty: treatAsLocalProperty,
                     projectCollection: projectCollection,
                     projectFileOptions: projectFileOptions)
-                .Property("TargetFrameworks", targetFrameworks == null ? null : String.Join(";", targetFrameworks))
+                .Property("TargetFrameworks", targetFrameworks == null ? null : string.Join(";", targetFrameworks))
                 .CustomAction(projectCreator);
         }
     }

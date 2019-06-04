@@ -98,7 +98,7 @@ FA7FCCBE43B741998BAB399E74F2997D
             {
                 { @"DA920698\E40D\4D8F\89D8\B85D870C4214", true },
                 { @"53C78698\F360\491F\8025\B323782DD912", false },
-                { @"F42234CB\7504\4F23\ACD7\D58F5BCDD3C6", true }
+                { @"F42234CB\7504\4F23\ACD7\D58F5BCDD3C6", true },
             };
 
             BuildOutput buildOutput = GetProjectLoggerWithEvents(eventSource => { Parallel.ForEach(projects, project => { eventSource.OnProjectFinished(project.Key, project.Value); }); });

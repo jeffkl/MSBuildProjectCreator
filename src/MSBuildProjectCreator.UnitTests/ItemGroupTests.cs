@@ -17,7 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemGroup(condition: "4AEF424E1AFB46DF844A29AC9663329E")
                 .Xml
                 .ShouldBe(
-@"<Project>
+                    @"<Project>
   <ItemGroup Condition=""4AEF424E1AFB46DF844A29AC9663329E"" />
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
@@ -33,7 +33,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemGroup(condition: "C8DDD08765A740589ECF938DB7BC5755")
                 .Xml
                 .ShouldBe(
-@"<Project>
+                    @"<Project>
   <ItemGroup Condition=""C5381C0D244D49CCBCFB512A434D2B9E"" />
   <PropertyGroup />
   <ItemGroup Condition=""F31A4B051DFB414684BA368068067EEA"" />
@@ -49,7 +49,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemGroup()
                 .Xml
                 .ShouldBe(
-@"<Project>
+                    @"<Project>
   <ItemGroup />
 </Project>",
                     StringCompareShould.IgnoreLineEndings);

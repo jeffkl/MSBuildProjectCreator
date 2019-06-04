@@ -69,7 +69,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ShouldBe(
                     $@"<Project>
   <Target Name=""{ProjectCreatorConstants.DefaultTargetName}"">
-    <ItemGroup{(condition == null ? String.Empty : $@" Condition=""{condition}""")} />
+    <ItemGroup{(condition == null ? string.Empty : $@" Condition=""{condition}""")} />
   </Target>
 </Project>",
                     StringCompareShould.IgnoreLineEndings);

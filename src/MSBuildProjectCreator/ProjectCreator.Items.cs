@@ -159,7 +159,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Version", version },
                     { "IncludeAssets", includeAssets },
                     { "ExcludeAssets", excludeAssets },
-                    { "PrivateAssets", privateAssets }
+                    { "PrivateAssets", privateAssets },
                 }),
                 condition: condition);
         }
@@ -228,7 +228,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     { "Name", name },
                     { "Project", projectGuid },
-                    { "ReferenceOutputAssembly", referenceOutputAssembly?.ToString() }
+                    { "ReferenceOutputAssembly", referenceOutputAssembly?.ToString() },
                 }),
                 condition: condition);
         }
@@ -256,7 +256,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "HintPath", hintPath },
                     { "Name", name },
                     { "Private", isPrivate?.ToString() },
-                    { "SpecificVersion", isSpecificVersion?.ToString() }
+                    { "SpecificVersion", isSpecificVersion?.ToString() },
                 }),
                 condition: condition);
         }
@@ -357,7 +357,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryGetItems(string itemType, string metadataName, out IReadOnlyDictionary<string, string> items)
         {
-            if (String.IsNullOrWhiteSpace(metadataName))
+            if (string.IsNullOrWhiteSpace(metadataName))
             {
                 throw new ArgumentNullException(nameof(metadataName));
             }
