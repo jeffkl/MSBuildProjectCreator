@@ -41,7 +41,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             Directory.CreateDirectory(TestRootPath);
 
-            return Path.Combine(TestRootPath, $"{Path.GetRandomFileName()}{extension ?? String.Empty}");
+            return Path.Combine(TestRootPath, $"{Path.GetRandomFileName()}{extension ?? string.Empty}");
         }
     }
 }

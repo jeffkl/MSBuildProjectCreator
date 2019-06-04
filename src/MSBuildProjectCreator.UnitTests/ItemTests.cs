@@ -23,7 +23,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     isVisible: false,
                     metadata: new Dictionary<string, string>
                     {
-                        { "Custom", "37F6FB078E9C462FAF984DB5AFF38297" }
+                        { "Custom", "37F6FB078E9C462FAF984DB5AFF38297" },
                     },
                     condition: "22484FB0B4364AE8BB9D43D44D40D46D")
                 .Xml
@@ -68,7 +68,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     copyToOutputDirectory: "1C57073B00964567A77666363AE52845",
                     metadata: new Dictionary<string, string>
                     {
-                        { "Custom", "C791E7D345444C87B541211E0C60E344" }
+                        { "Custom", "C791E7D345444C87B541211E0C60E344" },
                     },
                     condition: "946D6DF1B32C47DBB0F34CA2E46FA6B8")
                 .Xml
@@ -98,7 +98,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "C2656BF5ABE24763B5D6789D20BE1086", "131E00C18D9F4704A5FC2865D7BF4DBA" },
                         { "D6B4D9F865B041AE9EEB7FBD0F09C058", "D02633A1BC4D4515A119D334CF87EAB9" },
-                        { "E9E4F1CB10C24CA88172FE5AD54E158B", "51F1085F4ED5462282B10195D6B55747" }
+                        { "E9E4F1CB10C24CA88172FE5AD54E158B", "51F1085F4ED5462282B10195D6B55747" },
                     },
                     exclude: "0950E170EE594396BCD2830147479BB4",
                     condition: "8C3F4A9DF1F44455A1CCE80C17B0246C")
@@ -142,7 +142,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     metadata: new Dictionary<string, string>
                     {
                         { "CDBA5A760C9C45CFB2E9532D4B4AE2B7", "D6A68EA723C848E19D2E17C09F7F2532" },
-                        { "FDD9C6C5582B404188CD8C938DB2CDD9", null }
+                        { "FDD9C6C5582B404188CD8C938DB2CDD9", null },
                     })
                 .Xml.ShouldBe(
                     @"<Project>
@@ -167,7 +167,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     copyToOutputDirectory: "C19852875EC14889A2B66A237AAB674A",
                     metadata: new Dictionary<string, string>
                     {
-                        { "A9106C7FC44641B0A6636D3559A3A8F4", "024B55145A22481BA5EFBADD4CA633A7" }
+                        { "A9106C7FC44641B0A6636D3559A3A8F4", "024B55145A22481BA5EFBADD4CA633A7" },
                     },
                     condition: "C88DEB23F8444037835F4E63AE236F7F")
                 .Xml
@@ -198,7 +198,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     privateAssets: "4E5C92D014734A8B9CE23198715B6C63",
                     metadata: new Dictionary<string, string>
                     {
-                        { "E5E3AEA9BFB547BABCEEEAFEDEB70BDA", "2ECE306CA8C540FBABD7893948504F26" }
+                        { "E5E3AEA9BFB547BABCEEEAFEDEB70BDA", "2ECE306CA8C540FBABD7893948504F26" },
                     },
                     condition: "66AF7AA732084E35ACC81361B21ADA3E")
                 .Xml.ShouldBe(
@@ -252,7 +252,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     referenceOutputAssembly: true,
                     metadata: new Dictionary<string, string>
                     {
-                        { "C533633B322444B8B41A8D964DF6013B", "2997CF6ABB7544A880F8D14BC3B26D5C" }
+                        { "C533633B322444B8B41A8D964DF6013B", "2997CF6ABB7544A880F8D14BC3B26D5C" },
                     },
                     condition: "EEA7E2E6077A4B56918D03CAA17411E5")
                 .Xml.ShouldBe(
@@ -278,7 +278,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     remove: "52CE3EA8F90F44779EC543225D6F182A",
                     metadata: new Dictionary<string, string>
                     {
-                        { "CCBE2A083AF44A1A8DD0AB38F174D983", "7D228EF67CC648E98D7D46BFFEF935FE" }
+                        { "CCBE2A083AF44A1A8DD0AB38F174D983", "7D228EF67CC648E98D7D46BFFEF935FE" },
                     },
                     condition: "5E1B774BD945407CA45227EE8BF5737A")
                 .Xml
@@ -304,7 +304,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             items.ShouldBe(new List<string>
             {
                 "3F114C1509CF4D499A44F986BEBD5707",
-                "8A9654A639F5429AB1C7A8F2AE9639D8"
+                "8A9654A639F5429AB1C7A8F2AE9639D8",
             });
         }
 
@@ -319,7 +319,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             items.ShouldBe(new Dictionary<string, string>
             {
                 ["A9AA54F5E51E4C0A966A5F5CDBD5EC9D"] = "A3A33B3B55A841D883A05F6CA920AC1F",
-                ["910E2DA9075043AA850D923E8E3EE398"] = "EF8E0862B0A946D98DA7082E70AEC3E9"
+                ["910E2DA9075043AA850D923E8E3EE398"] = "EF8E0862B0A946D98DA7082E70AEC3E9",
             });
         }
 
@@ -337,7 +337,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ShouldBe(new List<string>
                 {
                     "B39E047FC97A48E3964EEA70C46F4E35",
-                    "E0FA8DA2551F4EE18D2102149D3049D4"
+                    "E0FA8DA2551F4EE18D2102149D3049D4",
                 });
         }
 
@@ -350,7 +350,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     update: "F58734B746BF4E76AB71E4151BB15A6F",
                     metadata: new Dictionary<string, string>
                     {
-                        { "EDD4A94F3C1241B4A6543E60C96FF51D", "10A8CF193EE54D679F25A8E1F83E0097" }
+                        { "EDD4A94F3C1241B4A6543E60C96FF51D", "10A8CF193EE54D679F25A8E1F83E0097" },
                     },
                     condition: "8DAE9F4AB6264A9CB2435C482C8B3DBB")
                 .Xml

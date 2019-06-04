@@ -67,12 +67,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             _lastTarget = AddTopLevelElement(RootElement.CreateTargetElement(name));
 
-            _lastTarget.AfterTargets = afterTargets ?? String.Empty;
-            _lastTarget.BeforeTargets = beforeTargets ?? String.Empty;
+            _lastTarget.AfterTargets = afterTargets ?? string.Empty;
+            _lastTarget.BeforeTargets = beforeTargets ?? string.Empty;
             _lastTarget.Condition = condition;
-            _lastTarget.DependsOnTargets = dependsOnTargets ?? String.Empty;
-            _lastTarget.Inputs = inputs ?? String.Empty;
-            _lastTarget.Outputs = outputs ?? String.Empty;
+            _lastTarget.DependsOnTargets = dependsOnTargets ?? string.Empty;
+            _lastTarget.Inputs = inputs ?? string.Empty;
+            _lastTarget.Outputs = outputs ?? string.Empty;
             _lastTarget.Returns = returns;
 
             if (keepDuplicateOutputs != null)

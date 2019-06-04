@@ -22,17 +22,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 string visualStudioDirectory;
 
-                if (!String.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
+                if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
                 {
                     return Path.Combine(visualStudioDirectory, "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin");
                 }
 
-                if (!String.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSAPPIDDIR")))
+                if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSAPPIDDIR")))
                 {
                     return Path.GetFullPath(Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin"));
                 }
 
-                foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? String.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
+                foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? string.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if (File.Exists(Path.Combine(path, "MSBuild.exe")))
                     {
@@ -40,7 +40,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     }
                 }
 #if NET46
-                if (!String.IsNullOrWhiteSpace(visualStudioDirectory = MSBuildAssemblyResolver.GetPathOfFirstInstalledVisualStudioInstance()))
+                if (!string.IsNullOrWhiteSpace(visualStudioDirectory = MSBuildAssemblyResolver.GetPathOfFirstInstalledVisualStudioInstance()))
                 {
                     return visualStudioDirectory;
                 }
@@ -110,7 +110,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     {
                         string installationPath = instance.GetInstallationPath();
 
-                        if (!String.IsNullOrWhiteSpace(installationPath) && Version.TryParse(instance.GetInstallationVersion(), out Version version))
+                        if (!string.IsNullOrWhiteSpace(installationPath) && Version.TryParse(instance.GetInstallationVersion(), out Version version))
                         {
                             if (highestVersion == null || version > highestVersion.Item1)
                             {

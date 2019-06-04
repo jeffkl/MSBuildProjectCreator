@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         "DD5FA432D4024EDE9AAD31C830C0777B",
                         "5F4B1101B5624C7A9664E2608CCD7F9A",
-                        "C17A88666FF843789F3CCA1F28EA950B"
+                        "C17A88666FF843789F3CCA1F28EA950B",
                     },
                     (item, i) => i.ItemInclude("MyItem", item))
                 .Xml

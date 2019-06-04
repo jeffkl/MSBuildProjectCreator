@@ -17,7 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Gets the current object as an <see cref="IEnumerable{T}"/>.
         /// </summary>
         /// <typeparam name="T">The type of the object.</typeparam>
-        /// <param name="item">The item to make into an <see cref="IEnumerable{T}"/></param>
+        /// <param name="item">The item to make into an <see cref="IEnumerable{T}"/>.</param>
         /// <returns>The current object as an <see cref="IEnumerable{T}"/>.</returns>
         public static IEnumerable<T> AsEnumerable<T>(this T item)
             where T : class
@@ -25,7 +25,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             // Return the item in an array for now unless we can find a cheaper way to do this (ie custom Enumerator?)
             return new[]
             {
-                item
+                item,
             };
         }
 

@@ -26,7 +26,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                             "App.config",
                             metadata: new Dictionary<string, string>
                             {
-                                { "SubType", "Designer" }
+                                { "SubType", "Designer" },
                             });
                 })
                 .Xml

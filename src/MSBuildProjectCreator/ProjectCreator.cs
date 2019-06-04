@@ -100,7 +100,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 rootElement.Sdk = sdk;
             }
 
-            rootElement.ToolsVersion = toolsVersion ?? String.Empty;
+            rootElement.ToolsVersion = toolsVersion ?? string.Empty;
 
             if (treatAsLocalProperty != null)
             {
@@ -109,7 +109,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return new ProjectCreator(rootElement)
             {
-                ProjectCollection = projectCollection
+                ProjectCollection = projectCollection,
             };
         }
 

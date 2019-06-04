@@ -17,7 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             ProjectCreator.Templates.SdkCsproj(sdk: sdk)
                 .Xml
                 .ShouldBe(
-                $@"<Project Sdk=""{sdk}"">
+                    $@"<Project Sdk=""{sdk}"">
   <PropertyGroup>
     <TargetFramework>{ProjectCreatorConstants.SdkCsprojDefaultTargetFramework}</TargetFramework>
   </PropertyGroup>
@@ -31,7 +31,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             ProjectCreator.Templates.SdkCsproj()
                 .Xml
                 .ShouldBe(
-                $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
+                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
   <PropertyGroup>
     <TargetFramework>{ProjectCreatorConstants.SdkCsprojDefaultTargetFramework}</TargetFramework>
   </PropertyGroup>
@@ -47,7 +47,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         "86A865B7391B4AFBA7466B3882CB21BD",
                         "475340B7B92C4E35A9503B747996F5F6",
-                        "9266B04DA648433F9BB76BBF42474545"
+                        "9266B04DA648433F9BB76BBF42474545",
                     })
                 .Xml
                 .ShouldBe(

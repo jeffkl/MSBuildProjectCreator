@@ -68,7 +68,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void PropertySetIfEmpty()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .Property("A47F78111F084710B139CD5AEEB5395E", String.Empty)
+                .Property("A47F78111F084710B139CD5AEEB5395E", string.Empty)
                 .Xml
                 .ShouldBe(
                     @"<Project>

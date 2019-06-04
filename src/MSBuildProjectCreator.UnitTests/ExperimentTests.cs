@@ -41,7 +41,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Task("Message", parameters: new Dictionary<string, string>
                 {
                     { "Text", "Hello World" },
-                    { "Importance", "High" }
+                    { "Importance", "High" },
                 })
                 .TryBuild(out bool _, out BuildOutput _);
 

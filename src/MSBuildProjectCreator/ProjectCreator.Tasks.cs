@@ -78,7 +78,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Text", text },
                     { "Code", code },
                     { "File", file },
-                    { "HelpKeyword", helpKeyword }
+                    { "HelpKeyword", helpKeyword },
                 });
         }
 
@@ -97,7 +97,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 new Dictionary<string, string>
                 {
                     { "Text", text },
-                    { "Importance", importance?.ToString() }
+                    { "Importance", importance?.ToString() },
                 });
         }
 
@@ -158,7 +158,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Text", text },
                     { "Code", code },
                     { "File", file },
-                    { "HelpKeyword", helpKeyword }
+                    { "HelpKeyword", helpKeyword },
                 });
         }
     }

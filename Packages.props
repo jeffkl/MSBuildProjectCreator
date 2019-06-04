@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <PackageReference Update="Microsoft.Build" Version="15.7.179" />
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Update="Microsoft.Build" Version="16.0.461" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Update="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" />
     <PackageReference Update="MSTest.TestAdapter" Version="1.1.18" />
     <PackageReference Update="MSTest.TestFramework" Version="1.1.18" />
-    <PackageReference Update="Shouldly" Version="3.0.0" />
-    <PackageReference Update="xunit" Version="2.3.1" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Update="Shouldly" Version="3.0.2" />
+    <PackageReference Update="xunit" Version="2.4.1" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>
   
   <ItemGroup>
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="2.1.23" Condition=" '$(EnableGitVersioning)' != 'false' " />
-    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.0.2" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="2.3.167" Condition=" '$(EnableGitVersioning)' != 'false' " />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableStyleCopAnalyzers)' != 'false' ">
