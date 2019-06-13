@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27508.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29011.400
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSBuildProjectCreator", "src\MSBuildProjectCreator\MSBuildProjectCreator.csproj", "{0CCB62BE-922F-480F-B8EA-823CB8A9CBDC}"
 EndProject
@@ -9,12 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSBuildProjectCreator.UnitT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8339FD67-CFE5-4951-B9DD-F7E6EAB77ADC}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.rsp = Directory.Build.rsp
 		Directory.Build.targets = Directory.Build.targets
 		global.json = global.json
+		LICENSE = LICENSE
 		NuGet.config = NuGet.config
 		Packages.props = Packages.props
 		README.md = README.md
