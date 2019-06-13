@@ -5,6 +5,9 @@
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
+    <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
+    <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
   </PropertyGroup>
   
   <PropertyGroup Label="Package properties">
