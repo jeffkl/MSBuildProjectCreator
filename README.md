@@ -1,5 +1,5 @@
 # Overview
-[![Build status](https://ci.appveyor.com/api/projects/status/39naoww2fy6xslt7/branch/master?svg=true)](https://ci.appveyor.com/project/CBT/msbuildprojectcreator/branch/master)
+[![Build Status](https://jeffkl.visualstudio.com/Public/_apis/build/status/MSBuildProjectCreator?branchName=master)](https://jeffkl.visualstudio.com/Public/_build/latest?definitionId=18&branchName=master)
 [![NuGet](https://img.shields.io/nuget/v/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 [![NuGet](https://img.shields.io/nuget/dt/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 
