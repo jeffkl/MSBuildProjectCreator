@@ -32,7 +32,7 @@ steps:
 
 - task: VSBuild@1
   displayName: 'Retry Build Solution With Binary Logger'
-  condition: failed()
+  condition: succeededOrFailed()
   inputs:
     solution: '*.sln'
     platform: '$(BuildPlatform)'
@@ -53,5 +53,5 @@ steps:
   inputs:
     artifactName: 'drop'
     targetPath: 'artifacts'
-  condition: always()
+  condition: succeededOrFailed()
     
