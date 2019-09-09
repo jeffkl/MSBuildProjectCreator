@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-#if NET46
+#if !NETCORE
 using Microsoft.VisualStudio.Setup.Configuration;
 #endif
 
@@ -20,6 +20,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private static readonly Lazy<string> MSBuildDirectoryLazy = new Lazy<string>(
             () =>
             {
+#if NETCORE
+                string msbuildExtensionsPath;
+                if (!string.IsNullOrWhiteSpace(msbuildExtensionsPath = Environment.GetEnvironmentVariable("MSBuildExtensionsPath")))
+                {
+                    return msbuildExtensionsPath;
+                }
+#else
                 string visualStudioDirectory;
 
                 if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
@@ -39,7 +46,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         return path;
                     }
                 }
-#if NET46
+
                 if (!string.IsNullOrWhiteSpace(visualStudioDirectory = MSBuildAssemblyResolver.GetPathOfFirstInstalledVisualStudioInstance()))
                 {
                     return visualStudioDirectory;
@@ -91,7 +98,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return version;
         }
 
-#if NET46
+#if !NETCORE
         private static string GetPathOfFirstInstalledVisualStudioInstance()
         {
             Tuple<Version, string> highestVersion = null;

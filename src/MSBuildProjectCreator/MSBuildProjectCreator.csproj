@@ -8,6 +8,7 @@
     <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Label="Package properties">
@@ -23,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net46'">
-    <PackageReference Include="Microsoft.Build" VersionOverride="15.9.20" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" VersionOverride="15.9.20" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'net472'">
@@ -31,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net472'">
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net46'" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
   </ItemGroup>
 
   <ItemGroup>
