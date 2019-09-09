@@ -44,4 +44,5 @@ steps:
   inputs:
     artifactName: 'drop'
     targetPath: 'artifacts'
-    condition: always()
+  condition: always()
+    
