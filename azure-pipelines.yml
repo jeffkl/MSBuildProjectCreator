@@ -28,7 +28,15 @@ steps:
     solution: '*.sln'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
-    msbuildArgs: '/bl:artifacts\msbuild.binlog'
+    msbuildArgs: '/bl:d:\a\1\s\artifacts\msbuild.binlog'
+
+- task: VSBuild@1
+  displayName: 'Retry Build Solution'
+  inputs:
+    solution: '*.sln'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArgs: '/bl:d:\a\1\s\artifacts\msbuild.binlog'
 
 - task: VSTest@2
   displayName: 'Run Unit Tests'
