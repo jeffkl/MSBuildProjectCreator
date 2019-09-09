@@ -3,10 +3,15 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Diagnostics;
 using System.IO;
+#if !NETCORE
 using System.Linq;
+#endif
 using System.Reflection;
-#if NET46
+using System.Text.RegularExpressions;
+using System.Threading;
+#if !NETCORE
 using Microsoft.VisualStudio.Setup.Configuration;
 #endif
 
@@ -17,9 +22,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public static class MSBuildAssemblyResolver
     {
+#if NETCORE
+        private static readonly Regex DotNetBasePathRegex = new Regex(@"^ Base Path:\s+(?<Path>.*)$");
+#endif
+
         private static readonly Lazy<string> MSBuildDirectoryLazy = new Lazy<string>(
             () =>
             {
+#if NETCORE
+                string basePath;
+
+                if (!string.IsNullOrWhiteSpace(basePath = GetDotNetBasePath()))
+                {
+                    return basePath;
+                }
+
+                if (!string.IsNullOrWhiteSpace(basePath = Environment.GetEnvironmentVariable("MSBuildExtensionsPath")))
+                {
+                    return basePath;
+                }
+#else
                 string visualStudioDirectory;
 
                 if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
@@ -39,7 +61,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         return path;
                     }
                 }
-#if NET46
+
                 if (!string.IsNullOrWhiteSpace(visualStudioDirectory = MSBuildAssemblyResolver.GetPathOfFirstInstalledVisualStudioInstance()))
                 {
                     return visualStudioDirectory;
@@ -81,6 +103,91 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return !assemblyName.FullName.Equals(AssemblyName.GetAssemblyName(fileInfo.FullName).FullName) ? null : Assembly.LoadFrom(fileInfo.FullName);
         }
 
+#if NETCORE
+
+        private static string GetDotNetBasePath()
+        {
+            string basePath = null;
+
+            using (ManualResetEvent processExited = new ManualResetEvent(false))
+            using (Process process = new Process
+            {
+                EnableRaisingEvents = true,
+                StartInfo = new ProcessStartInfo
+                {
+                    Arguments = "--info",
+                    CreateNoWindow = true,
+                    FileName = "dotnet",
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = Environment.CurrentDirectory,
+                },
+            })
+            {
+                process.StartInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"] = "en-US";
+
+                process.ErrorDataReceived += (sender, args) => { };
+
+                process.OutputDataReceived += (sender, args) =>
+                {
+                    if (!String.IsNullOrWhiteSpace(args?.Data))
+                    {
+                        Match match = DotNetBasePathRegex.Match(args.Data);
+
+                        if (match.Success && match.Groups["Path"].Success)
+                        {
+                            basePath = match.Groups["Path"].Value.Trim();
+                        }
+                    }
+                };
+
+                process.Exited += (sender, args) => { processExited.Set(); };
+
+                try
+                {
+                    if (!process.Start())
+                    {
+                        return null;
+                    }
+                }
+                catch
+                {
+                    return null;
+                }
+
+                process.StandardInput.Close();
+
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+
+                switch (WaitHandle.WaitAny(new WaitHandle[] { processExited }, TimeSpan.FromSeconds(5)))
+                {
+                    case WaitHandle.WaitTimeout:
+                        break;
+
+                    case 0:
+                        break;
+                }
+
+                if (!process.HasExited)
+                {
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                return basePath;
+            }
+        }
+
+#endif
+
         private static string GetMSBuildVersionDirectory(string version)
         {
             if (Version.TryParse(version, out Version visualStudioVersion) && visualStudioVersion.Major >= 16)
@@ -91,7 +198,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return version;
         }
 
-#if NET46
+#if !NETCORE
         private static string GetPathOfFirstInstalledVisualStudioInstance()
         {
             Tuple<Version, string> highestVersion = null;

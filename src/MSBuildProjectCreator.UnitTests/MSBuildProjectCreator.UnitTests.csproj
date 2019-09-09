@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation.UnitTests</AssemblyName>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation.UnitTests</RootNamespace>
@@ -11,7 +11,7 @@
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
-  
+
     <ProjectReference Include="..\MSBuildProjectCreator\MSBuildProjectCreator.csproj" />
   </ItemGroup>
 </Project>

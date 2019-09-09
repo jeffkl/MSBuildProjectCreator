@@ -22,12 +22,22 @@ steps:
   displayName: 'Set BuildConfiguration to Release for tagged commits'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
 
-- task: MSBuild@1
+- task: VSBuild@1
   displayName: 'Build Solution'
+  continueOnError: true
   inputs:
-    solution: 'MSBuildProjectCreator.sln'
+    solution: '*.sln'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
+
+- task: VSBuild@1
+  displayName: 'Retry Build Solution With Binary Logger'
+  condition: succeededOrFailed()
+  inputs:
+    solution: '*.sln'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArgs: '/bl:$(Build.SourcesDirectory)artifacts\msbuild.binlog'
 
 - task: VSTest@2
   displayName: 'Run Unit Tests'
@@ -43,3 +53,5 @@ steps:
   inputs:
     artifactName: 'drop'
     targetPath: 'artifacts'
+  condition: succeededOrFailed()
+    
