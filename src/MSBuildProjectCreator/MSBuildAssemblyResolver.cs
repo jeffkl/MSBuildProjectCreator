@@ -5,12 +5,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+#if !NETCORE
+using System.Linq;
+#endif
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-
 #if !NETCORE
-using System.Linq;
 using Microsoft.VisualStudio.Setup.Configuration;
 #endif
 

@@ -24,6 +24,7 @@ steps:
 
 - task: VSBuild@1
   displayName: 'Build Solution'
+  continueOnError: true
   inputs:
     solution: '*.sln'
     platform: '$(BuildPlatform)'
