@@ -1,5 +1,12 @@
-pool:
-  vmImage: 'windows-2019'
+resources:
+- repo: self
+
+variables:
+  BuildConfiguration: 'Debug'
+  BuildPlatform: 'Any CPU'
+  DotNetCore3Version: '3.0.100'
+  DotNetCore2Version: '2.1.802'
+
 trigger:
   batch: true
   branches:
@@ -17,41 +24,40 @@ pr:
     exclude:
     - README.md
 
-steps:
-- script: 'echo ##vso[task.setvariable variable=BuildConfiguration;]Release'
-  displayName: 'Set BuildConfiguration to Release for tagged commits'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+jobs:
+- job: NETCoreWindows
+  displayName: Build (Windows)
+  pool:
+    vmImage: windows-latest
+  steps:
+  - script: 'echo ##vso[task.setvariable variable=BuildConfiguration;]Release'
+    displayName: 'Set BuildConfiguration to Release for tagged commits'
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
 
-- task: VSBuild@1
-  displayName: 'Build Solution'
-  continueOnError: true
-  inputs:
-    solution: '*.sln'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core 2.0'
+    inputs:
+      version: '$(DotNetCore2Version)'
 
-- task: VSBuild@1
-  displayName: 'Retry Build Solution With Binary Logger'
-  condition: succeededOrFailed()
-  inputs:
-    solution: '*.sln'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
-    msbuildArgs: '/bl:$(Build.SourcesDirectory)artifacts\msbuild.binlog'
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core 3.0'
+    inputs:
+      version: '$(DotNetCore3Version)'
 
-- task: VSTest@2
-  displayName: 'Run Unit Tests'
-  inputs:
-    testAssemblyVer2: |
-     **\*Tests.dll
-     !**\obj\**
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet build'
+    inputs:
+      arguments: '-property:"Configuration=$(BuildConfiguration)"'
 
-- task: PublishPipelineArtifact@0
-  displayName: 'Publish Artifacts'
-  inputs:
-    artifactName: 'drop'
-    targetPath: 'artifacts'
-  condition: succeededOrFailed()
-    
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet test'
+    inputs:
+      command: test
+      arguments: '--no-build -restore:false -property:VSTestNoBuild=true'
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Artifacts'
+    inputs:
+      artifactName: 'drop'
+      targetPath: 'artifacts'
+    condition: succeededOrFailed()  
