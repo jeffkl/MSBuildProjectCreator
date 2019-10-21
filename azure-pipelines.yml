@@ -53,7 +53,7 @@ jobs:
     displayName: 'dotnet test'
     inputs:
       command: test
-      arguments: '--no-build -restore:false -property:VSTestNoBuild=true'
+      arguments: '--no-build -restore:false -property:VSTestNoBuild=true -property:"Configuration=$(BuildConfiguration)"'
 
   - task: PublishPipelineArtifact@0
     displayName: 'Publish Artifacts'
