@@ -5,6 +5,7 @@ variables:
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
   DotNetCore3Version: '3.0.100'
+  DotNetCore2Version: '2.1.802'
 
 trigger:
   batch: true
@@ -32,6 +33,11 @@ jobs:
   - script: 'echo ##vso[task.setvariable variable=BuildConfiguration;]Release'
     displayName: 'Set BuildConfiguration to Release for tagged commits'
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core 2.0'
+    inputs:
+      version: '$(DotNetCore2Version)'
 
   - task: UseDotNet@2
     displayName: 'Install .NET Core 3.0'
