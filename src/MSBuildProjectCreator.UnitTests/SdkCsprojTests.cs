@@ -2,13 +2,64 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Evaluation;
 using Shouldly;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class SdkCsprojTests : MSBuildTestBase
+    public class SdkCsprojTests : TestBase
     {
+        [Fact]
+        public void CanBuild()
+        {
+            ProjectCollection projectCollection = new ProjectCollection(globalProperties: new Dictionary<string, string>
+            {
+                ["DesignTimeBuild"] = "true",
+            });
+
+            const string targetFramework = "net472";
+
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFramework: targetFramework,
+                    path: GetTempFileName(".csproj"),
+                    projectCollection: projectCollection)
+                .Save()
+                .TryBuild("Build", out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void CanRestoreAndBuild()
+        {
+            ProjectCollection projectCollection = new ProjectCollection(globalProperties: new Dictionary<string, string>
+            {
+                ["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D"),
+            });
+
+            string path = GetTempFileName(".csproj");
+
+            const string targetFramework = "net472";
+
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFramework: targetFramework,
+                    projectCollection: projectCollection)
+                .Save(path)
+                .TryBuild("Restore", out bool restoreResult, out BuildOutput restoreBuildOutput);
+
+            restoreResult.ShouldBeTrue(restoreBuildOutput.GetConsoleLog());
+
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFramework: targetFramework)
+                .Save(path)
+                .TryBuild("Build", out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+        }
+
         [Fact]
         public void CustomSdk()
         {
