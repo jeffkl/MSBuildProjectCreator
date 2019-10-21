@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <PackageReference Update="Microsoft.Build" Version="16.0.461" />
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.1.1" />
+    <PackageReference Update="Microsoft.Build" Version="16.3.0" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.3.0" />
     <PackageReference Update="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" />
     <PackageReference Update="MSTest.TestAdapter" Version="1.1.18" />
     <PackageReference Update="MSTest.TestFramework" Version="1.1.18" />
@@ -12,8 +12,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="1.0.68" />
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="2.3.167" Condition=" '$(EnableGitVersioning)' != 'false' " />
+    <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="2.0.1" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.0.26" Condition=" '$(EnableGitVersioning)' != 'false' " />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
   </ItemGroup>
 
