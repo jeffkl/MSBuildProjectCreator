@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46;netcoreapp2.1;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net46;netcoreapp2.1;net472;netcoreapp3.0</TargetFrameworks>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation</RootNamespace>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -8,7 +8,7 @@
     <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">$(DefineConstants);NETCORE</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp3.0'">$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Label="Package properties">
@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" VersionOverride="15.9.20" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'net472'">
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
   </ItemGroup>
 
