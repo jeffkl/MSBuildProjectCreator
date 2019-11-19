@@ -32,5 +32,39 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             item.Value.Items.Select(i => i.ItemSpec).ShouldBe(new[] { "E32099C7AF4E481885B624E5600C718A", "7F38E64414104C6182F492B535926187" });
         }
+
+        [Fact]
+        public void RestoreTargetCanBeRun()
+        {
+            ProjectCreator
+                .Create(Path.Combine(TestRootPath, "project1.proj"))
+                .Target("Restore")
+                    .TaskMessage("312D2E6ABDDC4735B437A016CED1A68E", Framework.MessageImportance.High, condition: "'$(MSBuildRestoreSessionId)' != ''")
+                    .TaskError("MSBuildRestoreSessionId was not defined", condition: "'$(MSBuildRestoreSessionId)' == ''")
+                .TryRestore(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == Framework.MessageImportance.High, buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void CanRestoreAndBuild()
+        {
+            ProjectCreator.Create(
+                    path: GetTempFileName(".csproj"))
+                .Target("Restore")
+                    .TaskMessage("Restoring...", Framework.MessageImportance.High)
+                .Target("Build")
+                    .TaskMessage("Building...", Framework.MessageImportance.High)
+                .Save()
+                .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restoring...", buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Building...", buildOutput.GetConsoleLog());
+        }
     }
 }
