@@ -5,6 +5,7 @@
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using System;
+using System.IO;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -143,6 +144,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator Save(string path)
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+
             RootElement.Save(path);
 
             return this;

@@ -2,14 +2,22 @@
 //
 // Licensed under the MIT license.
 
+using NuGet.Packaging;
 using System;
 using System.IO;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public abstract class TestBase : MSBuildTestBase
+    public abstract class TestBase : MSBuildTestBase, IDisposable
     {
+        private readonly Lazy<VersionFolderPathResolver> _pathResolverLazy;
+
         private readonly string _testRootPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+        protected TestBase()
+        {
+            _pathResolverLazy = new Lazy<VersionFolderPathResolver>(() => new VersionFolderPathResolver(Path.Combine(TestRootPath, ".nuget", "packages")));
+        }
 
         public string TestRootPath
         {
@@ -19,6 +27,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 return _testRootPath;
             }
         }
+
+        public VersionFolderPathResolver VersionFolderPathResolver => _pathResolverLazy.Value;
 
         public void Dispose()
         {
