@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ErrorFileAlreadyCreated" xml:space="preserve">
+    <value>The file "{0}" has already been added to the package.</value>
+  </data>
+  <data name="ErrorFilePathMustBeInADirectory" xml:space="preserve">
+    <value>The specified file path "{0}" must have a parent directory.</value>
+  </data>
   <data name="ErrorOtherwiseCanOnlyBeSetOnce" xml:space="preserve">
     <value>You can only add one Otherwise to a Choose.</value>
   </data>
   <data name="ErrorOtherwiseRequresWhen" xml:space="preserve">
     <value>You must add a When before adding an Otherwise.</value>
+  </data>
+  <data name="ErrorPackageAlreadyCreated" xml:space="preserve">
+    <value>The package "{0}" version "{1}" has already been created.</value>
   </data>
   <data name="ErrorTaskOutputItemRequiresTask" xml:space="preserve">
     <value>You must add a Task by before you can add an output item.</value>
@@ -137,6 +146,12 @@
   </data>
   <data name="ErrorUsingTaskParameterRequiresUsingTask" xml:space="preserve">
     <value>You must add a UsingTask before adding a UsingTask parameter.</value>
+  </data>
+  <data name="ErrorWhenAddingBuildLogicRequiresPackage" xml:space="preserve">
+    <value>You must add a package before adding build logic.</value>
+  </data>
+  <data name="ErrorWhenAddingLibraryRequiresPackage" xml:space="preserve">
+    <value>You must add a package before adding a library.</value>
   </data>
   <data name="ErrorWhenItemGroupRequiresWhen" xml:space="preserve">
     <value>You must add a When before adding a When ItemGroup.</value>

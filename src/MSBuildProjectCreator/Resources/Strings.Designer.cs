@@ -19,7 +19,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -61,6 +61,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file &quot;{0}&quot; has already been added to the package..
+        /// </summary>
+        internal static string ErrorFileAlreadyCreated {
+            get {
+                return ResourceManager.GetString("ErrorFileAlreadyCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified file path &quot;{0}&quot; must have a parent directory..
+        /// </summary>
+        internal static string ErrorFilePathMustBeInADirectory {
+            get {
+                return ResourceManager.GetString("ErrorFilePathMustBeInADirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You can only add one Otherwise to a Choose..
         /// </summary>
         internal static string ErrorOtherwiseCanOnlyBeSetOnce {
@@ -75,6 +93,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         internal static string ErrorOtherwiseRequresWhen {
             get {
                 return ResourceManager.GetString("ErrorOtherwiseRequresWhen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The package &quot;{0}&quot; version &quot;{1}&quot; has already been created..
+        /// </summary>
+        internal static string ErrorPackageAlreadyCreated {
+            get {
+                return ResourceManager.GetString("ErrorPackageAlreadyCreated", resourceCulture);
             }
         }
         
@@ -120,6 +147,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         internal static string ErrorUsingTaskParameterRequiresUsingTask {
             get {
                 return ResourceManager.GetString("ErrorUsingTaskParameterRequiresUsingTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must add a package before adding build logic..
+        /// </summary>
+        internal static string ErrorWhenAddingBuildLogicRequiresPackage {
+            get {
+                return ResourceManager.GetString("ErrorWhenAddingBuildLogicRequiresPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must add a package before adding a library..
+        /// </summary>
+        internal static string ErrorWhenAddingLibraryRequiresPackage {
+            get {
+                return ResourceManager.GetString("ErrorWhenAddingLibraryRequiresPackage", resourceCulture);
             }
         }
         

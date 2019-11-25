@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 [![NuGet](https://img.shields.io/nuget/dt/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 
-This class library is a [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface) for generating MSBuild projects.  Its primarily for unit tests that need MSBuild projects to do their testing.
+This class library is a [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface) for generating MSBuild projects and NuGet package repositories.  Its primarily for unit tests that need MSBuild projects to do their testing.
 
 ## Example
 You want to test a custom MSBuild task that you are building so your unit tests need to generate a project that you can build with MSBuild.  The following code would generate the necessary project:
@@ -125,7 +125,7 @@ Your extension methods should extend the `ProjectCreatorTemplates` class so they
 ```C#
 public static class ExtensionMethods
 {
-        public ProjectCreator LogsMessage(this ProjectCreatorTemplates template, string text, string path = null, MessageImportance ? importance = null, string condition = null)
+    public ProjectCreator LogsMessage(this ProjectCreatorTemplates template, string text, string path = null, MessageImportance ? importance = null, string condition = null)
     {
         return ProjectCreator.Create(path)
             .TaskMessage(text, importance, condition);
@@ -158,3 +158,32 @@ And the resulting project would look like this:
   </Target>
 </Project>
 ```
+
+# Package Repositories
+NuGet and MSBuild are very tightly coupled and a lot of times you need packages available when building projects.
+
+## Example
+
+Create a package repository with a package that supports two target frameworks:
+
+```C#
+PackageRepository.Create(rootPath)
+    .Package("MyPackage", "1.2.3", out PackageIdentify package)
+        .Library("net472")
+        .Library("netstandard2.0");
+```
+
+The resulting package would have a `lib\net472\MyPackage.dll` and `lib\netstandard2.0\MyPackage.dll` class library.  This allows you to restore and build projects that consume the packages
+
+```C#
+PackageRepository.Create(rootPath)
+    .Package("MyPackage", "1.0.0", out PackageIdentify package)
+        .Library("netstandard2.0");
+
+ProjectCreator.Templates.SdkCsproj()
+    .ItemPackageReference(package)
+    .Save(Path.Combine(rootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
+    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+```
+
+The result would be a project that references the `MyPackage` package and would restore and build accordingly.
