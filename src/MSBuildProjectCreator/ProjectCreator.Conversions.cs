@@ -4,7 +4,6 @@
 
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
-using System;
 using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
