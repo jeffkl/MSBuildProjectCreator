@@ -5,7 +5,6 @@
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Exceptions;
 using Shouldly;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -29,6 +28,25 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         [Fact]
         public void ProjectWithGlobalProperties()
+        {
+            IDictionary<string, string> globalProperties = new Dictionary<string, string>
+            {
+                ["Property1"] = "0945E8894F5B46C3894158EAE2815DF3",
+            };
+
+            ProjectCreator creator = ProjectCreator.Create(globalProperties: globalProperties);
+
+            creator.ProjectCollection.ShouldBeSameAs(ProjectCollection.GlobalProjectCollection);
+
+            creator.Project.ProjectCollection.ShouldBeSameAs(ProjectCollection.GlobalProjectCollection);
+
+            creator.Project.GlobalProperties.ShouldBe(globalProperties);
+
+            creator.Project.GetPropertyValue("Property1").ShouldBe("0945E8894F5B46C3894158EAE2815DF3");
+        }
+
+        [Fact]
+        public void ProjectWithGlobalPropertiesFromProjectCollection()
         {
             ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
             {

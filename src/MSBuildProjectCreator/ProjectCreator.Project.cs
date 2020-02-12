@@ -11,6 +11,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     public partial class ProjectCreator
     {
         /// <summary>
+        /// Stores the global properties for the project.
+        /// </summary>
+        private readonly IDictionary<string, string> _globalProperties;
+
+        /// <summary>
         /// Stores the <see cref="Lazy{Project}"/> instance used to create a <see cref="Project"/> object lazily.
         /// </summary>
         private Project _project;
@@ -24,7 +29,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 if (_project == null)
                 {
-                    TryGetProject(out _project, ProjectCollection.GlobalProperties, string.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion, ProjectCollection);
+                    TryGetProject(out _project, _globalProperties, string.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion, ProjectCollection);
                 }
 
                 _project.ReevaluateIfNecessary();
@@ -51,7 +56,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             project = new Project(
                 RootElement,
-                globalProperties ?? projectCollection?.GlobalProperties,
+                globalProperties,
                 toolsVersion,
                 projectCollection ?? ProjectCollection.GlobalProjectCollection,
                 projectLoadSettings);
@@ -85,7 +90,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             project = new Project(
                 RootElement,
-                globalProperties ?? projectCollection.GlobalProperties,
+                globalProperties,
                 toolsVersion,
                 projectCollection,
                 projectLoadSettings);

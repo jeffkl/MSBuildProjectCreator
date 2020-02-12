@@ -24,6 +24,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="treatAsLocalProperty">An optional list of properties to treat as local properties.</param>
         /// <param name="projectCollection">An optional <see cref="ProjectCollection"/> to use when loading the project.</param>
         /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions"/> specifying options when creating a new file.</param>
+        /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator SdkCsproj(
             string path = null,
@@ -35,7 +36,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string initialTargets = null,
             string treatAsLocalProperty = null,
             ProjectCollection projectCollection = null,
-            NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None)
+            NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None,
+            IDictionary<string, string> globalProperties = null)
         {
             return ProjectCreator.Create(
                     path,
@@ -44,7 +46,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     initialTargets: initialTargets,
                     treatAsLocalProperty: treatAsLocalProperty,
                     projectCollection: projectCollection,
-                    projectFileOptions: projectFileOptions)
+                    projectFileOptions: projectFileOptions,
+                    globalProperties: globalProperties)
                 .Property("TargetFramework", targetFramework)
                 .Property("OutputType", outputType)
                 .CustomAction(projectCreator);
@@ -63,6 +66,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="treatAsLocalProperty">An optional list of properties to treat as local properties.</param>
         /// <param name="projectCollection">An optional <see cref="ProjectCollection"/> to use when loading the project.</param>
         /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions"/> specifying options when creating a new file.</param>
+        /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator SdkCsproj(
             IEnumerable<string> targetFrameworks,
@@ -74,7 +78,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string initialTargets = null,
             string treatAsLocalProperty = null,
             ProjectCollection projectCollection = null,
-            NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None)
+            NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None,
+            IDictionary<string, string> globalProperties = null)
         {
             return SdkCsproj(
                     path: path,
@@ -85,7 +90,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     initialTargets: initialTargets,
                     treatAsLocalProperty: treatAsLocalProperty,
                     projectCollection: projectCollection,
-                    projectFileOptions: projectFileOptions)
+                    projectFileOptions: projectFileOptions,
+                    globalProperties: globalProperties)
                 .Property("TargetFrameworks", targetFrameworks == null ? null : string.Join(";", targetFrameworks))
                 .CustomAction(projectCreator);
         }

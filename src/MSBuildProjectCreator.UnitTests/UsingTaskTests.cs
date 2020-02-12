@@ -5,7 +5,6 @@
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using Shouldly;
-using System;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests

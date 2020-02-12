@@ -5,6 +5,7 @@
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
@@ -27,9 +28,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Initializes a new instance of the <see cref="ProjectCreator"/> class.
         /// </summary>
         /// <param name="rootElement">The <see cref="ProjectRootElement"/> of the backing MSBuild project.</param>
-        private ProjectCreator(ProjectRootElement rootElement)
+        /// <param name="globalProperties">An <see cref="IDictionary{String,String}" /> containing global properties to use when creating the project.</param>
+        private ProjectCreator(ProjectRootElement rootElement, IDictionary<string, string> globalProperties)
         {
             RootElement = rootElement;
+            _globalProperties = globalProperties;
         }
 
         /// <summary>
@@ -63,6 +66,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="treatAsLocalProperty">An optional list of properties to treat as local properties.</param>
         /// <param name="projectCollection">An optional <see cref="ProjectCollection"/> to use when loading the project.</param>
         /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions"/> specifying options when creating a new file.</param>
+        /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public static ProjectCreator Create(
             string path = null,
@@ -72,7 +76,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string toolsVersion = null,
             string treatAsLocalProperty = null,
             ProjectCollection projectCollection = null,
-            NewProjectFileOptions? projectFileOptions = null)
+            NewProjectFileOptions? projectFileOptions = null,
+            IDictionary<string, string> globalProperties = null)
         {
             if (projectCollection == null)
             {
@@ -108,7 +113,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 rootElement.TreatAsLocalProperty = treatAsLocalProperty;
             }
 
-            return new ProjectCreator(rootElement)
+            return new ProjectCreator(rootElement, globalProperties == null ? null : new Dictionary<string, string>(globalProperties))
             {
                 ProjectCollection = projectCollection,
             };

@@ -4,7 +4,6 @@
 
 using Microsoft.Build.Evaluation;
 using Shouldly;
-using System;
 using System.Collections.Generic;
 using Xunit;
 

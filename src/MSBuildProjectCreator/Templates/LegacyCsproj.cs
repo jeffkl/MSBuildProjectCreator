@@ -4,6 +4,7 @@
 
 using Microsoft.Build.Evaluation;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 // ReSharper disable once CheckNamespace
@@ -33,6 +34,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="treatAsLocalProperty">An optional list of properties to treat as local properties.</param>
         /// <param name="projectCollection">An optional <see cref="ProjectCollection"/> to use when loading the project.</param>
         /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions"/> specifying options when creating a new file.</param>
+        /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator LegacyCsproj(
             string path = null,
@@ -50,7 +52,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string toolsVersion = null,
             string treatAsLocalProperty = null,
             ProjectCollection projectCollection = null,
-            NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+            NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.IncludeAllOptions,
+            IDictionary<string, string> globalProperties = null)
         {
             if (path != null)
             {
@@ -65,7 +68,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     toolsVersion: toolsVersion,
                     treatAsLocalProperty: treatAsLocalProperty,
                     projectCollection: projectCollection,
-                    projectFileOptions: projectFileOptions)
+                    projectFileOptions: projectFileOptions,
+                    globalProperties: globalProperties)
                 .Import(@"$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props", conditionOnExistence: true)
                 .PropertyGroup()
                     .Property("Configuration", defaultConfiguration, setIfEmpty: true)

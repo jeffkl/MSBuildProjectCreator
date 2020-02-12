@@ -4,7 +4,6 @@
 
 using Microsoft.Build.Construction;
 using Microsoft.Build.Utilities.ProjectCreation.Resources;
-using System;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
