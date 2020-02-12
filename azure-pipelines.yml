@@ -4,7 +4,7 @@ resources:
 variables:
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
-  DotNetCore3Version: '3.0.100'
+  DotNetCore3Version: '3.1.101'
   DotNetCore2Version: '2.1.802'
 
 trigger:
@@ -35,12 +35,12 @@ jobs:
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
 
   - task: UseDotNet@2
-    displayName: 'Install .NET Core 2.0'
+    displayName: 'Install .NET Core $(DotNetCore2Version)'
     inputs:
       version: '$(DotNetCore2Version)'
 
   - task: UseDotNet@2
-    displayName: 'Install .NET Core 3.0'
+    displayName: 'Install .NET Core $(DotNetCore3Version)'
     inputs:
       version: '$(DotNetCore3Version)'
 
