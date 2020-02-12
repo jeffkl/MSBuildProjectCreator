@@ -11,7 +11,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public class SdkCsprojTests : TestBase
     {
-        [Fact]
+        [Fact(Skip = "Disabled for now")]
         public void CanBuild()
         {
             ProjectCollection projectCollection = new ProjectCollection(globalProperties: new Dictionary<string, string>
