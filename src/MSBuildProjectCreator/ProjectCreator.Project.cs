@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Evaluation.Context;
+using Microsoft.Build.Execution;
 using System;
 using System.Collections.Generic;
 
@@ -21,6 +23,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private Project _project;
 
         /// <summary>
+        /// Stores the <see cref="ProjectInstance" /> for the current project.
+        /// </summary>
+        private ProjectInstance _projectInstance;
+
+        /// <summary>
         /// Gets the <see cref="Project"/> instance for the current project.  The project is re-evaluated if necessary every time this property is accessed.
         /// </summary>
         public Project Project
@@ -37,6 +44,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 return _project;
             }
         }
+
+        /// <summary>
+        /// Gets the <see cref="ProjectInstance" /> for the current project.
+        /// </summary>
+        public ProjectInstance ProjectInstance => _projectInstance ?? (_projectInstance = Project.CreateProjectInstance());
 
         /// <summary>
         /// Gets a <see cref="Project"/> instance from the current project.
@@ -94,6 +106,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 toolsVersion,
                 projectCollection,
                 projectLoadSettings);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="ProjectInstance" /> from the current project.
+        /// </summary>
+        /// <param name="projectInstance">Receives the <see cref="ProjectInstance" />.</param>
+        /// <param name="projectInstanceSettings">Optional <see cref="ProjectInstanceSettings" /> to use when creating the project instance.</param>
+        /// <param name="evaluationContext">Optional <see cref="EvaluationContext" /> to use when creating the project instance.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryGetProjectInstance(
+            out ProjectInstance projectInstance,
+            ProjectInstanceSettings projectInstanceSettings = ProjectInstanceSettings.None,
+            EvaluationContext evaluationContext = null)
+        {
+            projectInstance = Project.CreateProjectInstance(projectInstanceSettings, evaluationContext);
 
             return this;
         }

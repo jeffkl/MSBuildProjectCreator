@@ -13,6 +13,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
     public class ProjectTests : MSBuildTestBase
     {
         [Fact]
+        public void ProjectInstanceGetsCorrectObject()
+        {
+            ProjectCreator.Create()
+                .Property("FA7AA8A112DA480AA2591A7FF619B05A", "43EEA58D938C4C6A9060816155FD5FA9")
+                .ProjectInstance
+                .GetPropertyValue("FA7AA8A112DA480AA2591A7FF619B05A")
+                .ShouldBe("43EEA58D938C4C6A9060816155FD5FA9");
+        }
+
+        [Fact]
         public void ProjectIsReEvaluated()
         {
             ProjectCollection projectCollection = new ProjectCollection();
