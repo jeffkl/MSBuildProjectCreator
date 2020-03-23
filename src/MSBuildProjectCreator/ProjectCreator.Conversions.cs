@@ -4,6 +4,7 @@
 
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Execution;
 using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
@@ -26,6 +27,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public static implicit operator ProjectCollection(ProjectCreator creator)
         {
             return creator.ProjectCollection;
+        }
+
+        /// <summary>
+        /// Defines an implicit conversion of a <see cref="ProjectCreator"/> to a <see cref="ProjectInstance"/>.
+        /// </summary>
+        /// <param name="creator">A <see cref="ProjectCreator"/> to convert.</param>
+        public static implicit operator ProjectInstance(ProjectCreator creator)
+        {
+            return creator.ProjectInstance;
         }
 
         /// <summary>
