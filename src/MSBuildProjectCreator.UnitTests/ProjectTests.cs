@@ -83,7 +83,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Import(@"$(MSBuildBinPath)\Microsoft.Common.targets")
                 .TryGetProject(out Project _, out BuildOutput buildOutput);
 
-            buildOutput.WarningEvents.ShouldHaveSingleItem().Code.ShouldBe("MSB4011");
+            buildOutput.WarningEvents.ShouldHaveSingleItem(buildOutput.GetConsoleLog()).Code.ShouldBe("MSB4011", buildOutput.GetConsoleLog());
         }
 
         [Fact]

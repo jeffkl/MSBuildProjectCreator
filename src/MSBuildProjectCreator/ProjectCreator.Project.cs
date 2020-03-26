@@ -96,7 +96,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             buildOutput = BuildOutput.Create();
 
-            projectCollection = projectCollection ?? ProjectCollection ?? new ProjectCollection();
+            projectCollection = projectCollection ?? new ProjectCollection();
 
             projectCollection.RegisterLogger(buildOutput);
 

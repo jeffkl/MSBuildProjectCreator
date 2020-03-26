@@ -2,7 +2,10 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 using NuGet.Packaging.Core;
 using Shouldly;
 using System.Collections.Generic;
@@ -74,6 +77,47 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restoring...", buildOutput.GetConsoleLog());
 
             buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Building...", buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void ProjectCollectionLoggersWork()
+        {
+            string binLogPath = Path.Combine(TestRootPath, "test.binlog");
+            string fileLogPath = Path.Combine(TestRootPath, "test.log");
+
+            using (ProjectCollection projectCollection = new ProjectCollection())
+            {
+                projectCollection.RegisterLogger(new BinaryLogger
+                {
+                    Parameters = $"LogFile={binLogPath}",
+                });
+                projectCollection.RegisterLogger(new FileLogger
+                {
+                    Parameters = $"LogFile={fileLogPath}",
+                    Verbosity = LoggerVerbosity.Normal,
+                    ShowSummary = true,
+                });
+
+                ProjectCreator.Templates
+                    .LogsMessage(
+                        text: "$(Property1)",
+                        projectCollection: projectCollection)
+                    .Property("Property1", "2AE492F6EEE04255B31B088051E9AF0F")
+                    .Save(GetTempFileName(".proj"))
+                    .TryBuild(out bool result, out BuildOutput buildOutput);
+
+                result.ShouldBeTrue();
+
+                buildOutput.MessageEvents.Normal.ShouldContain(i => i.Message == "2AE492F6EEE04255B31B088051E9AF0F", buildOutput.GetConsoleLog());
+            }
+
+            File.Exists(binLogPath).ShouldBeTrue();
+
+            File.Exists(fileLogPath).ShouldBeTrue();
+
+            string fileLogContents = File.ReadAllText(fileLogPath);
+
+            fileLogContents.ShouldContain("2AE492F6EEE04255B31B088051E9AF0F", fileLogContents);
         }
 
         [Fact]
