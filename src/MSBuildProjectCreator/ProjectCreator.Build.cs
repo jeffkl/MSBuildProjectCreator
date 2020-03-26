@@ -41,10 +41,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
             }
 
-            lock (BuildManager.DefaultBuildManager)
-            {
-                result = Project.Build(target);
-            }
+            Build(target.ToArrayWithSingleElement(), out result, out _, out _);
 
             return this;
         }
@@ -85,10 +82,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 buildOutput = BuildOutput.Create();
             }
 
-            lock (BuildManager.DefaultBuildManager)
-            {
-                result = Project.Build(target, buildOutput.AsEnumerable());
-            }
+            Build(target.ToArrayWithSingleElement(), buildOutput, out result, out _);
 
             return this;
         }
@@ -121,10 +115,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
             }
 
-            lock (BuildManager.DefaultBuildManager)
-            {
-                result = Project.Build();
-            }
+            Build(null, out result, out _, out _);
 
             return this;
         }
@@ -163,10 +154,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 buildOutput = BuildOutput.Create();
             }
 
-            lock (BuildManager.DefaultBuildManager)
-            {
-                result = Project.Build(buildOutput.AsEnumerable());
-            }
+            Build(null, buildOutput, out result, out _);
 
             return this;
         }
@@ -236,12 +224,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 buildOutput = BuildOutput.Create();
             }
 
-            lock (BuildManager.DefaultBuildManager)
-            {
-                ProjectInstance projectInstance = Project.CreateProjectInstance();
-
-                result = projectInstance.Build(targets, buildOutput.AsEnumerable(), out targetOutputs);
-            }
+            Build(targets, buildOutput, out result, out targetOutputs);
 
             return this;
         }
@@ -351,6 +334,46 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Project.ReevaluateIfNecessary();
 
             return this;
+        }
+
+        private void Build(string[] targets, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        {
+            buildOutput = BuildOutput.Create();
+
+            Build(targets, buildOutput, out result, out targetOutputs);
+        }
+
+        private void Build(string[] targets, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        {
+            lock (BuildManager.DefaultBuildManager)
+            {
+                BuildRequestData restoreRequest = new BuildRequestData(
+                    ProjectInstance,
+                    targetsToBuild: targets ?? ProjectInstance.DefaultTargets.ToArray(),
+                    hostServices: null,
+                    flags: BuildRequestDataFlags.ReplaceExistingProjectInstance);
+
+                BuildParameters buildParameters = new BuildParameters
+                {
+                    Loggers = new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
+                };
+
+                BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
+                try
+                {
+                    BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(restoreRequest);
+
+                    BuildResult buildResult = buildSubmission.Execute();
+
+                    result = buildResult.OverallResult == BuildResultCode.Success;
+
+                    targetOutputs = buildResult.ResultsByTarget;
+                }
+                finally
+                {
+                    BuildManager.DefaultBuildManager.EndBuild();
+                }
+            }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Merge's two dictionaries by combining all values and overriding with the first with the second.
+        /// Merges two dictionaries by combining all values and overriding with the first with the second.
         /// </summary>
         /// <param name="first">The first dictionary and all of its values to start with.</param>
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
@@ -41,7 +41,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Merge's two dictionaries by combining all values and overriding with the first with the second.
+        /// Merges two dictionaries by combining all values and overriding with the first with the second.
         /// </summary>
         /// <param name="first">The first dictionary and all of its values to start with.</param>
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
@@ -59,6 +59,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the current object as an array of objects.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="item">The item to make into an array.</param>
+        /// <returns>An array of T objects.</returns>
+        public static T[] ToArrayWithSingleElement<T>(this T item)
+            where T : class
+        {
+            return new[]
+            {
+                item,
+            };
         }
     }
 }
