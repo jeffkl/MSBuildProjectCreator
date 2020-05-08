@@ -23,15 +23,22 @@
     <PackageTags>MSBuild project creator generator</PackageTags>
   </PropertyGroup>
 
+  <ItemDefinitionGroup>
+    <PackageReference>
+      <ExcludeAssets>Runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemDefinitionGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net46'">
-    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" VersionOverride="15.9.20" />
+    <PackageReference Include="Microsoft.Build" VersionOverride="15.9.20" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'net472'">
-    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
   </ItemGroup>
 

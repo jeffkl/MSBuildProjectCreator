@@ -3,32 +3,53 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Logging;
 using Shouldly;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public class SdkCsprojTests : TestBase
     {
-        [Fact(Skip = "Disabled for now")]
+        [Fact]
         public void CanBuild()
         {
-            ProjectCollection projectCollection = new ProjectCollection(globalProperties: new Dictionary<string, string>
-            {
-                ["DesignTimeBuild"] = "true",
-            });
-
             const string targetFramework = "net472";
 
             ProjectCreator.Templates.SdkCsproj(
                     targetFramework: targetFramework,
-                    path: GetTempFileName(".csproj"),
-                    projectCollection: projectCollection)
+                    path: GetTempFileName(".csproj"))
                 .Save()
-                .TryBuild("Build", out bool result, out BuildOutput buildOutput);
+                .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 
             result.ShouldBeTrue(buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void CanUseNuGetSdkResolver()
+        {
+            using (ProjectCollection projectCollection = new ProjectCollection())
+            {
+                projectCollection.RegisterLogger(new BinaryLogger
+                {
+                    Parameters = $"LogFile={GetTempFileName(".binlog")}",
+                });
+
+                projectCollection.RegisterLogger(new FileLogger
+                {
+                    Parameters = $"Verbosity=Diagnostic;LogFile={GetTempFileName(".log")}",
+                });
+
+                ProjectCreator projectCreator = ProjectCreator
+                    .Create(GetTempFileName(".csproj"), projectCollection: projectCollection)
+                    .ImportSdk("Sdk.props", "Microsoft.Build.NoTargets", "1.0.53")
+                    .ImportSdk("Sdk.targets", "Microsoft.Build.NoTargets", "1.0.53")
+                    .Save(GetTempFileName(".csproj"));
+
+                projectCreator.RootElement.Reload();
+
+                Project project = projectCreator.Project;
+            }
         }
 
         [Fact]
