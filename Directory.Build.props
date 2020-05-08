@@ -6,5 +6,6 @@
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
+    <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
   </PropertyGroup>
 </Project>

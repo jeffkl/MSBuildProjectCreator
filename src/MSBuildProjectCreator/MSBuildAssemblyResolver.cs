@@ -5,9 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-#if !NETCORE
 using System.Linq;
-#endif
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -22,61 +20,80 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public static class MSBuildAssemblyResolver
     {
-#if NETCORE
-        private static readonly Regex DotNetBasePathRegex = new Regex(@"^ Base Path:\s+(?<Path>.*)$");
-#endif
-
-        private static readonly Lazy<string> MSBuildDirectoryLazy = new Lazy<string>(
+        private static readonly Lazy<string[]> MSBuildDirectoryLazy = new Lazy<string[]>(
             () =>
             {
 #if NETCORE
                 string basePath;
 
-                if (!string.IsNullOrWhiteSpace(basePath = GetDotNetBasePath()))
+                if (string.IsNullOrWhiteSpace(basePath = GetDotNetBasePath()))
                 {
-                    return basePath;
+                    basePath = Environment.GetEnvironmentVariable("MSBuildExtensionsPath");
                 }
 
-                if (!string.IsNullOrWhiteSpace(basePath = Environment.GetEnvironmentVariable("MSBuildExtensionsPath")))
+                if (!string.IsNullOrWhiteSpace(basePath))
                 {
-                    return basePath;
+                    return new[]
+                    {
+                        basePath,
+                        Path.Combine(basePath, "Roslyn", "bincore"),
+                    };
                 }
 #else
+                string msbuildBinPath = null;
                 string visualStudioDirectory;
 
                 if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSINSTALLDIR")))
                 {
-                    return Path.Combine(visualStudioDirectory, "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin");
+                    msbuildBinPath = Path.Combine(visualStudioDirectory, "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin");
                 }
-
-                if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSAPPIDDIR")))
+                else if (!string.IsNullOrWhiteSpace(visualStudioDirectory = Environment.GetEnvironmentVariable("VSAPPIDDIR")))
                 {
-                    return Path.GetFullPath(Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin"));
+                    msbuildBinPath = Path.Combine(visualStudioDirectory, "..", "..", "MSBuild", GetMSBuildVersionDirectory(Environment.GetEnvironmentVariable("VISUALSTUDIOVERSION") ?? "15.0"), "Bin");
                 }
-
-                foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? string.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
+                else
                 {
-                    if (File.Exists(Path.Combine(path, "MSBuild.exe")))
+                    foreach (string path in (Environment.GetEnvironmentVariable("PATH") ?? string.Empty).Split(PathSplitChars, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        return path;
+                        if (File.Exists(Path.Combine(path, "MSBuild.exe")))
+                        {
+                            msbuildBinPath = path;
+                            break;
+                        }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(msbuildBinPath))
+                    {
+                        msbuildBinPath = GetPathOfFirstInstalledVisualStudioInstance();
                     }
                 }
 
-                if (!string.IsNullOrWhiteSpace(visualStudioDirectory = MSBuildAssemblyResolver.GetPathOfFirstInstalledVisualStudioInstance()))
+                if (!string.IsNullOrWhiteSpace(msbuildBinPath))
                 {
-                    return visualStudioDirectory;
+                    return new[]
+                    {
+                        Path.GetFullPath(msbuildBinPath),
+                        Path.Combine(msbuildBinPath, "Roslyn"),
+                        Path.GetFullPath(Path.Combine(msbuildBinPath, @"..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet")),
+                    };
                 }
 #endif
+
                 return null;
-            },
-            isThreadSafe: true);
+            });
 
         private static readonly char[] PathSplitChars = { Path.PathSeparator };
+
+        private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
+
+#if NETCORE
+        private static readonly Regex DotNetBasePathRegex = new Regex(@"^ Base Path:\s+(?<Path>.*)$");
+#endif
 
         /// <summary>
         /// Gets the full path to the MSBuild directory used.
         /// </summary>
-        public static string MSBuildPath => MSBuildDirectoryLazy.Value;
+        public static string[] SearchPaths => MSBuildDirectoryLazy.Value;
 
         /// <summary>
         /// A <see cref="ResolveEventHandler"/> for MSBuild related assemblies.
@@ -86,21 +103,38 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>An MSBuild assembly if one could be located, otherwise <code>null</code>.</returns>
         public static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            AssemblyName assemblyName = new AssemblyName(args.Name);
-
-            if (MSBuildPath == null)
+            if (SearchPaths == null)
             {
                 return null;
             }
 
-            FileInfo fileInfo = new FileInfo(Path.Combine(MSBuildPath, $"{assemblyName.Name}.dll"));
+            AssemblyName requestedAssemblyName = new AssemblyName(args.Name);
 
-            if (!fileInfo.Exists)
+            foreach (FileInfo candidateAssemblyFile in SearchPaths.SelectMany(searchPath => AssemblyExtensions.Select(extension => new FileInfo(Path.Combine(searchPath, $"{requestedAssemblyName.Name}{extension}")))))
             {
-                return null;
+                if (!candidateAssemblyFile.Exists)
+                {
+                    continue;
+                }
+
+                AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
+
+                if (requestedAssemblyName.ProcessorArchitecture != ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
+                {
+                    // The requested assembly has a processor architecture and the candidate assembly has a different value
+                    continue;
+                }
+
+                if (requestedAssemblyName.Flags.HasFlag(AssemblyNameFlags.PublicKey) && !requestedAssemblyName.GetPublicKeyToken().SequenceEqual(candidateAssemblyName.GetPublicKeyToken()))
+                {
+                    // Requested assembly has a public key but it doesn't match the candidate assembly public key
+                    continue;
+                }
+
+                return Assembly.LoadFrom(candidateAssemblyFile.FullName);
             }
 
-            return !assemblyName.FullName.Equals(AssemblyName.GetAssemblyName(fileInfo.FullName).FullName) ? null : Assembly.LoadFrom(fileInfo.FullName);
+            return null;
         }
 
 #if NETCORE
@@ -199,6 +233,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
 #if !NETCORE
+
         private static string GetPathOfFirstInstalledVisualStudioInstance()
         {
             Tuple<Version, string> highestVersion = null;
@@ -239,6 +274,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return null;
         }
+
 #endif
     }
 }
