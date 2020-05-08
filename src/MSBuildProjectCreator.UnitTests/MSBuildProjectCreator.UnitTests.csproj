@@ -5,6 +5,7 @@
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation.UnitTests</AssemblyName>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation.UnitTests</RootNamespace>
   </PropertyGroup>
+  <Import Project="..\MSBuildProjectCreator\build\MSBuild.ProjectCreation.props" Condition="'$(TargetFramework)' == 'net472'" />
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NuGet.Packaging" IncludeAssets="All" />
@@ -15,8 +16,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MSBuildProjectCreator\MSBuildProjectCreator.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" Condition="'$(TargetFramework)' == 'net472'" />
   </ItemGroup>
 </Project>

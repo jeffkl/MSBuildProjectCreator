@@ -66,4 +66,10 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\MSBuild.ProjectCreation.props"
+          Pack="true"
+          PackagePath="build\" />
+  </ItemGroup>
 </Project>
