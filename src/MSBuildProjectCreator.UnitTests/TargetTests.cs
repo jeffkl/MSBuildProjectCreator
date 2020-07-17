@@ -23,11 +23,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     inputs: "B7419E0377CE4FA6AEFCCFB3F69777FC",
                     outputs: "DA3C0A891FFD4D6CA0B883258E87D0CA",
                     returns: "D3091D945AF7479A8958BA05954626B2",
-                    keepDuplicateOutputs: true)
+                    keepDuplicateOutputs: true,
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
-  <Target Name=""3B2288C3ACA5460CBEEEC3EB914787EA"" AfterTargets=""2C8FF9B75080400D920A8D5AF553AC65"" BeforeTargets=""F04B583BD2B94B40A926568E27A056AA"" Condition=""84FB6783A56748AEA7024F648E520B5D"" DependsOnTargets=""B7D5486A843348849ABBEF2A8161A37E"" Inputs=""B7419E0377CE4FA6AEFCCFB3F69777FC"" Outputs=""DA3C0A891FFD4D6CA0B883258E87D0CA"" Returns=""D3091D945AF7479A8958BA05954626B2"" KeepDuplicateOutputs=""True"" />
+  <Target Name=""3B2288C3ACA5460CBEEEC3EB914787EA"" AfterTargets=""2C8FF9B75080400D920A8D5AF553AC65"" BeforeTargets=""F04B583BD2B94B40A926568E27A056AA"" Condition=""84FB6783A56748AEA7024F648E520B5D"" DependsOnTargets=""B7D5486A843348849ABBEF2A8161A37E"" Inputs=""B7419E0377CE4FA6AEFCCFB3F69777FC"" Outputs=""DA3C0A891FFD4D6CA0B883258E87D0CA"" Returns=""D3091D945AF7479A8958BA05954626B2"" Label=""label"" KeepDuplicateOutputs=""True"" />
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }

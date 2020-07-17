@@ -23,13 +23,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="runtime">An optional runtime for the task.</param>
         /// <param name="architecture">An optional architecture for the task.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator UsingTaskAssemblyFile(string taskName, string assemblyFile, string taskFactory = null, string runtime = null, string architecture = null, string condition = null)
+        public ProjectCreator UsingTaskAssemblyFile(string taskName, string assemblyFile, string taskFactory = null, string runtime = null, string architecture = null, string condition = null, string label = null)
         {
             _lastUsingTask = AddTopLevelElement(RootElement.CreateUsingTaskElement(taskName, assemblyFile, null, runtime, architecture));
 
             _lastUsingTask.TaskFactory = taskFactory;
             _lastUsingTask.Condition = condition;
+            _lastUsingTask.Label = label;
 
             return this;
         }
@@ -43,13 +45,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="runtime">An optional runtime for the task.</param>
         /// <param name="architecture">An optional architecture for the task.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator UsingTaskAssemblyName(string taskName, string assemblyName, string taskFactory, string runtime = null, string architecture = null, string condition = null)
+        public ProjectCreator UsingTaskAssemblyName(string taskName, string assemblyName, string taskFactory, string runtime = null, string architecture = null, string condition = null, string label = null)
         {
             _lastUsingTask = AddTopLevelElement(RootElement.CreateUsingTaskElement(taskName, null, assemblyName, runtime, architecture));
 
             _lastUsingTask.TaskFactory = taskFactory;
             _lastUsingTask.Condition = condition;
+            _lastUsingTask.Label = label;
 
             return this;
         }

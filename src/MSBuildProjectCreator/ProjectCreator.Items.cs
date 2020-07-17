@@ -23,8 +23,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="isVisible">An optional value indicating whether to display the file in Solution Explorer in Visual Studio.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemCompile(string include, string exclude = null, string dependentUpon = null, string link = null, bool? isVisible = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemCompile(string include, string exclude = null, string dependentUpon = null, string link = null, bool? isVisible = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
             return ItemInclude(
                 itemType: "Compile",
@@ -35,7 +36,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Link", link },
                     { "Visible", isVisible?.ToString() },
                 }),
-                condition: condition);
+                condition: condition,
+                label: label);
         }
 
         /// <summary>
@@ -61,8 +63,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemContent(string include, string exclude = null, string dependentUpon = null, string link = null, bool? isVisible = null, string copyToOutputDirectory = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemContent(string include, string exclude = null, string dependentUpon = null, string link = null, bool? isVisible = null, string copyToOutputDirectory = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
             return ItemInclude(
                 itemType: "Content",
@@ -75,7 +78,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Link", link },
                     { "Visible", isVisible?.ToString() },
                 }),
-                condition: condition);
+                condition: condition,
+                label: label);
         }
 
         /// <summary>
@@ -86,18 +90,20 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="exclude">An optional file or wildcard to exclude from the list of items.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator ItemInclude(
             string itemType,
             string include,
             string exclude = null,
             IDictionary<string, string> metadata = null,
-            string condition = null)
+            string condition = null,
+            string label = null)
         {
             return
                 include == null
                     ? this
-                    : Item(LastItemGroup, itemType, include, exclude, metadata, null, null, condition);
+                    : Item(LastItemGroup, itemType, include, exclude, metadata, null, null, condition, label: label);
         }
 
         /// <summary>
@@ -123,12 +129,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemNone(string include, string exclude = null, string dependentUpon = null, string link = null, bool? isVisible = null, string copyToOutputDirectory = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemNone(string include, string exclude = null, string dependentUpon = null, string link = null, bool? isVisible = null, string copyToOutputDirectory = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
             return ItemInclude(
                 itemType: "None",
                 include: include,
+                exclude: exclude,
                 metadata: metadata.Merge(new Dictionary<string, string>
                 {
                     { "CopyToOutputDirectory", copyToOutputDirectory },
@@ -136,7 +144,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Link", link },
                     { "Visible", isVisible?.ToString() },
                 }),
-                condition: condition);
+                condition: condition,
+                label: label);
         }
 
         /// <summary>
@@ -149,8 +158,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="privateAssets">An optional value specifying which assets belonging to the package should not flow to dependent projects.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemPackageReference(string include, string version = null, string includeAssets = null, string excludeAssets = null, string privateAssets = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemPackageReference(string include, string version = null, string includeAssets = null, string excludeAssets = null, string privateAssets = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
             return ItemInclude(
                 itemType: "PackageReference",
@@ -162,7 +172,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "ExcludeAssets", excludeAssets },
                     { "PrivateAssets", privateAssets },
                 }),
-                condition: condition);
+                condition: condition,
+                label: label);
         }
 
         /// <summary>
@@ -174,10 +185,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="privateAssets">An optional value specifying which assets belonging to the package should not flow to dependent projects.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemPackageReference(PackageIdentity package, string includeAssets = null, string excludeAssets = null, string privateAssets = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemPackageReference(PackageIdentity package, string includeAssets = null, string excludeAssets = null, string privateAssets = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
-            return ItemPackageReference(package.Id, package.Version.ToNormalizedString(), includeAssets, excludeAssets, privateAssets, metadata, condition);
+            return ItemPackageReference(package.Id, package.Version.ToNormalizedString(), includeAssets, excludeAssets, privateAssets, metadata, condition, label);
         }
 
         /// <summary>
@@ -189,10 +201,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="referenceOutputAssembly">An optional value indicating if the output of the project reference should be referenced by the current project.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemProjectReference(Project project, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemProjectReference(Project project, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
-            return ItemProjectReference(project.Xml, name, projectGuid, referenceOutputAssembly, metadata, condition);
+            return ItemProjectReference(project.Xml, name, projectGuid, referenceOutputAssembly, metadata, condition, label);
         }
 
         /// <summary>
@@ -204,10 +217,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="referenceOutputAssembly">An optional value indicating if the output of the project reference should be referenced by the current project.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemProjectReference(ProjectRootElement rootElement, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemProjectReference(ProjectRootElement rootElement, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
-            return ItemProjectReference(rootElement.FullPath, name, projectGuid, referenceOutputAssembly, metadata, condition);
+            return ItemProjectReference(rootElement.FullPath, name, projectGuid, referenceOutputAssembly, metadata, condition, label);
         }
 
         /// <summary>
@@ -219,10 +233,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="referenceOutputAssembly">An optional value indicating if the output of the project reference should be referenced by the current project.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemProjectReference(ProjectCreator projectCreator, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemProjectReference(ProjectCreator projectCreator, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
-            return ItemProjectReference(projectCreator.RootElement, name, projectGuid, referenceOutputAssembly, metadata, condition);
+            return ItemProjectReference(projectCreator.RootElement, name, projectGuid, referenceOutputAssembly, metadata, condition, label);
         }
 
         /// <summary>
@@ -234,8 +249,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="referenceOutputAssembly">An optional value indicating if the output of the project reference should be referenced by the current project.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemProjectReference(string include, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemProjectReference(string include, string name = null, string projectGuid = null, bool? referenceOutputAssembly = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
             return ItemInclude(
                 itemType: "ProjectReference",
@@ -246,7 +262,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Project", projectGuid },
                     { "ReferenceOutputAssembly", referenceOutputAssembly?.ToString() },
                 }),
-                condition: condition);
+                condition: condition,
+                label: label);
         }
 
         /// <summary>
@@ -260,8 +277,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="isPrivate">An optional value indicating whether or not the reference should be copied to the output folder.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemReference(string include, string name = null, string hintPath = null, bool? isSpecificVersion = null, string aliases = null, bool? isPrivate = null, IDictionary<string, string> metadata = null, string condition = null)
+        public ProjectCreator ItemReference(string include, string name = null, string hintPath = null, bool? isSpecificVersion = null, string aliases = null, bool? isPrivate = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
         {
             return ItemInclude(
                 itemType: "Reference",
@@ -274,7 +292,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Private", isPrivate?.ToString() },
                     { "SpecificVersion", isSpecificVersion?.ToString() },
                 }),
-                condition: condition);
+                condition: condition,
+                label: label);
         }
 
         /// <summary>
@@ -284,12 +303,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="remove">The file or wildcard to remove in the list of items.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator ItemRemove(
             string itemType,
             string remove,
             IDictionary<string, string> metadata = null,
-            string condition = null)
+            string condition = null,
+            string label = null)
         {
             return remove == null
                     ? this
@@ -301,7 +322,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         metadata: metadata,
                         remove: remove,
                         update: null,
-                        condition: condition);
+                        condition: condition,
+                        label: label);
         }
 
         /// <summary>
@@ -311,12 +333,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="update">The file or wildcard to update in the list of items.</param>
         /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator ItemUpdate(
             string itemType,
             string update,
             IDictionary<string, string> metadata = null,
-            string condition = null)
+            string condition = null,
+            string label = null)
         {
             return update == null
                     ? this
@@ -328,7 +352,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         metadata: metadata,
                         remove: null,
                         update: update,
-                        condition: condition);
+                        condition: condition,
+                        label: label);
         }
 
         /// <summary>
@@ -396,6 +421,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the item.</param>
         /// <param name="keepDuplicates">Specifies whether an item should be added to the target group if it's an exact duplicate of an existing item.</param>
         /// <param name="keepMetadata">The metadata for the source items to add to the target items.</param>
+        /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         private ProjectCreator Item(
             ProjectItemGroupElement itemGroup,
@@ -407,7 +433,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string update = null,
             string condition = null,
             string keepDuplicates = null,
-            string keepMetadata = null)
+            string keepMetadata = null,
+            string label = null)
         {
             ProjectItemElement item = include == null
                 ? RootElement.CreateItemElement(itemType)
@@ -428,6 +455,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             item.Condition = condition;
+            item.Label = label;
             item.Exclude = exclude;
 
             if (keepDuplicates != null)

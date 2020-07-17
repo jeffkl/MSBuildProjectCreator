@@ -21,11 +21,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     taskFactory: "76E271579AB749AE9FE7CBFF73E2B83A",
                     runtime: "9312C4042D974331974FF3706DB0FC48",
                     architecture: "141E4976FAFB4C1B8EE66417EA939743",
-                    condition: "C65111E72ADA438AB6DD385F9A1BC887")
+                    condition: "C65111E72ADA438AB6DD385F9A1BC887",
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
-  <UsingTask TaskName=""BCC53601667C4195A9DCDCEF59C4C0F0"" Runtime=""9312C4042D974331974FF3706DB0FC48"" Architecture=""141E4976FAFB4C1B8EE66417EA939743"" AssemblyFile=""125F7786CD46409FA09B4999629BAF4F"" TaskFactory=""76E271579AB749AE9FE7CBFF73E2B83A"" Condition=""C65111E72ADA438AB6DD385F9A1BC887"" />
+  <UsingTask TaskName=""BCC53601667C4195A9DCDCEF59C4C0F0"" Runtime=""9312C4042D974331974FF3706DB0FC48"" Architecture=""141E4976FAFB4C1B8EE66417EA939743"" AssemblyFile=""125F7786CD46409FA09B4999629BAF4F"" TaskFactory=""76E271579AB749AE9FE7CBFF73E2B83A"" Condition=""C65111E72ADA438AB6DD385F9A1BC887"" Label=""label"" />
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }

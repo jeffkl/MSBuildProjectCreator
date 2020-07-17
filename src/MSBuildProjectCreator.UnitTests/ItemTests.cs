@@ -25,12 +25,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "Custom", "37F6FB078E9C462FAF984DB5AFF38297" },
                     },
-                    condition: "22484FB0B4364AE8BB9D43D44D40D46D")
+                    condition: "22484FB0B4364AE8BB9D43D44D40D46D",
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
   <ItemGroup>
-    <Compile Include=""1C18F6564FFE4850A3D2710899454FE1"" Condition=""22484FB0B4364AE8BB9D43D44D40D46D"">
+    <Compile Include=""1C18F6564FFE4850A3D2710899454FE1"" Condition=""22484FB0B4364AE8BB9D43D44D40D46D"" Label=""label"">
       <Custom>37F6FB078E9C462FAF984DB5AFF38297</Custom>
       <DependentUpon>BA2012419E7943F996968C103B0DE557</DependentUpon>
       <Link>ADC2E3D8861743639BBF3E9313FEE962</Link>
@@ -169,12 +170,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "A9106C7FC44641B0A6636D3559A3A8F4", "024B55145A22481BA5EFBADD4CA633A7" },
                     },
-                    condition: "C88DEB23F8444037835F4E63AE236F7F")
+                    condition: "C88DEB23F8444037835F4E63AE236F7F",
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
   <ItemGroup>
-    <None Include=""1F65516B40BE4EC099C5DB8AF87999E1"" Condition=""C88DEB23F8444037835F4E63AE236F7F"">
+    <None Include=""1F65516B40BE4EC099C5DB8AF87999E1"" Condition=""C88DEB23F8444037835F4E63AE236F7F"" Label=""label"">
       <A9106C7FC44641B0A6636D3559A3A8F4>024B55145A22481BA5EFBADD4CA633A7</A9106C7FC44641B0A6636D3559A3A8F4>
       <CopyToOutputDirectory>C19852875EC14889A2B66A237AAB674A</CopyToOutputDirectory>
       <DependentUpon>87E0338EB2E14F278DBC5486AFB6C51D</DependentUpon>
@@ -200,11 +202,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "E5E3AEA9BFB547BABCEEEAFEDEB70BDA", "2ECE306CA8C540FBABD7893948504F26" },
                     },
-                    condition: "66AF7AA732084E35ACC81361B21ADA3E")
+                    condition: "66AF7AA732084E35ACC81361B21ADA3E",
+                    label: "label")
                 .Xml.ShouldBe(
                     @"<Project>
   <ItemGroup>
-    <PackageReference Include=""30FD03495EF5456D98DC09F5886DB230"" Condition=""66AF7AA732084E35ACC81361B21ADA3E"">
+    <PackageReference Include=""30FD03495EF5456D98DC09F5886DB230"" Condition=""66AF7AA732084E35ACC81361B21ADA3E"" Label=""label"">
       <E5E3AEA9BFB547BABCEEEAFEDEB70BDA>2ECE306CA8C540FBABD7893948504F26</E5E3AEA9BFB547BABCEEEAFEDEB70BDA>
       <Version>4C896A13564E4138B1BFD81304BCE0C3</Version>
       <IncludeAssets>F647EECC49A349CFB0C161E8D38E8C71</IncludeAssets>
@@ -227,11 +230,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     name: "E39F90168BA547D7A3D3ABB365689C61",
                     projectGuid: "EDF72CB2AD114C3CB03B2C79178BF09C",
                     referenceOutputAssembly: false,
-                    condition: "F0E7173CB4714887A28EB6929227427A")
+                    condition: "F0E7173CB4714887A28EB6929227427A",
+                    label: "label")
                 .Xml.ShouldBe(
                     $@"<Project>
   <ItemGroup>
-    <ProjectReference Include=""{project1.FullPath}"" Condition=""F0E7173CB4714887A28EB6929227427A"">
+    <ProjectReference Include=""{project1.FullPath}"" Condition=""F0E7173CB4714887A28EB6929227427A"" Label=""label"">
       <Name>E39F90168BA547D7A3D3ABB365689C61</Name>
       <Project>EDF72CB2AD114C3CB03B2C79178BF09C</Project>
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
@@ -254,11 +258,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "C533633B322444B8B41A8D964DF6013B", "2997CF6ABB7544A880F8D14BC3B26D5C" },
                     },
-                    condition: "EEA7E2E6077A4B56918D03CAA17411E5")
+                    condition: "EEA7E2E6077A4B56918D03CAA17411E5",
+                    label: "label")
                 .Xml.ShouldBe(
                     @"<Project>
   <ItemGroup>
-    <ProjectReference Include=""CB53CFCFC8C44B169B5910F9C18A9C97"" Condition=""EEA7E2E6077A4B56918D03CAA17411E5"">
+    <ProjectReference Include=""CB53CFCFC8C44B169B5910F9C18A9C97"" Condition=""EEA7E2E6077A4B56918D03CAA17411E5"" Label=""label"">
       <C533633B322444B8B41A8D964DF6013B>2997CF6ABB7544A880F8D14BC3B26D5C</C533633B322444B8B41A8D964DF6013B>
       <Name>48E21478110940879DA354EA18C9D7A1</Name>
       <Project>17BC6030262A402D911188CAF0968F51</Project>
@@ -280,12 +285,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "CCBE2A083AF44A1A8DD0AB38F174D983", "7D228EF67CC648E98D7D46BFFEF935FE" },
                     },
-                    condition: "5E1B774BD945407CA45227EE8BF5737A")
+                    condition: "5E1B774BD945407CA45227EE8BF5737A",
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
   <ItemGroup>
-    <F10988936B3B421BB4FD7E33B9C0DEC9 Remove=""52CE3EA8F90F44779EC543225D6F182A"" Condition=""5E1B774BD945407CA45227EE8BF5737A"">
+    <F10988936B3B421BB4FD7E33B9C0DEC9 Remove=""52CE3EA8F90F44779EC543225D6F182A"" Condition=""5E1B774BD945407CA45227EE8BF5737A"" Label=""label"">
       <CCBE2A083AF44A1A8DD0AB38F174D983>7D228EF67CC648E98D7D46BFFEF935FE</CCBE2A083AF44A1A8DD0AB38F174D983>
     </F10988936B3B421BB4FD7E33B9C0DEC9>
   </ItemGroup>
@@ -352,12 +358,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     {
                         { "EDD4A94F3C1241B4A6543E60C96FF51D", "10A8CF193EE54D679F25A8E1F83E0097" },
                     },
-                    condition: "8DAE9F4AB6264A9CB2435C482C8B3DBB")
+                    condition: "8DAE9F4AB6264A9CB2435C482C8B3DBB",
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
   <ItemGroup>
-    <E8517D605F70454BA7095F64B0EEB526 Update=""F58734B746BF4E76AB71E4151BB15A6F"" Condition=""8DAE9F4AB6264A9CB2435C482C8B3DBB"">
+    <E8517D605F70454BA7095F64B0EEB526 Update=""F58734B746BF4E76AB71E4151BB15A6F"" Condition=""8DAE9F4AB6264A9CB2435C482C8B3DBB"" Label=""label"">
       <EDD4A94F3C1241B4A6543E60C96FF51D>10A8CF193EE54D679F25A8E1F83E0097</EDD4A94F3C1241B4A6543E60C96FF51D>
     </E8517D605F70454BA7095F64B0EEB526>
   </ItemGroup>

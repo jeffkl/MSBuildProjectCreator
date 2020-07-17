@@ -36,12 +36,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     name: "E1A695D73E91481A9D1FAEE1C4C8407C",
                     unevaluatedValue: "5C50C035A20E4372B6A64C08D111F9F7",
                     condition: "9894AD0320B64027AA92732D436A5F0A",
-                    setIfEmpty: true)
+                    setIfEmpty: true,
+                    label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
   <PropertyGroup>
-    <E1A695D73E91481A9D1FAEE1C4C8407C Condition="" '$(E1A695D73E91481A9D1FAEE1C4C8407C)' == '' And 9894AD0320B64027AA92732D436A5F0A "">5C50C035A20E4372B6A64C08D111F9F7</E1A695D73E91481A9D1FAEE1C4C8407C>
+    <E1A695D73E91481A9D1FAEE1C4C8407C Condition="" '$(E1A695D73E91481A9D1FAEE1C4C8407C)' == '' And 9894AD0320B64027AA92732D436A5F0A "" Label=""label"">5C50C035A20E4372B6A64C08D111F9F7</E1A695D73E91481A9D1FAEE1C4C8407C>
   </PropertyGroup>
 </Project>",
                     StringCompareShould.IgnoreLineEndings);

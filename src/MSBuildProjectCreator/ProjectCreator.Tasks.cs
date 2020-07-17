@@ -38,13 +38,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </param>
         /// <param name="architecture">an optional architecture for the task.</param>
         /// <param name="runtime">An optional runtime for the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator Task(string name, string condition = null, IDictionary<string, string> parameters = null, string continueOnError = null, string architecture = null, string runtime = null)
+        public ProjectCreator Task(string name, string condition = null, IDictionary<string, string> parameters = null, string continueOnError = null, string architecture = null, string runtime = null, string label = null)
         {
             _lastTask = LastTarget.AddTask(name);
 
             _lastTask.ContinueOnError = continueOnError;
             _lastTask.Condition = condition;
+            _lastTask.Label = label;
             _lastTask.MSBuildArchitecture = architecture;
             _lastTask.MSBuildRuntime = runtime;
 
@@ -67,8 +69,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="file">An optional file to display.</param>
         /// <param name="helpKeyword">An optional help keyword.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskError(string text, string code = null, string file = null, string helpKeyword = null, string condition = null)
+        public ProjectCreator TaskError(string text, string code = null, string file = null, string helpKeyword = null, string condition = null, string label = null)
         {
             return Task(
                 "Error",
@@ -79,7 +82,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Code", code },
                     { "File", file },
                     { "HelpKeyword", helpKeyword },
-                });
+                },
+                label: label);
         }
 
         /// <summary>
@@ -88,8 +92,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="text">The message to display.</param>
         /// <param name="importance">An optional <see cref="MessageImportance"/> to use.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskMessage(string text, MessageImportance? importance = null, string condition = null)
+        public ProjectCreator TaskMessage(string text, MessageImportance? importance = null, string condition = null, string label = null)
         {
             return Task(
                 "Message",
@@ -98,7 +103,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     { "Text", text },
                     { "Importance", importance?.ToString() },
-                });
+                },
+                label: label);
         }
 
         /// <summary>
@@ -107,8 +113,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="taskParameter">The name of the task's output parameter.</param>
         /// <param name="itemType">The item that receives the task's output parameter value.</param>
         /// <param name="condition">An optional condition to add to the output element.</param>
+        /// <param name="label">An optional label to add to the output element.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskOutputItem(string taskParameter, string itemType, string condition = null)
+        public ProjectCreator TaskOutputItem(string taskParameter, string itemType, string condition = null, string label = null)
         {
             if (_lastTask == null)
             {
@@ -116,6 +123,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             _lastTask.AddOutputItem(taskParameter, itemType, condition);
+            _lastTask.Label = label;
 
             return this;
         }
@@ -126,8 +134,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="taskParameter">The name of the task's output parameter.</param>
         /// <param name="propertyName">The property that receives the task's output parameter value.</param>
         /// <param name="condition">An optional condition to add to the output element.</param>
+        /// <param name="label">An optional label to add to the output element.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskOutputProperty(string taskParameter, string propertyName, string condition = null)
+        public ProjectCreator TaskOutputProperty(string taskParameter, string propertyName, string condition = null, string label = null)
         {
             if (_lastTask == null)
             {
@@ -135,6 +144,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             _lastTask.AddOutputProperty(taskParameter, propertyName, condition);
+            _lastTask.Label = label;
 
             return this;
         }
@@ -147,8 +157,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="file">An optional file to display.</param>
         /// <param name="helpKeyword">An optional help keyword.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskWarning(string text, string code = null, string file = null, string helpKeyword = null, string condition = null)
+        public ProjectCreator TaskWarning(string text, string code = null, string file = null, string helpKeyword = null, string condition = null, string label = null)
         {
             return Task(
                 "Warning",
@@ -159,7 +170,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     { "Code", code },
                     { "File", file },
                     { "HelpKeyword", helpKeyword },
-                });
+                },
+                label: label);
         }
     }
 }

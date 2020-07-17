@@ -27,17 +27,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void ItemGroupOrder()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .ItemGroup(condition: "C5381C0D244D49CCBCFB512A434D2B9E")
-                .PropertyGroup()
-                .ItemGroup(condition: "F31A4B051DFB414684BA368068067EEA")
-                .ItemGroup(condition: "C8DDD08765A740589ECF938DB7BC5755")
+                .ItemGroup(condition: "C5381C0D244D49CCBCFB512A434D2B9E", label: "label")
+                .PropertyGroup(label: "label")
+                .ItemGroup(condition: "F31A4B051DFB414684BA368068067EEA", label: "label")
+                .ItemGroup(condition: "C8DDD08765A740589ECF938DB7BC5755", label: "label")
                 .Xml
                 .ShouldBe(
                     @"<Project>
-  <ItemGroup Condition=""C5381C0D244D49CCBCFB512A434D2B9E"" />
-  <PropertyGroup />
-  <ItemGroup Condition=""F31A4B051DFB414684BA368068067EEA"" />
-  <ItemGroup Condition=""C8DDD08765A740589ECF938DB7BC5755"" />
+  <ItemGroup Condition=""C5381C0D244D49CCBCFB512A434D2B9E"" Label=""label"" />
+  <PropertyGroup Label=""label"" />
+  <ItemGroup Condition=""F31A4B051DFB414684BA368068067EEA"" Label=""label"" />
+  <ItemGroup Condition=""C8DDD08765A740589ECF938DB7BC5755"" Label=""label"" />
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }

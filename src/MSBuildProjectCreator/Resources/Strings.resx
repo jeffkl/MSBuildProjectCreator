@@ -126,7 +126,7 @@
   <data name="ErrorOtherwiseCanOnlyBeSetOnce" xml:space="preserve">
     <value>You can only add one Otherwise to a Choose.</value>
   </data>
-  <data name="ErrorOtherwiseRequresWhen" xml:space="preserve">
+  <data name="ErrorOtherwiseRequiresWhen" xml:space="preserve">
     <value>You must add a When before adding an Otherwise.</value>
   </data>
   <data name="ErrorPackageAlreadyCreated" xml:space="preserve">
