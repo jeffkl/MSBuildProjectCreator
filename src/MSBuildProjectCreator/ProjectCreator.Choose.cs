@@ -150,7 +150,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="name">The name of the property.</param>
         /// <param name="unevaluatedValue">The unevaluated value of the property.</param>
         /// <param name="condition">An optional condition to add to the property.</param>
-        /// <param name="setIfEmpty">An optional value indicating whether or not a condition should be added that checks if the property has already been set.</param> 
+        /// <param name="setIfEmpty">An optional value indicating whether or not a condition should be added that checks if the property has already been set.</param>
         /// <param name="label">An optional label to add to the property.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         /// <remarks>
