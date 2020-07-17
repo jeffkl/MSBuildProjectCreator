@@ -33,12 +33,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Adds an &lt;ItemGroup /&gt; element to the current project.
         /// </summary>
         /// <param name="condition">An optional condition to add to the item group.</param>
+        /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemGroup(string condition = null)
+        public ProjectCreator ItemGroup(string condition = null, string label = null)
         {
             _lastItemGroup = AddTopLevelElement(RootElement.CreateItemGroupElement());
 
             _lastItemGroup.Condition = condition;
+
+            _lastItemGroup.Label = label;
 
             return this;
         }
@@ -48,14 +51,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="parent">A parent <see cref="ProjectElementContainer"/> to add the item group to.</param>
         /// <param name="condition">An optional condition to add to the item group.</param>
+        /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        protected ProjectItemGroupElement ItemGroup(ProjectElementContainer parent, string condition = null)
+        protected ProjectItemGroupElement ItemGroup(ProjectElementContainer parent, string condition = null, string label = null)
         {
             ProjectItemGroupElement itemGroup = RootElement.CreateItemGroupElement();
 
             parent.AppendChild(itemGroup);
 
             itemGroup.Condition = condition;
+
+            itemGroup.Label = label;
 
             return itemGroup;
         }

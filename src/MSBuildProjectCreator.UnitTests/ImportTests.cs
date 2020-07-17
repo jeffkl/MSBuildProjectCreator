@@ -31,15 +31,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void ImportOrder()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .Import("5D3801D732C14BB2A8A2A8466B2DAD38")
-                .Property("BCD8381CE5944323B3019379EBE55F5C", "36E81797987E4319A5BCE62F57ACE527")
+                .Import("5D3801D732C14BB2A8A2A8466B2DAD38", label: "label")
+                .Property("BCD8381CE5944323B3019379EBE55F5C", "36E81797987E4319A5BCE62F57ACE527", label: "label")
                 .Import("5E2A00F750CE4E14B793C51ACCA60F84")
                 .Xml
                 .ShouldBe(
                     @"<Project>
-  <Import Project=""5D3801D732C14BB2A8A2A8466B2DAD38"" />
+  <Import Project=""5D3801D732C14BB2A8A2A8466B2DAD38"" Label=""label"" />
   <PropertyGroup>
-    <BCD8381CE5944323B3019379EBE55F5C>36E81797987E4319A5BCE62F57ACE527</BCD8381CE5944323B3019379EBE55F5C>
+    <BCD8381CE5944323B3019379EBE55F5C Label=""label"">36E81797987E4319A5BCE62F57ACE527</BCD8381CE5944323B3019379EBE55F5C>
   </PropertyGroup>
   <Import Project=""5E2A00F750CE4E14B793C51ACCA60F84"" />
 </Project>",

@@ -90,9 +90,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         /// <summary>
         ///   Looks up a localized string similar to You must add a When before adding an Otherwise..
         /// </summary>
-        internal static string ErrorOtherwiseRequresWhen {
+        internal static string ErrorOtherwiseRequiresWhen {
             get {
-                return ResourceManager.GetString("ErrorOtherwiseRequresWhen", resourceCulture);
+                return ResourceManager.GetString("ErrorOtherwiseRequiresWhen", resourceCulture);
             }
         }
         
