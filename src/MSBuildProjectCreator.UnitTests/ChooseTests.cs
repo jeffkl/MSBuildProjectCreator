@@ -15,7 +15,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
                 .Choose(label: "label")
-                .When("86578122B49842F891B9E4364611C4B5" , label: "label")
+                .When("86578122B49842F891B9E4364611C4B5", label: "label")
                     .WhenProperty("B7AF35A6A56D42EFACF4DFE1D7B0BC22", "0CA39A3C5E5348C4B5F1F50A33D8E6D8", label: "label")
                 .WhenItemInclude("B5A8719D78D94961AFFA5134869C0DA5", "451053866BBB40B4A384EF5621994A65", label: "label")
                 .WhenPropertyGroup("F192F2869950424BBE8FF979B12D98F8", label: "label")

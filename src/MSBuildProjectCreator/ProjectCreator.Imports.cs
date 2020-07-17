@@ -21,7 +21,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the import.</param>
         /// <param name="sdk">An optional SDK to add to the import.</param>
         /// <param name="sdkVersion">An optional SDK version to add to the import.</param>
-        /// <param name="conditionOnExistence">An optional value indicating if a condition should be automatically added that checks if the specified project exists.</param> 
+        /// <param name="conditionOnExistence">An optional value indicating if a condition should be automatically added that checks if the specified project exists.</param>
         /// <param name="label">An optional label to add to the import.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator Import(string project, string condition = null, string sdk = null, string sdkVersion = null, bool conditionOnExistence = false, string label = null)
