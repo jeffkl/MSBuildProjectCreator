@@ -68,21 +68,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(bool restore, string target, out bool result, out BuildOutput buildOutput)
         {
-            if (restore)
-            {
-                TryRestore(out result, out buildOutput);
+            buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-            else
-            {
-                buildOutput = BuildOutput.Create();
-            }
-
-            Build(target.ToArrayWithSingleElement(), buildOutput, out result, out _);
+            Build(restore, target.ToArrayWithSingleElement(), buildOutput, out result, out _);
 
             return this;
         }
@@ -140,21 +128,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(bool restore, out bool result, out BuildOutput buildOutput)
         {
-            if (restore)
-            {
-                TryRestore(out result, out buildOutput);
+            buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-            else
-            {
-                buildOutput = BuildOutput.Create();
-            }
-
-            Build(null, buildOutput, out result, out _);
+            Build(restore, null, buildOutput, out result, out _);
 
             return this;
         }
@@ -210,21 +186,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(bool restore, string[] targets, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
-            if (restore)
-            {
-                TryRestore(out result, out buildOutput, out targetOutputs);
+            buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-            else
-            {
-                buildOutput = BuildOutput.Create();
-            }
-
-            Build(targets, buildOutput, out result, out targetOutputs);
+            Build(restore, targets, buildOutput, out result, out targetOutputs);
 
             return this;
         }
@@ -286,52 +250,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryRestore(out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
-            Save();
-
             buildOutput = BuildOutput.Create();
 
             lock (BuildManager.DefaultBuildManager)
             {
-                BuildRequestData restoreRequest = new BuildRequestData(
-                    FullPath,
-                    new Dictionary<string, string>
-                    {
-                        ["ExcludeRestorePackageImports"] = "true",
-                        ["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D"),
-                    },
-                    ProjectCollection.DefaultToolsVersion,
-                    targetsToBuild: new[] { "Restore" },
-                    hostServices: null,
-                    flags: BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
-
                 BuildParameters buildParameters = new BuildParameters
                 {
-                    Loggers = new List<Framework.ILogger>
-                    {
-                        buildOutput,
-                    },
+                    Loggers = new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
                 };
 
                 BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
+
                 try
                 {
-                    BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(restoreRequest);
-
-                    BuildResult buildResult = buildSubmission.Execute();
-
-                    result = buildResult.OverallResult == BuildResultCode.Success;
-
-                    targetOutputs = buildResult.ResultsByTarget;
+                    Restore(out result, out targetOutputs);
                 }
                 finally
                 {
                     BuildManager.DefaultBuildManager.EndBuild();
                 }
             }
-
-            Project.MarkDirty();
-
-            Project.ReevaluateIfNecessary();
 
             return this;
         }
@@ -340,19 +278,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             buildOutput = BuildOutput.Create();
 
-            Build(targets, buildOutput, out result, out targetOutputs);
+            Build(restore: false, targets, buildOutput, out result, out targetOutputs);
         }
 
-        private void Build(string[] targets, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        private void Build(bool restore, string[] targets, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
+            targetOutputs = null;
+
             lock (BuildManager.DefaultBuildManager)
             {
-                BuildRequestData restoreRequest = new BuildRequestData(
-                    ProjectInstance,
-                    targetsToBuild: targets ?? ProjectInstance.DefaultTargets.ToArray(),
-                    hostServices: null,
-                    flags: BuildRequestDataFlags.ReplaceExistingProjectInstance);
-
                 BuildParameters buildParameters = new BuildParameters
                 {
                     Loggers = new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
@@ -361,19 +295,77 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
                 try
                 {
-                    BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(restoreRequest);
+                    if (restore)
+                    {
+                        Restore(out result, out targetOutputs);
+
+                        if (!result)
+                        {
+                            return;
+                        }
+                    }
+
+                    BuildRequestData buildRequestData = new BuildRequestData(
+                        ProjectInstance,
+                        targetsToBuild: targets ?? ProjectInstance.DefaultTargets.ToArray(),
+                        hostServices: null,
+                        flags: BuildRequestDataFlags.ReplaceExistingProjectInstance);
+
+                    BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
 
                     BuildResult buildResult = buildSubmission.Execute();
 
                     result = buildResult.OverallResult == BuildResultCode.Success;
 
-                    targetOutputs = buildResult.ResultsByTarget;
+                    if (targetOutputs != null)
+                    {
+                        foreach (KeyValuePair<string, TargetResult> targetResult in buildResult.ResultsByTarget)
+                        {
+                            targetOutputs[targetResult.Key] = targetResult.Value;
+                        }
+                    }
+                    else
+                    {
+                        targetOutputs = buildResult.ResultsByTarget;
+                    }
                 }
                 finally
                 {
                     BuildManager.DefaultBuildManager.EndBuild();
                 }
             }
+        }
+
+        private void Restore(out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        {
+            Save();
+
+            IDictionary<string, string> globalProperties = new Dictionary<string, string>(ProjectCollection.GlobalProperties);
+
+            globalProperties["ExcludeRestorePackageImports"] = "true";
+            globalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
+
+            BuildRequestData buildRequestData = new BuildRequestData(
+                FullPath,
+                globalProperties,
+                ProjectCollection.DefaultToolsVersion,
+                targetsToBuild: new[] { "Restore" },
+                hostServices: null,
+                flags: BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
+
+            BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
+
+            BuildResult buildResult = buildSubmission.Execute();
+
+            Project.MarkDirty();
+
+            Project.ReevaluateIfNecessary();
+
+            _projectInstance = Project.CreateProjectInstance();
+
+            targetOutputs = buildResult.ResultsByTarget;
+
+            result = buildResult.OverallResult == BuildResultCode.Success;
         }
     }
 }
