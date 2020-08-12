@@ -79,6 +79,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified file path &quot;{0}&quot; must be a relative path..
+        /// </summary>
+        internal static string ErrorFilePathMustBeRelative {
+            get {
+                return ResourceManager.GetString("ErrorFilePathMustBeRelative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You can only add one Otherwise to a Choose..
         /// </summary>
         internal static string ErrorOtherwiseCanOnlyBeSetOnce {
