@@ -4,8 +4,8 @@ resources:
 variables:
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
-  DotNetCore3Version: '3.1.101'
-  DotNetCore2Version: '2.1.802'
+  DotNetCore3Version: '3.x'
+  DotNetCore2Version: '2.1.x'
 
 trigger:
   batch: true
