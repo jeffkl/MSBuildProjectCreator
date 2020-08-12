@@ -1,11 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <PropertyGroup>
     <DefaultItemExcludes>*log</DefaultItemExcludes>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
     <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>jeffkl</Authors>
+    <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 </Project>
