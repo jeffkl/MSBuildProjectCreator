@@ -4,8 +4,9 @@ resources:
 variables:
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
-  DotNetCore3Version: '3.x'
   DotNetCore2Version: '2.1.x'
+  DotNetCore3Version: '3.x'
+  DotNetCore5Version: '5.x'
 
 trigger:
   batch: true
@@ -43,6 +44,12 @@ jobs:
     displayName: 'Install .NET Core $(DotNetCore3Version)'
     inputs:
       version: '$(DotNetCore3Version)'
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core $(DotNetCore5Version)'
+    inputs:
+      version: '$(DotNetCore5Version)'
+      includePreviewVersions: true
 
   - task: DotNetCoreCLI@2
     displayName: 'dotnet build'
