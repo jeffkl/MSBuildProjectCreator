@@ -123,6 +123,9 @@
   <data name="ErrorFilePathMustBeInADirectory" xml:space="preserve">
     <value>The specified file path "{0}" must have a parent directory.</value>
   </data>
+  <data name="ErrorFilePathMustBeRelative" xml:space="preserve">
+    <value>The specified file path "{0}" must be a relative path.</value>
+  </data>
   <data name="ErrorOtherwiseCanOnlyBeSetOnce" xml:space="preserve">
     <value>You can only add one Otherwise to a Choose.</value>
   </data>
