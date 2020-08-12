@@ -9,8 +9,12 @@ using Microsoft.CodeAnalysis.Emit;
 using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -103,16 +107,32 @@ namespace {name}
                 name,
                 new[]
                 {
-                    CSharpSyntaxTree.ParseText(code),
+                    CSharpSyntaxTree.ParseText(code, null, string.Empty, Encoding.Default, CancellationToken.None),
                 },
                 references.Select(i => MetadataReference.CreateFromFile(i)),
-                new CSharpCompilationOptions(outputKind));
+                GetCSharpCompilationOptions(outputKind));
 
             EmitResult result = compilation.Emit(fileInfo.FullName);
 
             if (!result.Success)
             {
             }
+        }
+
+        private CSharpCompilationOptions GetCSharpCompilationOptions(OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary)
+        {
+            ConstructorInfo ctor = typeof(CSharpCompilationOptions).GetConstructors().FirstOrDefault();
+
+            if (ctor == null)
+            {
+                return null;
+            }
+
+            object[] parameters = new object[ctor.GetParameters().Length];
+
+            parameters[0] = outputKind;
+
+            return (CSharpCompilationOptions)ctor.Invoke(parameters);
         }
     }
 }

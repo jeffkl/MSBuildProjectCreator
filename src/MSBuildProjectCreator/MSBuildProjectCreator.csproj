@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46;netcoreapp2.1;net472;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net472;net50</TargetFrameworks>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation</RootNamespace>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -8,18 +8,12 @@
     <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'netcoreapp3.0'">$(DefineConstants);NETCORE</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' != 'net472'">$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Label="Package properties">
-    <IncludeSymbols>true</IncludeSymbols>
     <PackageId>MSBuild.ProjectCreation</PackageId>
     <Description>A fluent interface for generation MSBuild project files.</Description>
-    <Authors>jeffkl</Authors>
-    <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
     <PackageTags>MSBuild project creator generator</PackageTags>
   </PropertyGroup>
 
@@ -29,29 +23,16 @@
     </PackageReference>
   </ItemDefinitionGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net46'">
-    <PackageReference Include="Microsoft.Build" VersionOverride="15.9.20" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'net472'">
-    <PackageReference Include="Microsoft.Build" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net472'">
-    <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="2.10.0" />
-    <PackageReference Include="NuGet.Packaging" VersionOverride="4.9.4" />
-    <PackageReference Include="NuGet.ProjectModel" VersionOverride="4.9.4" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != 'net46'">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
     <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="NuGet.ProjectModel" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
