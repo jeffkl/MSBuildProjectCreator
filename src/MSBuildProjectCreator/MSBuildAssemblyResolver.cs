@@ -3,12 +3,16 @@
 // Licensed under the MIT license.
 
 using System;
+#if NETCORE
 using System.Diagnostics;
+#endif
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if NETCORE
 using System.Text.RegularExpressions;
 using System.Threading;
+#endif
 #if !NETCORE
 using Microsoft.VisualStudio.Setup.Configuration;
 #endif
@@ -24,12 +28,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             () =>
             {
 #if NETCORE
-                string basePath;
-
-                if (string.IsNullOrWhiteSpace(basePath = GetDotNetBasePath()))
-                {
-                    basePath = Environment.GetEnvironmentVariable("MSBuildExtensionsPath");
-                }
+                string basePath = GetDotNetBasePath();
 
                 if (!string.IsNullOrWhiteSpace(basePath))
                 {

@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using Shouldly;
 using System.IO;
@@ -11,19 +12,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 {
     public class FileTests : TestBase
     {
-        [Fact]
-        public void TextFileTest()
-        {
-            const string relativePath = @"test\foo.txt";
-            const string contents = "FF6B25B727E04D9980DE3B5D7AE0FB6E";
-
-            PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .FileText(relativePath, contents);
-
-            VerifyFileContents(packageA, relativePath, contents);
-        }
-
         [Fact]
         public void CustomFileTest()
         {
@@ -41,9 +29,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             VerifyFileContents(packageA, relativePath, contents);
         }
 
+        [Fact]
+        public void TextFileTest()
+        {
+            const string relativePath = @"test\foo.txt";
+            const string contents = "FF6B25B727E04D9980DE3B5D7AE0FB6E";
+
+            PackageRepository.Create(TestRootPath)
+                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
+                .FileText(relativePath, contents);
+
+            VerifyFileContents(packageA, relativePath, contents);
+        }
+
         private void VerifyFileContents(PackageIdentity package, string relativePath, string contents)
         {
-            DirectoryInfo packageDirectory = new DirectoryInfo(VersionFolderPathResolver.GetInstallPath(package.Id, package.Version))
+            DirectoryInfo packageDirectory = new DirectoryInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetInstallPath(package.Id, package.Version))
                             .ShouldExist();
 
             FileInfo file = new FileInfo(Path.Combine(packageDirectory.FullName, relativePath))

@@ -26,7 +26,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             package.Id.ShouldBe("PackageD");
             package.Version.ShouldBe(NuGetVersion.Parse("1.2.3-beta"));
 
-            FileInfo manifestFilePath = new FileInfo(VersionFolderPathResolver.GetManifestFilePath(package.Id, package.Version))
+            FileInfo manifestFilePath = new FileInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetManifestFilePath(package.Id, package.Version))
                 .ShouldExist();
 
             using (Stream stream = File.OpenRead(manifestFilePath.FullName))
@@ -78,7 +78,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             package.Id.ShouldBe("PackageD");
             package.Version.ShouldBe(NuGetVersion.Parse("1.2.3"));
 
-            FileInfo manifestFilePath = new FileInfo(VersionFolderPathResolver.GetManifestFilePath(package.Id, package.Version))
+            FileInfo manifestFilePath = new FileInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetManifestFilePath(package.Id, package.Version))
                 .ShouldExist();
 
             using (Stream stream = File.OpenRead(manifestFilePath.FullName))

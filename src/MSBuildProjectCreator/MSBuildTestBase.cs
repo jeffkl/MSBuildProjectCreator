@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -11,8 +12,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public abstract class MSBuildTestBase
     {
+        private static readonly string[] EnvironmentVariablesToRemove =
+        {
+            "MSBuildSdksPath",
+            "MSBuildExtensionsPath",
+        };
+
         static MSBuildTestBase()
         {
+            foreach (string environmentVariableName in EnvironmentVariablesToRemove)
+            {
+                Environment.SetEnvironmentVariable(environmentVariableName, null);
+            }
+
             AppDomain.CurrentDomain.AssemblyResolve += MSBuildAssemblyResolver.AssemblyResolve;
         }
     }
