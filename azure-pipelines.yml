@@ -2,62 +2,81 @@ resources:
 - repo: self
 
 variables:
+  ArtifactsDirectoryName: 'artifacts'
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
-  DotNetCore3Version: '3.1.101'
-  DotNetCore2Version: '2.1.802'
+  DotNetCore3Version: '3.x'
+  DotNet5Version: '5.x'
+  MSBuildArgs: '"/p:Platform=$(BuildPlatform)" "/p:Configuration=$(BuildConfiguration)" "/BinaryLogger:$(Build.SourcesDirectory)\$(ArtifactsDirectoryName)\msbuild.binlog"'
+  
 
 trigger:
-  batch: true
+  batch: 'true'
   branches:
     include:
     - 'master'
-    - 'refs/tags/*'
+    - 'rel/*'
   paths:
     exclude:
-    - README.md
+    - '*.md'
 pr:
   branches:
     include:
-    - master
+    - 'master'
+    - 'rel/*'
   paths:
     exclude:
-    - README.md
+    - '*.md'
 
 jobs:
-- job: NETCoreWindows
-  displayName: Build (Windows)
+- job: BuildAndTest
+  displayName: 'Build and Test'
   pool:
     vmImage: windows-latest
   steps:
-  - script: 'echo ##vso[task.setvariable variable=BuildConfiguration;]Release'
-    displayName: 'Set BuildConfiguration to Release for tagged commits'
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-
-  - task: UseDotNet@2
-    displayName: 'Install .NET Core $(DotNetCore2Version)'
-    inputs:
-      version: '$(DotNetCore2Version)'
-
   - task: UseDotNet@2
     displayName: 'Install .NET Core $(DotNetCore3Version)'
     inputs:
       version: '$(DotNetCore3Version)'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
+  - task: UseDotNet@2
+    displayName: 'Install .NET $(DotNet5Version)'
     inputs:
-      arguments: '-property:"Configuration=$(BuildConfiguration)"'
+      version: '$(DotNet5Version)'
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet test'
+    displayName: 'Build Solution'
     inputs:
-      command: test
-      arguments: '--no-build -restore:false -property:VSTestNoBuild=true -property:"Configuration=$(BuildConfiguration)"'
+      command: 'build'
+      projects: 'MSBuildProjectCreator.sln'
+      arguments: '$(MSBuildArgs)'
 
-  - task: PublishPipelineArtifact@0
+  - task: DotNetCoreCLI@2
+    displayName: 'Run Unit Tests (.NET 5)'
+    inputs:
+      command: 'test'
+      arguments: '--no-restore --no-build --framework net5.0 "/restore:false"'
+      testRunTitle: '.NET 5.0'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run Unit Tests (.NET Framework)'
+    condition: succeededOrFailed()
+    inputs:
+      command: 'test'
+      arguments: '--no-restore --no-build --framework net472 "/restore:false"'
+      testRunTitle: '.NET Framework 4.7.2'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run Unit Tests (.NET Core)'
+    condition: succeededOrFailed()
+    inputs:
+      command: 'test'
+      arguments: '--no-restore --no-build --framework netcoreapp3.1 "/restore:false"'
+      testRunTitle: '.NET Core 3.1'
+
+  - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
     inputs:
-      artifactName: 'drop'
-      targetPath: 'artifacts'
-    condition: succeededOrFailed()  
+      PathtoPublish: '$(ArtifactsDirectoryName)'
+      ArtifactName: $(ArtifactsDirectoryName)
+    condition: always()

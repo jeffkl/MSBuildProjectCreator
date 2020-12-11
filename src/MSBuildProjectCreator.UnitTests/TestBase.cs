@@ -5,18 +5,47 @@
 using NuGet.Packaging;
 using System;
 using System.IO;
+using Xunit.Abstractions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public abstract class TestBase : MSBuildTestBase, IDisposable
     {
-        private readonly Lazy<VersionFolderPathResolver> _pathResolverLazy;
+        private readonly string _currentDirectoryBackup;
+
+        private readonly Lazy<object> _pathResolverLazy;
 
         private readonly string _testRootPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
         protected TestBase()
         {
-            _pathResolverLazy = new Lazy<VersionFolderPathResolver>(() => new VersionFolderPathResolver(Path.Combine(TestRootPath, ".nuget", "packages")));
+            string globalJson = Path.Combine(TestRootPath, "global.json");
+#if NETCOREAPP3_1
+            File.WriteAllText(
+                globalJson,
+                @"{
+   ""sdk"": {
+    ""version"": ""3.1.100"",
+    ""rollForward"": ""latestFeature""
+  }
+}");
+#else
+            File.WriteAllText(
+                globalJson,
+                @"{
+   ""sdk"": {
+    ""version"": ""5.0.100"",
+    ""rollForward"": ""latestMinor""
+  }
+}");
+#endif
+
+            // Save the current directory to restore it later
+            _currentDirectoryBackup = Environment.CurrentDirectory;
+
+            Environment.CurrentDirectory = TestRootPath;
+
+            _pathResolverLazy = new Lazy<object>(() => new VersionFolderPathResolver(Path.Combine(TestRootPath, ".nuget", "packages")));
         }
 
         public string TestRootPath
@@ -28,7 +57,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             }
         }
 
-        public VersionFolderPathResolver VersionFolderPathResolver => _pathResolverLazy.Value;
+        public object VersionFolderPathResolver => _pathResolverLazy.Value;
 
         public void Dispose()
         {
@@ -40,9 +69,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             if (disposing)
             {
+                if (Directory.Exists(_currentDirectoryBackup))
+                {
+                    Environment.CurrentDirectory = _currentDirectoryBackup;
+                }
+
                 if (Directory.Exists(TestRootPath))
                 {
-                    Directory.Delete(TestRootPath, recursive: true);
+                    try
+                    {
+                        Directory.Delete(TestRootPath, recursive: true);
+                    }
+                    catch (Exception)
+                    {
+                        // Ignored
+                    }
                 }
             }
         }

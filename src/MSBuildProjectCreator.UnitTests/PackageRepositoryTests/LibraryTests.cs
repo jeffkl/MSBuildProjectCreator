@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 
 using NuGet.Frameworks;
+using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using Shouldly;
 using System;
@@ -62,7 +63,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 
         private void VerifyAssembly(PackageIdentity packageIdentity, NuGetFramework targetFramework, string assemblyFileName = null, string version = null)
         {
-            DirectoryInfo packageDirectory = new DirectoryInfo(VersionFolderPathResolver.GetInstallPath(packageIdentity.Id, packageIdentity.Version))
+            DirectoryInfo packageDirectory = new DirectoryInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetInstallPath(packageIdentity.Id, packageIdentity.Version))
                 .ShouldExist();
 
             DirectoryInfo libDirectory = new DirectoryInfo(Path.Combine(packageDirectory.FullName, "lib", targetFramework.GetShortFolderName()))

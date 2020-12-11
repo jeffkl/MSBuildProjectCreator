@@ -6,7 +6,7 @@ using Microsoft.Build.Evaluation;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public static class TestOnlyExtensionMethods
+    internal static class TestOnlyExtensionMethods
     {
         public static ProjectCreator ForTestingOnly(this ProjectCreator creator, string param1, string param2)
         {

@@ -119,7 +119,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             string fileLogContents = File.ReadAllText(fileLogPath);
 
-            fileLogContents.ShouldContain("2AE492F6EEE04255B31B088051E9AF0F", fileLogContents);
+            fileLogContents.ShouldContain("2AE492F6EEE04255B31B088051E9AF0F", Case.Sensitive, fileLogContents);
         }
 
         [Fact]
@@ -164,8 +164,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             string fileLogContents = File.ReadAllText(fileLogPath);
 
-            fileLogContents.ShouldContain("38EC33B686134B3C8DE4B8E571D4FB24", fileLogContents);
-            fileLogContents.ShouldContain("B7F9A257198D4A44A06BB6146AB27440", fileLogContents);
+            fileLogContents.ShouldContain("38EC33B686134B3C8DE4B8E571D4FB24", Case.Sensitive, fileLogContents);
+            fileLogContents.ShouldContain("B7F9A257198D4A44A06BB6146AB27440", Case.Sensitive, fileLogContents);
         }
 
         [Fact]

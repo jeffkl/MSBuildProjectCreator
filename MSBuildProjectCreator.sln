@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8339FD67
 		Packages.props = Packages.props
 		README.md = README.md
 		version.json = version.json
+		xunit.runner.json = xunit.runner.json
 	EndProjectSection
 EndProject
 Global

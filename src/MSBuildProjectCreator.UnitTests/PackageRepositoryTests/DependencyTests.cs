@@ -76,7 +76,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 
         private void ValidatePackageDependencies(PackageIdentity package, IEnumerable<PackageDependencyGroup> expectedDependencyGroups)
         {
-            FileInfo nuspecFile = new FileInfo(VersionFolderPathResolver.GetManifestFilePath(package.Id, package.Version));
+            FileInfo nuspecFile = new FileInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetManifestFilePath(package.Id, package.Version));
 
             nuspecFile.ShouldExist();
 
