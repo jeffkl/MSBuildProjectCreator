@@ -63,14 +63,38 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void BuildWithGlobalProperties()
+        {
+            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            {
+                ["Property1"] = "D7BBABDFB2D142D3A75E0C1A33E33780",
+            };
+
+            ProjectCreator
+                .Create(Path.Combine(TestRootPath, "project1.proj"))
+                .Target("Build")
+                .TaskMessage("Value = $(Property1)", MessageImportance.High)
+                .TryBuild("Build", out bool resultWithoutGlobalProperties, out BuildOutput buildOutputWithoutGlobalProperties)
+                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties);
+
+            resultWithoutGlobalProperties.ShouldBeTrue();
+
+            buildOutputWithoutGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithoutGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = ", buildOutputWithoutGlobalProperties.GetConsoleLog());
+
+            resultWithGlobalProperties.ShouldBeTrue();
+
+            buildOutputWithGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = D7BBABDFB2D142D3A75E0C1A33E33780", buildOutputWithGlobalProperties.GetConsoleLog());
+        }
+
+        [Fact]
         public void CanRestoreAndBuild()
         {
             ProjectCreator.Create(
                     path: GetTempFileName(".csproj"))
                 .Target("Restore")
-                    .TaskMessage("Restoring...", Framework.MessageImportance.High)
+                    .TaskMessage("Restoring...", MessageImportance.High)
                 .Target("Build")
-                    .TaskMessage("Building...", Framework.MessageImportance.High)
+                    .TaskMessage("Building...", MessageImportance.High)
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 
@@ -174,13 +198,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             ProjectCreator
                 .Create(Path.Combine(TestRootPath, "project1.proj"))
                 .Target("Restore")
-                    .TaskMessage("312D2E6ABDDC4735B437A016CED1A68E", Framework.MessageImportance.High, condition: "'$(MSBuildRestoreSessionId)' != ''")
+                    .TaskMessage("312D2E6ABDDC4735B437A016CED1A68E", MessageImportance.High, condition: "'$(MSBuildRestoreSessionId)' != ''")
                     .TaskError("MSBuildRestoreSessionId was not defined", condition: "'$(MSBuildRestoreSessionId)' == ''")
                 .TryRestore(out bool result, out BuildOutput buildOutput);
 
             result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == Framework.MessageImportance.High, buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == MessageImportance.High, buildOutput.GetConsoleLog());
         }
     }
 }
