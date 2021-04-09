@@ -3,8 +3,8 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Logging;
 using Shouldly;
+using System;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -30,25 +30,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             using (ProjectCollection projectCollection = new ProjectCollection())
             {
-                projectCollection.RegisterLogger(new BinaryLogger
+                BuildOutput buildOutput = BuildOutput.Create();
+
+                projectCollection.RegisterLogger(buildOutput);
+
+                try
                 {
-                    Parameters = $"LogFile={GetTempFileName(".binlog")}",
-                });
+                    ProjectCreator projectCreator = ProjectCreator
+                        .Create(GetTempFileName(".csproj"), projectCollection: projectCollection)
+                        .ImportSdk("Sdk.props", "Microsoft.Build.NoTargets", "1.0.53")
+                        .ImportSdk("Sdk.targets", "Microsoft.Build.NoTargets", "1.0.53")
+                        .Save();
 
-                projectCollection.RegisterLogger(new FileLogger
+                    projectCreator.RootElement.Reload();
+
+                    Project project = projectCreator.Project;
+                }
+                catch (Exception e)
                 {
-                    Parameters = $"Verbosity=Diagnostic;LogFile={GetTempFileName(".log")}",
-                });
-
-                ProjectCreator projectCreator = ProjectCreator
-                    .Create(GetTempFileName(".csproj"), projectCollection: projectCollection)
-                    .ImportSdk("Sdk.props", "Microsoft.Build.NoTargets", "1.0.53")
-                    .ImportSdk("Sdk.targets", "Microsoft.Build.NoTargets", "1.0.53")
-                    .Save(GetTempFileName(".csproj"));
-
-                projectCreator.RootElement.Reload();
-
-                Project project = projectCreator.Project;
+                    throw new Exception(buildOutput.GetConsoleLog(), e);
+                }
             }
         }
 
