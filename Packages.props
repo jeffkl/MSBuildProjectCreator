@@ -18,7 +18,7 @@
   
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="2.2.0" />
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" Condition=" '$(EnableGitVersioning)' != 'false' " />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.4.194" Condition=" '$(EnableGitVersioning)' != 'false' " />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
   </ItemGroup>
 
