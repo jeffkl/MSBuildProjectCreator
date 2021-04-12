@@ -39,6 +39,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   }
 }");
 #endif
+            File.WriteAllText(
+                Path.Combine(TestRootPath, "NuGet.config"),
+                @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <clear />
+    <add key=""NuGet.org"" value=""https://api.nuget.org/v3/index.json"" />
+  </packageSources>
+</configuration>");
 
             // Save the current directory to restore it later
             _currentDirectoryBackup = Environment.CurrentDirectory;

@@ -3,8 +3,8 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Logging;
 using Shouldly;
+using System;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -30,25 +30,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             using (ProjectCollection projectCollection = new ProjectCollection())
             {
-                projectCollection.RegisterLogger(new BinaryLogger
-                {
-                    Parameters = $"LogFile={GetTempFileName(".binlog")}",
-                });
+                BuildOutput buildOutput = BuildOutput.Create();
 
-                projectCollection.RegisterLogger(new FileLogger
-                {
-                    Parameters = $"Verbosity=Diagnostic;LogFile={GetTempFileName(".log")}",
-                });
+                projectCollection.RegisterLogger(buildOutput);
 
                 ProjectCreator projectCreator = ProjectCreator
-                    .Create(GetTempFileName(".csproj"), projectCollection: projectCollection)
+                    .Create(projectCollection: projectCollection)
                     .ImportSdk("Sdk.props", "Microsoft.Build.NoTargets", "1.0.53")
                     .ImportSdk("Sdk.targets", "Microsoft.Build.NoTargets", "1.0.53")
                     .Save(GetTempFileName(".csproj"));
 
-                projectCreator.RootElement.Reload();
-
-                Project project = projectCreator.Project;
+                try
+                {
+                    Project unused = projectCreator.Project;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(buildOutput.GetConsoleLog(), e);
+                }
             }
         }
 
