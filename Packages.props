@@ -11,7 +11,7 @@
     <PackageReference Update="NuGet.Frameworks" Version="5.8.0" />
     <PackageReference Update="NuGet.Packaging" Version="5.8.0" />
     <PackageReference Update="NuGet.ProjectModel" Version="5.8.0" />
-    <PackageReference Update="Shouldly" Version="4.0.1" />
+    <PackageReference Update="Shouldly" Version="4.0.3" />
     <PackageReference Update="xunit" Version="2.4.1" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
