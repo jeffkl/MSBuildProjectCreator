@@ -5,12 +5,13 @@
 using NuGet.Packaging;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public abstract class TestBase : MSBuildTestBase, IDisposable
     {
-        private readonly string _currentDirectoryBackup;
+        private static readonly string ThisAssemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         private readonly Lazy<object> _pathResolverLazy;
 
@@ -36,9 +37,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   </packageSources>
 </configuration>");
 
-            // Save the current directory to restore it later
-            _currentDirectoryBackup = Environment.CurrentDirectory;
-
             Environment.CurrentDirectory = TestRootPath;
 
             _pathResolverLazy = new Lazy<object>(() => new VersionFolderPathResolver(Path.Combine(TestRootPath, ".nuget", "packages")));
@@ -58,9 +56,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             if (disposing)
             {
-                if (Directory.Exists(_currentDirectoryBackup))
+                if (Directory.Exists(ThisAssemblyDirectory))
                 {
-                    Environment.CurrentDirectory = _currentDirectoryBackup;
+                    Environment.CurrentDirectory = ThisAssemblyDirectory;
                 }
 
                 if (Directory.Exists(TestRootPath))
