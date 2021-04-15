@@ -6,6 +6,7 @@ using Microsoft.Build.Framework;
 using Shouldly;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -96,9 +97,9 @@ FA7FCCBE43B741998BAB399E74F2997D
         {
             Dictionary<string, bool> projects = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase)
             {
-                { @"DA920698\E40D\4D8F\89D8\B85D870C4214", true },
-                { @"53C78698\F360\491F\8025\B323782DD912", false },
-                { @"F42234CB\7504\4F23\ACD7\D58F5BCDD3C6", true },
+                { Path.Combine("DA920698", "E40D", "4D8F", "89D8", "B85D870C4214"), true },
+                { Path.Combine("53C78698", "F360", "491F", "8025", "B323782DD912"), false },
+                { Path.Combine("F42234CB", "7504", "4F23", "ACD7", "D58F5BCDD3C6"), true },
             };
 
             BuildOutput buildOutput = GetProjectLoggerWithEvents(eventSource => { Parallel.ForEach(projects, project => { eventSource.OnProjectFinished(project.Key, project.Value); }); });

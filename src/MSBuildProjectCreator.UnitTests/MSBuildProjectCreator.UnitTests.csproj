@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation.UnitTests</AssemblyName>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation.UnitTests</RootNamespace>
@@ -8,14 +8,9 @@
   <Import Project="..\MSBuildProjectCreator\build\MSBuild.ProjectCreation.props" Condition="'$(TargetFramework)' == 'net472'" />
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="NuGet.Frameworks" />
-    <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
-
-    <PackageReference Update="NuGet.Frameworks" VersionOverride="5.7.0" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
-    <PackageReference Update="NuGet.Packaging" VersionOverride="5.7.0" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MSBuildProjectCreator\MSBuildProjectCreator.csproj" />

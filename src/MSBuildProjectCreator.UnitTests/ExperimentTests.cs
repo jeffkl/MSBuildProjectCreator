@@ -4,6 +4,7 @@
 
 using Microsoft.Build.Framework;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -24,7 +25,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     projectCreator
                         .ItemGroup()
                         .ItemCompile("Class1.cs")
-                        .ItemCompile(@"Properties\AssemblyInfo.cs")
+                        .ItemCompile(Path.Combine("Properties", "AssemblyInfo.cs"))
                         .ItemGroup()
                         .ItemNone("App.config", metadata: new Dictionary<string, string> { { "SubType", "Designer" } });
                 });

@@ -4,8 +4,8 @@
 
 using NuGet.Configuration;
 using NuGet.Packaging;
+using System;
 using System.IO;
-using System.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -22,17 +22,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             GlobalPackagesFolder = Path.Combine(rootPath, ".nuget", SettingsUtility.DefaultGlobalPackagesFolderPath);
 
-            ISettings settings = new Settings(rootPath, Settings.DefaultSettingsFileName);
-
-            SettingsUtility.SetConfigValue(settings, ConfigurationConstants.GlobalPackagesFolder, GlobalPackagesFolder);
-
-            settings.Remove(ConfigurationConstants.PackageSources, settings.GetSection(ConfigurationConstants.PackageSources).Items.First());
-
-            settings.AddOrUpdate(ConfigurationConstants.PackageSources, new ClearItem());
-
-            settings.SaveToDisk();
-
             _versionFolderPathResolver = new VersionFolderPathResolver(GlobalPackagesFolder);
+
+            Environment.SetEnvironmentVariable("NUGET_PACKAGES", GlobalPackagesFolder);
         }
 
         /// <summary>

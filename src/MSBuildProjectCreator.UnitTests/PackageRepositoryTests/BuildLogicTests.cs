@@ -74,8 +74,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 .BuildMultiTargetingProps(out ProjectCreator buildMultiTargetingPropsProject)
                 .BuildMultiTargetingTargets(out ProjectCreator buildMultiTargetingTargetsProject);
 
-            buildMultiTargetingPropsProject.FullPath.ShouldBe($@"{TestRootPath}\.nuget\packages\packagea\2.0.0\buildMultiTargeting\PackageA.props");
-            buildMultiTargetingTargetsProject.FullPath.ShouldBe($@"{TestRootPath}\.nuget\packages\packagea\2.0.0\buildMultiTargeting\PackageA.targets");
+            buildMultiTargetingPropsProject.FullPath.ShouldBe(Path.Combine(TestRootPath, ".nuget", "packages", "packagea", "2.0.0", "buildMultiTargeting", "PackageA.props"));
+            buildMultiTargetingTargetsProject.FullPath.ShouldBe(Path.Combine(TestRootPath, ".nuget", "packages", "packagea", "2.0.0", "buildMultiTargeting", "PackageA.targets"));
 
             File.Exists(buildMultiTargetingPropsProject.FullPath).ShouldBeTrue();
             File.Exists(buildMultiTargetingTargetsProject.FullPath).ShouldBeTrue();
@@ -89,8 +89,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 .BuildProps(out ProjectCreator buildPropsProject)
                 .BuildTargets(out ProjectCreator buildTargetsProject);
 
-            buildPropsProject.FullPath.ShouldBe($@"{TestRootPath}\.nuget\packages\packagea\2.0.0\build\PackageA.props");
-            buildTargetsProject.FullPath.ShouldBe($@"{TestRootPath}\.nuget\packages\packagea\2.0.0\build\PackageA.targets");
+            buildPropsProject.FullPath.ShouldBe(Path.Combine(TestRootPath, ".nuget", "packages", "packagea", "2.0.0", "build", "PackageA.props"));
+            buildTargetsProject.FullPath.ShouldBe(Path.Combine(TestRootPath, ".nuget", "packages", "packagea", "2.0.0", "build", "PackageA.targets"));
 
             File.Exists(buildPropsProject.FullPath).ShouldBeTrue();
             File.Exists(buildTargetsProject.FullPath).ShouldBeTrue();
@@ -104,8 +104,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 .BuildTransitiveProps(out ProjectCreator buildTransitivePropsProject)
                 .BuildTransitiveTargets(out ProjectCreator buildTransitiveTargetsProject);
 
-            buildTransitivePropsProject.FullPath.ShouldBe($@"{TestRootPath}\.nuget\packages\packagea\2.0.0\buildTransitive\PackageA.props");
-            buildTransitiveTargetsProject.FullPath.ShouldBe($@"{TestRootPath}\.nuget\packages\packagea\2.0.0\buildTransitive\PackageA.targets");
+            buildTransitivePropsProject.FullPath.ShouldBe(Path.Combine(TestRootPath, ".nuget", "packages", "packagea", "2.0.0", "buildTransitive", "PackageA.props"));
+            buildTransitiveTargetsProject.FullPath.ShouldBe(Path.Combine(TestRootPath, ".nuget", "packages", "packagea", "2.0.0", "buildTransitive", "PackageA.targets"));
 
             File.Exists(buildTransitivePropsProject.FullPath).ShouldBeTrue();
             File.Exists(buildTransitiveTargetsProject.FullPath).ShouldBeTrue();
