@@ -19,64 +19,68 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         [Fact]
         public void CanAddDependenciesToMultipleGroups()
         {
-            PackageRepository.Create(TestRootPath)
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out PackageIdentity package)
-                    .Dependency("PackageB", "1.0.0", "net45")
-                    .Dependency("PackageB", "1.0.0", "net46")
-                    .Dependency("PackageB", "1.0.0", "netstandard2.0");
-
-            ValidatePackageDependencies(
-                package,
-                new List<PackageDependencyGroup>
-                {
-                    new PackageDependencyGroup(
-                        FrameworkConstants.CommonFrameworks.Net45,
-                        new List<PackageDependency>
-                        {
-                            new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
-                        }),
-                    new PackageDependencyGroup(
-                        FrameworkConstants.CommonFrameworks.Net46,
-                        new List<PackageDependency>
-                        {
-                            new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
-                        }),
-                    new PackageDependencyGroup(
-                        FrameworkConstants.CommonFrameworks.NetStandard20,
-                        new List<PackageDependency>
-                        {
-                            new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
-                        }),
-                });
+                .Dependency("PackageB", "1.0.0", "net45")
+                .Dependency("PackageB", "1.0.0", "net46")
+                .Dependency("PackageB", "1.0.0", "netstandard2.0"))
+            {
+                ValidatePackageDependencies(
+                    packageRepository,
+                    package,
+                    new List<PackageDependencyGroup>
+                    {
+                        new PackageDependencyGroup(
+                            FrameworkConstants.CommonFrameworks.Net45,
+                            new List<PackageDependency>
+                            {
+                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                            }),
+                        new PackageDependencyGroup(
+                            FrameworkConstants.CommonFrameworks.Net46,
+                            new List<PackageDependency>
+                            {
+                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                            }),
+                        new PackageDependencyGroup(
+                            FrameworkConstants.CommonFrameworks.NetStandard20,
+                            new List<PackageDependency>
+                            {
+                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                            }),
+                    });
+            }
         }
 
         [Fact]
         public void CanAddMultipleDependenciesToSameGroup()
         {
-            PackageRepository.Create(TestRootPath)
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out PackageIdentity package)
-                    .Dependency("PackageB", "1.0.0", "net45")
-                    .Dependency("PackageC", "1.1.0", "net45")
-                    .Dependency("PackageD", "1.2.0", "net45");
-
-            ValidatePackageDependencies(
-                package,
-                new List<PackageDependencyGroup>
-                {
-                    new PackageDependencyGroup(
-                        FrameworkConstants.CommonFrameworks.Net45,
-                        new List<PackageDependency>
-                        {
-                            new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
-                            new PackageDependency("PackageC", VersionRange.Parse("1.1.0")),
-                            new PackageDependency("PackageD", VersionRange.Parse("1.2.0")),
-                        }),
-                });
+                .Dependency("PackageB", "1.0.0", "net45")
+                .Dependency("PackageC", "1.1.0", "net45")
+                .Dependency("PackageD", "1.2.0", "net45"))
+            {
+                ValidatePackageDependencies(
+                    packageRepository,
+                    package,
+                    new List<PackageDependencyGroup>
+                    {
+                        new PackageDependencyGroup(
+                            FrameworkConstants.CommonFrameworks.Net45,
+                            new List<PackageDependency>
+                            {
+                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                                new PackageDependency("PackageC", VersionRange.Parse("1.1.0")),
+                                new PackageDependency("PackageD", VersionRange.Parse("1.2.0")),
+                            }),
+                    });
+            }
         }
 
-        private void ValidatePackageDependencies(PackageIdentity package, IEnumerable<PackageDependencyGroup> expectedDependencyGroups)
+        private void ValidatePackageDependencies(PackageRepository packageRepository, PackageIdentity package, IEnumerable<PackageDependencyGroup> expectedDependencyGroups)
         {
-            FileInfo nuspecFile = new FileInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetManifestFilePath(package.Id, package.Version));
+            FileInfo nuspecFile = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version));
 
             nuspecFile.ShouldExist();
 

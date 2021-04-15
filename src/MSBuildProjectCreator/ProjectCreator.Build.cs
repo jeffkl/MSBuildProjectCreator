@@ -30,7 +30,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">Global properties to use when building the target.</param>
         /// <param name="result">A value indicating the result of the build.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(string target, Dictionary<string, string> globalProperties, out bool result)
+        public ProjectCreator TryBuild(string target, IDictionary<string, string> globalProperties, out bool result)
         {
             return TryBuild(restore: false, target, globalProperties, out result);
         }
@@ -55,7 +55,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">Global properties to use when building the target.</param>
         /// <param name="result">A value indicating the result of the build.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, string target, Dictionary<string, string> globalProperties, out bool result)
+        public ProjectCreator TryBuild(bool restore, string target, IDictionary<string, string> globalProperties, out bool result)
         {
             if (restore)
             {
@@ -92,7 +92,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="result">A value indicating the result of the build.</param>
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(string target, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
+        public ProjectCreator TryBuild(string target, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
         {
             return TryBuild(restore: false, target, globalProperties, out result, out buildOutput);
         }
@@ -119,7 +119,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="result">A value indicating the result of the build.</param>
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, string target, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
+        public ProjectCreator TryBuild(bool restore, string target, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
         {
             buildOutput = BuildOutput.Create();
 
@@ -167,7 +167,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">Global properties to use when building the target.</param>
         /// <param name="result">A value indicating the result of the build.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, Dictionary<string, string> globalProperties, out bool result)
+        public ProjectCreator TryBuild(bool restore, IDictionary<string, string> globalProperties, out bool result)
         {
             if (restore)
             {
@@ -192,7 +192,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(out bool result, out BuildOutput buildOutput)
         {
-            return TryBuild(restore: false, out result, out buildOutput);
+            return TryBuild(globalProperties: null, out result, out buildOutput);
+        }
+
+        /// <summary>
+        /// Attempts to build the current project.
+        /// </summary>
+        /// <param name="globalProperties">Global properties to use when building the target.</param>
+        /// <param name="result">A value indicating the result of the build.</param>
+        /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryBuild(IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
+        {
+            return TryBuild(restore: false, globalProperties, out result, out buildOutput);
         }
 
         /// <summary>
@@ -215,7 +227,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="result">A value indicating the result of the build.</param>
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
+        public ProjectCreator TryBuild(bool restore, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
         {
             buildOutput = BuildOutput.Create();
 
@@ -246,7 +258,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(string target, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        public ProjectCreator TryBuild(string target, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             return TryBuild(restore: false, target, out result, out buildOutput, out targetOutputs);
         }
@@ -275,7 +287,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, string target, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        public ProjectCreator TryBuild(bool restore, string target, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             return TryBuild(restore, new[] { target }, out result, out buildOutput, out targetOutputs);
         }
@@ -302,7 +314,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(string[] targets, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        public ProjectCreator TryBuild(string[] targets, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             return TryBuild(restore: false, targets, out result, out buildOutput, out targetOutputs);
         }
@@ -331,7 +343,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, string[] targets, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        public ProjectCreator TryBuild(bool restore, string[] targets, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             buildOutput = BuildOutput.Create();
 
@@ -362,7 +374,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(IEnumerable<string> targets, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        public ProjectCreator TryBuild(IEnumerable<string> targets, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             return TryBuild(restore: false, targets, globalProperties, out result, out buildOutput, out targetOutputs);
         }
@@ -391,9 +403,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the build.</param>
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TryBuild(bool restore, IEnumerable<string> targets, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        public ProjectCreator TryBuild(bool restore, IEnumerable<string> targets, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
-            return TryBuild(restore, targets.ToArray(), out result, out buildOutput, out targetOutputs);
+            return TryBuild(restore, targets.ToArray(), globalProperties, out result, out buildOutput, out targetOutputs);
         }
 
         /// <summary>
@@ -403,7 +415,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryRestore(out bool result)
         {
-            return TryRestore(out result, out BuildOutput _, out IDictionary<string, TargetResult> _);
+            return TryRestore(null, out result);
+        }
+
+        /// <summary>
+        /// Attempts to run the Restore target for the current project with a unique evaluation context.
+        /// </summary>
+        /// <param name="globalProperties">Global properties to use when running the Restore the target.</param>
+        /// <param name="result">A value indicating the result of the restore.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryRestore(IDictionary<string, string> globalProperties, out bool result)
+        {
+            return TryRestore(globalProperties, out result, out BuildOutput _, out IDictionary<string, TargetResult> _);
         }
 
         /// <summary>
@@ -414,7 +437,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryRestore(out bool result, out BuildOutput buildOutput)
         {
-            return TryRestore(out result, out buildOutput, out IDictionary<string, TargetResult> _);
+            return TryRestore(null, out result, out buildOutput);
+        }
+
+        /// <summary>
+        /// Attempts to run the Restore target for the current project with a unique evaluation context.
+        /// </summary>
+        /// <param name="globalProperties">Global properties to use when running the Restore the target.</param>
+        /// <param name="result">A value indicating the result of the restore.</param>
+        /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the restore.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryRestore(IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput)
+        {
+            return TryRestore(globalProperties, out result, out buildOutput, out IDictionary<string, TargetResult> _);
         }
 
         /// <summary>
@@ -425,6 +460,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryRestore(out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        {
+            return TryRestore(null, out result, out buildOutput, out targetOutputs);
+        }
+
+        /// <summary>
+        /// Attempts to run the Restore target for the current project with a unique evaluation context.
+        /// </summary>
+        /// <param name="globalProperties">Global properties to use when running the Restore the target.</param>
+        /// <param name="result">A value indicating the result of the restore.</param>
+        /// <param name="buildOutput">A <see cref="BuildOutput"/> object that captured the logging from the restore.</param>
+        /// <param name="targetOutputs">A <see cref="IDictionary{String,TargetResult}" /> containing the target outputs.</param>
+        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        public ProjectCreator TryRestore(IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             buildOutput = BuildOutput.Create();
 
@@ -439,7 +487,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 try
                 {
-                    Restore(out result, out targetOutputs);
+                    Restore(globalProperties, out result, out targetOutputs);
                 }
                 finally
                 {
@@ -450,14 +498,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return this;
         }
 
-        private void Build(string[] targets, Dictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
+        private void Build(string[] targets, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
             buildOutput = BuildOutput.Create();
 
             Build(restore: false, targets, globalProperties, buildOutput, out result, out targetOutputs);
         }
 
-        private void Build(bool restore, string[] targets, Dictionary<string, string> globalProperties, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        private void Build(bool restore, string[] targets, IDictionary<string, string> globalProperties, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
             targetOutputs = null;
 
@@ -530,11 +578,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
         }
 
-        private void Restore(out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        private void Restore(IDictionary<string, string> globalProperties, out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
             Save();
 
-            IDictionary<string, string> globalProperties = new Dictionary<string, string>(ProjectCollection.GlobalProperties);
+            globalProperties = globalProperties ?? new Dictionary<string, string>(ProjectCollection.GlobalProperties);
 
             globalProperties["ExcludeRestorePackageImports"] = "true";
             globalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
@@ -560,6 +608,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             targetOutputs = buildResult.ResultsByTarget;
 
             result = buildResult.OverallResult == BuildResultCode.Success;
+        }
+
+        private void Restore(out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        {
+            Restore(null, out result, out targetOutputs);
         }
     }
 }

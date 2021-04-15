@@ -100,13 +100,13 @@ namespace {name}
         private void CreateAssembly(FileInfo fileInfo, string name, string code, IEnumerable<string> references, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary)
         {
             CSharpCompilation compilation = CSharpCompilation.Create(
-                name,
-                new[]
+                assemblyName: name,
+                syntaxTrees: new[]
                 {
                     CSharpSyntaxTree.ParseText(code),
                 },
-                references.Select(i => MetadataReference.CreateFromFile(i)),
-                new CSharpCompilationOptions(outputKind));
+                references: references.Select(i => MetadataReference.CreateFromFile(i)),
+                options: new CSharpCompilationOptions(outputKind));
 
             EmitResult result = compilation.Emit(fileInfo.FullName);
 

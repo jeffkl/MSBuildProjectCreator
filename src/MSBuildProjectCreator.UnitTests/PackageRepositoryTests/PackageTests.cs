@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Evaluation;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -16,35 +17,55 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
     public class PackageTests : TestBase
     {
         [Fact]
+        public void BuildCanConsumePackage()
+        {
+            using (PackageRepository.Create(TestRootPath)
+                .Package("PackageB", "1.0", out PackageIdentity packageB)
+                    .Library("netstandard2.0")
+                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
+                    .Dependency(packageB, "netstandard2.0")
+                    .Library("netstandard2.0"))
+            {
+                ProjectCreator.Templates.SdkCsproj(
+                        targetFramework: "net5.0")
+                    .ItemPackageReference(packageA)
+                    .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
+                    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+
+                result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            }
+        }
+
+        [Fact]
         public void BasicPackage()
         {
-            PackageRepository.Create(TestRootPath)
-                .Package("PackageD", "1.2.3-beta", out PackageIdentity package);
-
-            package.ShouldNotBeNull();
-
-            package.Id.ShouldBe("PackageD");
-            package.Version.ShouldBe(NuGetVersion.Parse("1.2.3-beta"));
-
-            FileInfo manifestFilePath = new FileInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetManifestFilePath(package.Id, package.Version))
-                .ShouldExist();
-
-            using (Stream stream = File.OpenRead(manifestFilePath.FullName))
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+                .Package("PackageD", "1.2.3-beta", out PackageIdentity package))
             {
-                Manifest manifest = Manifest.ReadFrom(stream, validateSchema: true);
+                package.ShouldNotBeNull();
 
-                manifest.Metadata.Authors.ShouldBe(new[] { "UserA" });
-                manifest.Metadata.Description.ShouldBe("Description");
-                manifest.Metadata.DevelopmentDependency.ShouldBeFalse();
-                manifest.Metadata.Id.ShouldBe("PackageD");
-                manifest.Metadata.RequireLicenseAcceptance.ShouldBeFalse();
+                package.Id.ShouldBe("PackageD");
+                package.Version.ShouldBe(NuGetVersion.Parse("1.2.3-beta"));
+
+                FileInfo manifestFilePath = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
+
+                using (Stream stream = File.OpenRead(manifestFilePath.FullName))
+                {
+                    Manifest manifest = Manifest.ReadFrom(stream, validateSchema: true);
+
+                    manifest.Metadata.Authors.ShouldBe(new[] { "UserA" });
+                    manifest.Metadata.Description.ShouldBe("Description");
+                    manifest.Metadata.DevelopmentDependency.ShouldBeFalse();
+                    manifest.Metadata.Id.ShouldBe("PackageD");
+                    manifest.Metadata.RequireLicenseAcceptance.ShouldBeFalse();
+                }
             }
         }
 
         [Fact]
         public void CanSetAllPackageProperties()
         {
-            PackageRepository.Create(TestRootPath)
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package(
                     name: "PackageD",
                     version: "1.2.3",
@@ -53,9 +74,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     description: "Custom description",
                     copyright: "Copyright 2000",
                     developmentDependency: true,
-#if !NET46
                     icon: Path.Combine("some", "icon.jpg"),
-#endif
                     iconUrl: "https://icon.url",
                     language: "Pig latin",
                     licenseMetadata: new LicenseMetadata(LicenseType.Expression, "MIT", null, null, Version.Parse("1.0.0")),
@@ -71,46 +90,76 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     serviceable: true,
                     summary: "Summary of PackageD",
                     tags: "Tag1 Tag2 Tag3",
-                    title: "Title of PackageD");
-
-            package.ShouldNotBeNull();
-
-            package.Id.ShouldBe("PackageD");
-            package.Version.ShouldBe(NuGetVersion.Parse("1.2.3"));
-
-            FileInfo manifestFilePath = new FileInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetManifestFilePath(package.Id, package.Version))
-                .ShouldExist();
-
-            using (Stream stream = File.OpenRead(manifestFilePath.FullName))
+                    title: "Title of PackageD"))
             {
-                Manifest manifest = Manifest.ReadFrom(stream, validateSchema: true);
+                package.ShouldNotBeNull();
 
-                manifest.Metadata.Authors.ShouldBe(new[] { "UserA", "UserB" });
-                manifest.Metadata.Copyright.ShouldBe("Copyright 2000");
-                manifest.Metadata.Description.ShouldBe("Custom description");
-                manifest.Metadata.DevelopmentDependency.ShouldBeTrue();
-#if !NET46
-                manifest.Metadata.Icon.ShouldBe(Path.Combine("some", "icon.jpg"));
-#endif
-                manifest.Metadata.IconUrl.ShouldBe(new Uri("https://icon.url"));
-                manifest.Metadata.Id.ShouldBe("PackageD");
-                manifest.Metadata.Language.ShouldBe("Pig latin");
-                manifest.Metadata.LicenseMetadata.License.ShouldBe("MIT");
-                manifest.Metadata.LicenseMetadata.Type.ShouldBe(LicenseType.Expression);
-                manifest.Metadata.LicenseMetadata.Version.ShouldBe(Version.Parse("1.0.0"));
-                manifest.Metadata.Owners.ShouldBe(new[] { "Owner1", "Owner2" });
-                manifest.Metadata.PackageTypes.ShouldBe(new[] { PackageType.Dependency, PackageType.DotnetCliTool });
-                manifest.Metadata.ProjectUrl.ShouldBe(new Uri("https://project.url"));
-                manifest.Metadata.ReleaseNotes.ShouldBe("Release notes for PackageD");
-                manifest.Metadata.Repository.Branch.ShouldBe("Branch1000");
-                manifest.Metadata.Repository.Commit.ShouldBe("Commit14");
-                manifest.Metadata.Repository.Type.ShouldBe("Git");
-                manifest.Metadata.Repository.Url.ShouldBe("https://repository.url");
-                manifest.Metadata.RequireLicenseAcceptance.ShouldBeTrue();
-                manifest.Metadata.Serviceable.ShouldBeTrue();
-                manifest.Metadata.Summary.ShouldBe("Summary of PackageD");
-                manifest.Metadata.Tags.ShouldBe("Tag1 Tag2 Tag3");
-                manifest.Metadata.Title.ShouldBe("Title of PackageD");
+                package.Id.ShouldBe("PackageD");
+                package.Version.ShouldBe(NuGetVersion.Parse("1.2.3"));
+
+                FileInfo manifestFilePath = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
+
+                using (Stream stream = File.OpenRead(manifestFilePath.FullName))
+                {
+                    Manifest manifest = Manifest.ReadFrom(stream, validateSchema: true);
+
+                    manifest.Metadata.Authors.ShouldBe(new[] { "UserA", "UserB" });
+                    manifest.Metadata.Copyright.ShouldBe("Copyright 2000");
+                    manifest.Metadata.Description.ShouldBe("Custom description");
+                    manifest.Metadata.DevelopmentDependency.ShouldBeTrue();
+                    manifest.Metadata.Icon.ShouldBe(Path.Combine("some", "icon.jpg"));
+                    manifest.Metadata.IconUrl.ShouldBe(new Uri("https://icon.url"));
+                    manifest.Metadata.Id.ShouldBe("PackageD");
+                    manifest.Metadata.Language.ShouldBe("Pig latin");
+                    manifest.Metadata.LicenseMetadata.License.ShouldBe("MIT");
+                    manifest.Metadata.LicenseMetadata.Type.ShouldBe(LicenseType.Expression);
+                    manifest.Metadata.LicenseMetadata.Version.ShouldBe(Version.Parse("1.0.0"));
+                    manifest.Metadata.Owners.ShouldBe(new[] { "Owner1", "Owner2" });
+                    manifest.Metadata.PackageTypes.ShouldBe(new[] { PackageType.Dependency, PackageType.DotnetCliTool });
+                    manifest.Metadata.ProjectUrl.ShouldBe(new Uri("https://project.url"));
+                    manifest.Metadata.ReleaseNotes.ShouldBe("Release notes for PackageD");
+                    manifest.Metadata.Repository.Branch.ShouldBe("Branch1000");
+                    manifest.Metadata.Repository.Commit.ShouldBe("Commit14");
+                    manifest.Metadata.Repository.Type.ShouldBe("Git");
+                    manifest.Metadata.Repository.Url.ShouldBe("https://repository.url");
+                    manifest.Metadata.RequireLicenseAcceptance.ShouldBeTrue();
+                    manifest.Metadata.Serviceable.ShouldBeTrue();
+                    manifest.Metadata.Summary.ShouldBe("Summary of PackageD");
+                    manifest.Metadata.Tags.ShouldBe("Tag1 Tag2 Tag3");
+                    manifest.Metadata.Title.ShouldBe("Title of PackageD");
+                }
+            }
+        }
+
+        [Fact]
+        public void CanUseNuGetSdkResolver()
+        {
+            using (ProjectCollection projectCollection = new ProjectCollection())
+            {
+                BuildOutput buildOutput = BuildOutput.Create();
+
+                projectCollection.RegisterLogger(buildOutput);
+
+                using (PackageRepository.Create(TestRootPath)
+                    .Package("Foo.Bar", "1.2.3", out PackageIdentity package)
+                    .FileText(Path.Combine("Sdk", "Sdk.props"), "<Project />")
+                    .FileText(Path.Combine("Sdk", "Sdk.targets"), "<Project />"))
+                {
+                    ProjectCreator projectCreator = ProjectCreator
+                        .Create(
+                            sdk: $"{package.Id}/{package.Version}",
+                            projectCollection: projectCollection)
+                        .Save(GetTempFileName(".csproj"));
+
+                    try
+                    {
+                        Project unused = projectCreator.Project;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(buildOutput.GetConsoleLog(), e);
+                    }
+                }
             }
         }
     }
