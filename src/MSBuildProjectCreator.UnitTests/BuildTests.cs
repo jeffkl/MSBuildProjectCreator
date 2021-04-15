@@ -21,25 +21,20 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void BuildCanConsumePackage()
         {
-            Action t = () =>
-            {
-                PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                    .Package("PackageB", "1.0", out PackageIdentity packageB)
-                    .Library("net45")
-                    .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                    .Dependency(packageB, "net45")
-                    .Library("net45");
+            PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+                .Package("PackageB", "1.0", out PackageIdentity packageB)
+                .Library("net45")
+                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
+                .Dependency(packageB, "net45")
+                .Library("net45");
 
-                ProjectCreator.Templates.SdkCsproj(
-                        targetFramework: "net45")
-                    .ItemPackageReference(packageA)
-                    .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
-                    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFramework: "net45")
+                .ItemPackageReference(packageA)
+                .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
+                .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
 
-                result.ShouldBeTrue(buildOutput.GetConsoleLog());
-            };
-
-            t.Invoke();
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
         }
 
         [Fact]

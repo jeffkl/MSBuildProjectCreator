@@ -54,7 +54,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     copyright: "Copyright 2000",
                     developmentDependency: true,
 #if !NET46
-                    icon: @"some\icon.jpg",
+                    icon: Path.Combine("some", "icon.jpg"),
 #endif
                     iconUrl: "https://icon.url",
                     language: "Pig latin",
@@ -90,7 +90,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 manifest.Metadata.Description.ShouldBe("Custom description");
                 manifest.Metadata.DevelopmentDependency.ShouldBeTrue();
 #if !NET46
-                manifest.Metadata.Icon.ShouldBe(@"some\icon.jpg");
+                manifest.Metadata.Icon.ShouldBe(Path.Combine("some", "icon.jpg"));
 #endif
                 manifest.Metadata.IconUrl.ShouldBe(new Uri("https://icon.url"));
                 manifest.Metadata.Id.ShouldBe("PackageD");

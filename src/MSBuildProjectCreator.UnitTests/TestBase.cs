@@ -5,7 +5,6 @@
 using NuGet.Packaging;
 using System;
 using System.IO;
-using Xunit.Abstractions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
@@ -15,30 +14,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         private readonly Lazy<object> _pathResolverLazy;
 
-        private readonly string _testRootPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        private readonly Lazy<string> _testRootPathLazy = new Lazy<string>(() => Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName);
 
         protected TestBase()
         {
-            string globalJson = Path.Combine(TestRootPath, "global.json");
-#if NETCOREAPP3_1
             File.WriteAllText(
-                globalJson,
-                @"{
-   ""sdk"": {
-    ""version"": ""3.1.100"",
-    ""rollForward"": ""latestFeature""
-  }
-}");
-#else
-            File.WriteAllText(
-                globalJson,
+                Path.Combine(TestRootPath, "global.json"),
                 @"{
    ""sdk"": {
     ""version"": ""5.0.100"",
     ""rollForward"": ""latestMinor""
   }
 }");
-#endif
             File.WriteAllText(
                 Path.Combine(TestRootPath, "NuGet.config"),
                 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -57,14 +44,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             _pathResolverLazy = new Lazy<object>(() => new VersionFolderPathResolver(Path.Combine(TestRootPath, ".nuget", "packages")));
         }
 
-        public string TestRootPath
-        {
-            get
-            {
-                Directory.CreateDirectory(_testRootPath);
-                return _testRootPath;
-            }
-        }
+        public string TestRootPath => _testRootPathLazy.Value;
 
         public object VersionFolderPathResolver => _pathResolverLazy.Value;
 

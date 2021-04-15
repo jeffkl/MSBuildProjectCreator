@@ -3,17 +3,17 @@
 // Licensed under the MIT license.
 
 using System;
-#if NETCORE
+#if !NETFRAMEWORK
 using System.Diagnostics;
 #endif
 using System.IO;
 using System.Linq;
 using System.Reflection;
-#if NETCORE
+#if !NETFRAMEWORK
 using System.Text.RegularExpressions;
 using System.Threading;
 #endif
-#if !NETCORE
+#if NETFRAMEWORK
 using Microsoft.VisualStudio.Setup.Configuration;
 #endif
 
@@ -27,7 +27,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private static readonly Lazy<string[]> MSBuildDirectoryLazy = new Lazy<string[]>(
             () =>
             {
-#if NETCORE
+#if !NETFRAMEWORK
                 string basePath = GetDotNetBasePath();
 
                 if (!string.IsNullOrWhiteSpace(basePath))
@@ -85,7 +85,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
 
-#if NETCORE
+#if !NETFRAMEWORK
         private static readonly Regex DotNetBasePathRegex = new Regex(@"^ Base Path:\s+(?<Path>.*)$");
 #endif
 
@@ -136,7 +136,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return null;
         }
 
-#if NETCORE
+#if !NETFRAMEWORK
 
         private static string GetDotNetBasePath()
         {
@@ -231,7 +231,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return version;
         }
 
-#if !NETCORE
+#if NETFRAMEWORK
 
         private static string GetPathOfFirstInstalledVisualStudioInstance()
         {

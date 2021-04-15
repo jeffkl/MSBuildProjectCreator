@@ -15,7 +15,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         [Fact]
         public void CustomFileTest()
         {
-            const string relativePath = @"test\foo.txt";
+            string relativePath = Path.Combine("test", "foo.txt");
             const string contents = "798D159A4ADE45B9896EDE89FBA39C60";
 
             FileInfo sourceFileInfo = new FileInfo(Path.Combine(TestRootPath, "something"));
@@ -32,7 +32,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         [Fact]
         public void TextFileTest()
         {
-            const string relativePath = @"test\foo.txt";
+            string relativePath = Path.Combine("test", "foo.txt");
             const string contents = "FF6B25B727E04D9980DE3B5D7AE0FB6E";
 
             PackageRepository.Create(TestRootPath)
