@@ -8,7 +8,7 @@
     <PackageReference Update="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" />
     <PackageReference Update="MSTest.TestAdapter" Version="1.1.18" />
     <PackageReference Update="MSTest.TestFramework" Version="1.1.18" />
-    <PackageReference Update="NuGet.Frameworks" Version="5.8.0" />
+    <PackageReference Update="NuGet.Frameworks" Version="5.9.1" />
     <PackageReference Update="NuGet.Packaging" Version="5.8.0" />
     <PackageReference Update="NuGet.ProjectModel" Version="5.8.0" />
     <PackageReference Update="Shouldly" Version="4.0.3" />
