@@ -15,6 +15,7 @@ trigger:
     include:
     - 'main'
     - 'rel/*'
+    - 'refs/tags/v*'
   paths:
     exclude:
     - '*.md'
