@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using Shouldly;
 using System.IO;
@@ -22,11 +21,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 
             File.WriteAllText(sourceFileInfo.FullName, contents);
 
-            PackageRepository.Create(TestRootPath)
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .FileCustom(relativePath, sourceFileInfo);
-
-            VerifyFileContents(packageA, relativePath, contents);
+                    .FileCustom(relativePath, sourceFileInfo))
+            {
+                VerifyFileContents(packageRepository, packageA, relativePath, contents);
+            }
         }
 
         [Fact]
@@ -35,16 +35,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             string relativePath = Path.Combine("test", "foo.txt");
             const string contents = "FF6B25B727E04D9980DE3B5D7AE0FB6E";
 
-            PackageRepository.Create(TestRootPath)
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .FileText(relativePath, contents);
-
-            VerifyFileContents(packageA, relativePath, contents);
+                .FileText(relativePath, contents))
+            {
+                VerifyFileContents(packageRepository, packageA, relativePath, contents);
+            }
         }
 
-        private void VerifyFileContents(PackageIdentity package, string relativePath, string contents)
+        private void VerifyFileContents(PackageRepository packageRepository, PackageIdentity package, string relativePath, string contents)
         {
-            DirectoryInfo packageDirectory = new DirectoryInfo(((VersionFolderPathResolver)VersionFolderPathResolver).GetInstallPath(package.Id, package.Version))
+            DirectoryInfo packageDirectory = new DirectoryInfo(packageRepository.GetInstallPath(package.Id, package.Version))
                             .ShouldExist();
 
             FileInfo file = new FileInfo(Path.Combine(packageDirectory.FullName, relativePath))

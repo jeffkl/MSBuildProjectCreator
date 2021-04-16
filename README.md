@@ -167,23 +167,27 @@ NuGet and MSBuild are very tightly coupled and a lot of times you need packages 
 Create a package repository with a package that supports two target frameworks:
 
 ```C#
-PackageRepository.Create(rootPath)
-    .Package("MyPackage", "1.2.3", out PackageIdentify package)
+using(PackageRepository.Create(rootPath)
+    .Package("MyPackage", "1.2.3", out PackageIdentity package)
         .Library("net472")
-        .Library("netstandard2.0");
+        .Library("netstandard2.0"))
+{
+    // Create projects that reference packages
+}
 ```
 
 The resulting package would have a `lib\net472\MyPackage.dll` and `lib\netstandard2.0\MyPackage.dll` class library.  This allows you to restore and build projects that consume the packages
 
 ```C#
-PackageRepository.Create(rootPath)
-    .Package("MyPackage", "1.0.0", out PackageIdentify package)
-        .Library("netstandard2.0");
-
-ProjectCreator.Templates.SdkCsproj()
-    .ItemPackageReference(package)
-    .Save(Path.Combine(rootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
-    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+using(PackageRepository.Create(rootPath)
+    .Package("MyPackage", "1.0.0", out PackageIdentity package)
+        .Library("netstandard2.0"))
+{
+    ProjectCreator.Templates.SdkCsproj()
+        .ItemPackageReference(package)
+        .Save(Path.Combine(rootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
+        .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+}
 ```
 
 The result would be a project that references the `MyPackage` package and would restore and build accordingly.

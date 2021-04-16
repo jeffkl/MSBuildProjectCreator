@@ -21,41 +21,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         public IReadOnlyCollection<PackageIdentity> Packages => _packages;
 
-        /// <inheritdoc cref="VersionFolderPathResolver.GetInstallPath" />
+        /// <inheritdoc cref="NuGet.Packaging.VersionFolderPathResolver" />
         public string GetInstallPath(string packageId, NuGetVersion version)
         {
-            return _versionFolderPathResolver.GetInstallPath(packageId, version);
+            return VersionFolderPathResolver.GetInstallPath(packageId, version);
         }
 
-#if NET46
-        /// <summary>
-        /// Creates a new package.
-        /// </summary>
-        /// <param name="name">The name or ID of the package.</param>
-        /// <param name="version">The semantic version of the package.</param>
-        /// <param name="authors">An optional semicolon delimited list of authors of the package.  The default value is &quot;UserA&quot;</param>
-        /// <param name="description">An optional description of the package.  The default value is &quot;Description&quot;</param>
-        /// <param name="copyright">An optional copyright of the package.</param>
-        /// <param name="developmentDependency">An optional value indicating whether or not the package is a development dependency.  The default value is <code>false</code>.</param>
-        /// <param name="iconUrl">An optional URL to the icon of the package.</param>
-        /// <param name="language">An optional language of the package.</param>
-        /// <param name="licenseUrl">An optional URL to the license of the package.</param>
-        /// <param name="licenseMetadata">An optional <see cref="LicenseMetadata" /> of the package.</param>
-        /// <param name="owners">An optional semicolon delimited list of owners of the package.</param>
-        /// <param name="packageTypes">An optional <see cref="IEnumerable{PackageType}" /> containing the package types of the package.</param>
-        /// <param name="projectUrl">An optional URL to the project of the package.</param>
-        /// <param name="releaseNotes">An optional value specifying release notes of the package.</param>
-        /// <param name="repositoryType">An optional value specifying the type of source code repository of the package.</param>
-        /// <param name="repositoryUrl">An optional value specifying the URL of the source code repository of the package.</param>
-        /// <param name="repositoryBranch">An optional value specifying the branch of the source code repository of the package.</param>
-        /// <param name="repositoryCommit">An optional value specifying the commit of the source code repository of the package.</param>
-        /// <param name="requireLicenseAcceptance">An optional value indicating whether or not the package requires license acceptance  The default value is <code>false</code>.</param>
-        /// <param name="serviceable">An option value indicating whether or not the package is serviceable.  The default value is <code>false</code>.</param>
-        /// <param name="summary">An optional summary of the package.</param>
-        /// <param name="tags">An optional set of tags of the package.</param>
-        /// <param name="title">An optional title of the package.</param>
-        /// <returns>The current <see cref="PackageRepository" />.</returns>
-#else
+        /// <inheritdoc cref="NuGet.Packaging.VersionFolderPathResolver.GetManifestFilePath" />
+        public string GetManifestFilePath(string packageId, NuGetVersion version)
+        {
+            return VersionFolderPathResolver.GetManifestFilePath(packageId, version);
+        }
+
         /// <summary>
         /// Creates a new package.
         /// </summary>
@@ -84,8 +61,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="tags">An optional set of tags of the package.</param>
         /// <param name="title">An optional title of the package.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-#endif
-
         public PackageRepository Package(
             string name,
             string version,
@@ -93,9 +68,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string description = null,
             string copyright = null,
             bool developmentDependency = false,
-#if !NET46
             string icon = null,
-#endif
             string iconUrl = null,
             string language = null,
             string licenseUrl = null,
@@ -122,9 +95,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 description,
                 copyright,
                 developmentDependency,
-#if !NET46
                 icon,
-#endif
                 iconUrl,
                 language,
                 licenseUrl,
@@ -144,36 +115,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 title);
         }
 
-#if NET46
-        /// <summary>
-        /// Creates a new package.
-        /// </summary>
-        /// <param name="name">The name or ID of the package.</param>
-        /// <param name="version">The semantic version of the package.</param>
-        /// <param name="package">Receives the <see cref="PackageIdentity" /> of the package.</param>
-        /// <param name="authors">An optional semicolon delimited list of authors of the package.  The default value is &quot;UserA&quot;</param>
-        /// <param name="description">An optional description of the package.  The default value is &quot;Description&quot;</param>
-        /// <param name="copyright">An optional copyright of the package.</param>
-        /// <param name="developmentDependency">An optional value indicating whether or not the package is a development dependency.  The default value is <code>false</code>.</param>
-        /// <param name="iconUrl">An optional URL to the icon of the package.</param>
-        /// <param name="language">An optional language of the package.</param>
-        /// <param name="licenseUrl">An optional URL to the license of the package.</param>
-        /// <param name="licenseMetadata">An optional <see cref="LicenseMetadata" /> of the package.</param>
-        /// <param name="owners">An optional semicolon delimited list of owners of the package.</param>
-        /// <param name="packageTypes">An optional <see cref="IEnumerable{PackageType}" /> containing the package types of the package.</param>
-        /// <param name="projectUrl">An optional URL to the project of the package.</param>
-        /// <param name="releaseNotes">An optional value specifying release notes of the package.</param>
-        /// <param name="repositoryType">An optional value specifying the type of source code repository of the package.</param>
-        /// <param name="repositoryUrl">An optional value specifying the URL of the source code repository of the package.</param>
-        /// <param name="repositoryBranch">An optional value specifying the branch of the source code repository of the package.</param>
-        /// <param name="repositoryCommit">An optional value specifying the commit of the source code repository of the package.</param>
-        /// <param name="requireLicenseAcceptance">An optional value indicating whether or not the package requires license acceptance  The default value is <code>false</code>.</param>
-        /// <param name="serviceable">An option value indicating whether or not the package is serviceable.  The default value is <code>false</code>.</param>
-        /// <param name="summary">An optional summary of the package.</param>
-        /// <param name="tags">An optional set of tags of the package.</param>
-        /// <param name="title">An optional title of the package.</param>
-        /// <returns>The current <see cref="PackageRepository" />.</returns>
-#else
         /// <summary>
         /// Creates a new package.
         /// </summary>
@@ -203,7 +144,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="tags">An optional set of tags of the package.</param>
         /// <param name="title">An optional title of the package.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-#endif
         public PackageRepository Package(
             string name,
             string version,
@@ -212,9 +152,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string description = null,
             string copyright = null,
             bool developmentDependency = false,
-#if !NET46
             string icon = null,
-#endif
             string iconUrl = null,
             string language = null,
             string licenseUrl = null,
@@ -245,7 +183,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             package = new PackageIdentity(name, NuGetVersion.Parse(version));
 
-            string manifestFilePath = _versionFolderPathResolver.GetManifestFilePath(package.Id, package.Version);
+            string manifestFilePath = VersionFolderPathResolver.GetManifestFilePath(package.Id, package.Version);
 
             if (System.IO.File.Exists(manifestFilePath))
             {
@@ -260,9 +198,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 description,
                 copyright,
                 developmentDependency,
-#if !NET46
                 icon,
-#endif
                 iconUrl,
                 language,
                 licenseUrl,

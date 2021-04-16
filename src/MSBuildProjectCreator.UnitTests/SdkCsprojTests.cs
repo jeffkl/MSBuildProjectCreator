@@ -26,32 +26,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
-        public void CanUseNuGetSdkResolver()
-        {
-            using (ProjectCollection projectCollection = new ProjectCollection())
-            {
-                BuildOutput buildOutput = BuildOutput.Create();
-
-                projectCollection.RegisterLogger(buildOutput);
-
-                ProjectCreator projectCreator = ProjectCreator
-                    .Create(projectCollection: projectCollection)
-                    .ImportSdk("Sdk.props", "Microsoft.Build.NoTargets", "1.0.53")
-                    .ImportSdk("Sdk.targets", "Microsoft.Build.NoTargets", "1.0.53")
-                    .Save(GetTempFileName(".csproj"));
-
-                try
-                {
-                    Project unused = projectCreator.Project;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(buildOutput.GetConsoleLog(), e);
-                }
-            }
-        }
-
-        [Fact]
         public void CustomSdk()
         {
             const string sdk = "Foo/1.2.3";

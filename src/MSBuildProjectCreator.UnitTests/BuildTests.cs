@@ -6,9 +6,7 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
-using NuGet.Packaging.Core;
 using Shouldly;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,25 +16,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public class BuildTests : TestBase
     {
-        [Fact]
-        public void BuildCanConsumePackage()
-        {
-            PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageB", "1.0", out PackageIdentity packageB)
-                .Library("net45")
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .Dependency(packageB, "net45")
-                .Library("net45");
-
-            ProjectCreator.Templates.SdkCsproj(
-                    targetFramework: "net45")
-                .ItemPackageReference(packageA)
-                .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
-                .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
-
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
-        }
-
         [Fact]
         public void BuildTargetOutputsTest()
         {
