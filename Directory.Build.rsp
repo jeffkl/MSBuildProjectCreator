@@ -1,5 +1,5 @@
 /Restore
-/ConsoleLoggerParameters:Verbosity=Minimal;Summary
+/ConsoleLoggerParameters:Verbosity=Minimal;Summary;ForceNoAlign
 /MaxCPUCount
 /NodeReuse:false
 /RestoreProperty:NuGetInteractive=true
