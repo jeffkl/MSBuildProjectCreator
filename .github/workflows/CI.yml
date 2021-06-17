@@ -12,7 +12,8 @@ on:
 
 jobs:
 
-  windows:
+  Build_and_Test_Windows:
+    name: Build and Test (Windows)
     runs-on: windows-latest
 
     env:
@@ -20,7 +21,6 @@ jobs:
       BuildConfiguration: 'Debug'
       BuildPlatform: 'Any CPU'
       DotNet5Version: '5.x'
-      MSBuildArgs: '"/p:Platform=%BuildPlatform%" "/p:Configuration=%BuildConfiguration%" "/BinaryLogger:%ArtifactsDirectoryName%\msbuild.binlog"'
   
     steps:
     - name: Checkout
@@ -37,7 +37,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1
 
     - name: Build
-      run: msbuild "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }} \msbuild.binlog"
+      run: msbuild "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
