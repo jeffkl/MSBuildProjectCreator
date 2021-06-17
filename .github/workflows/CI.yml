@@ -20,7 +20,7 @@ jobs:
       BuildConfiguration: 'Debug'
       BuildPlatform: 'Any CPU'
       DotNet5Version: '5.x'
-      MSBuildArgs: '"/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"'
+      MSBuildArgs: '"/p:Platform=%BuildPlatform%" "/p:Configuration=%BuildConfiguration%" "/BinaryLogger:%ArtifactsDirectoryName%\msbuild.binlog"'
   
     steps:
     - name: Checkout
