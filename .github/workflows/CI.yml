@@ -48,8 +48,16 @@ jobs:
     - name: Run Unit Tests (.NET Framework)
       run: dotnet test --no-restore --no-build --framework net472 /restore:false
 
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      if: success() || failure()
+      with:
+        name: test-results-win
+        path: TestResults/*.trx
+        
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
+      if: success() || failure()
       with:
         name: ${{ env.ArtifactsDirectoryName }}-win
         path: ${{ env.ArtifactsDirectoryName }}
