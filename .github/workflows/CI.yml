@@ -53,7 +53,7 @@ jobs:
       if: success() || failure()
       with:
         name: test-results-win
-        path: TestResults/*.trx
+        path: '**/TestResults/*.trx'
         if-no-files-found: error
         
     - name: Upload build artifacts
