@@ -42,8 +42,11 @@ jobs:
     - name: Build
       run: msbuild "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
       
-    - name: Test
-      run: vstest.console **\*.UnitTests.dll
+    - name: Run Unit Tests (.NET 5)
+      run: dotnet test --no-restore --no-build --framework net5.0 /restore:false
+      
+    - name: Run Unit Tests (.NET Framework)
+      run: dotnet test --no-restore --no-build --framework net472 /restore:false
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
