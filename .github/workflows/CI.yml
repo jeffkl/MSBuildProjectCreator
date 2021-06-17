@@ -31,16 +31,16 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: $(DotNet5Version)
+        dotnet-version: ${{ env.DotNet5Version }}
 
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1
 
     - name: Build
-      run: msbuild $env:MSBuildArgs
+      run: msbuild "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }} \msbuild.binlog"
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: MSIX Package
-        path: ${{ env.ArtifactsDirectoryName }}\AppPackages
+        path: ${{ env.ArtifactsDirectoryName }}
