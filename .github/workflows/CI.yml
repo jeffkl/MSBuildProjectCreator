@@ -43,10 +43,10 @@ jobs:
       run: msbuild "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
       
     - name: Run Unit Tests (.NET 5)
-      run: dotnet test --no-restore --no-build --framework net5.0 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
       
     - name: Run Unit Tests (.NET Framework)
-      run: dotnet test --no-restore --no-build --framework net472 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net472 /restore:false
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
@@ -54,6 +54,7 @@ jobs:
       with:
         name: test-results-win
         path: TestResults/*.trx
+        if-no-files-found: error
         
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
