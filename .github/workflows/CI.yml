@@ -33,14 +33,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DotNet5Version }}
 
-    - name: Install MSBuild
-      uses: microsoft/setup-msbuild@v1
-      
-    - name: Install VSTest
-      uses: darenm/Setup-VSTest@v1
-
     - name: Build
-      run: msbuild "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
+      run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
       
     - name: Run Unit Tests (.NET 5)
       run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
