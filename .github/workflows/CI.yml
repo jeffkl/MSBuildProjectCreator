@@ -98,3 +98,40 @@ jobs:
       with:
         name: ${{ env.ArtifactsDirectoryName }}-linux
         path: ${{ env.ArtifactsDirectoryName }}
+
+  MacOSBuild:
+    name: Build and Test (MacOS)
+    runs-on: macos-latest
+  
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DotNet5Version }}
+    
+    - name: Build
+      run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
+      
+    - name: Run Unit Tests (.NET 5)
+      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      if: success() || failure()
+      with:
+        name: test-results-macos
+        path: '**/TestResults/*.trx'
+        if-no-files-found: error
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      if: success() || failure()
+      with:
+        name: ${{ env.ArtifactsDirectoryName }}-macos
+        path: ${{ env.ArtifactsDirectoryName }}
+
