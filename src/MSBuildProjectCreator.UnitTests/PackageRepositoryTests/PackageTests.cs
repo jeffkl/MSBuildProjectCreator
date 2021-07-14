@@ -27,7 +27,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     .Library("netstandard2.0"))
             {
                 ProjectCreator.Templates.SdkCsproj(
-                        targetFramework: "net5.0")
+                        targetFramework: TargetFramework)
                     .ItemPackageReference(packageA)
                     .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
                     .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);

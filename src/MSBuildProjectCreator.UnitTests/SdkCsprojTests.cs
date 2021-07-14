@@ -5,7 +5,11 @@
 using Microsoft.Build.Evaluation;
 using Shouldly;
 using System;
+using System.Collections;
+using System.Linq;
+using System.Reflection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
@@ -14,10 +18,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void CanBuild()
         {
-            const string targetFramework = "net472";
-
             ProjectCreator.Templates.SdkCsproj(
-                    targetFramework: targetFramework,
+                    targetFramework: TargetFramework,
                     path: GetTempFileName(".csproj"))
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);

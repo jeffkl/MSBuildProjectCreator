@@ -13,7 +13,12 @@
     <PackageReference Update="xunit" Version="2.4.1" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
-  
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Update="Microsoft.Build" Version="16.9.0" />
+    <PackageReference Update="NuGet.Frameworks" Version="5.7.1" />
+    <PackageReference Update="NuGet.Packaging" Version="5.7.1" />
+    <PackageReference Update="NuGet.ProjectModel" Version="5.7.1" />
+  </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="2.2.0" />
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.4.220" Condition=" '$(EnableGitVersioning)' != 'false' " />

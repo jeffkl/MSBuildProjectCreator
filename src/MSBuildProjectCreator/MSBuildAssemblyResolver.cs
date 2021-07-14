@@ -3,15 +3,19 @@
 // Licensed under the MIT license.
 
 using System;
+
 #if !NETFRAMEWORK
 using System.Diagnostics;
 #endif
+
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if NETCOREAPP || NET5_0_OR_GREATER
+using System.Runtime.Loader;
+#endif
 #if !NETFRAMEWORK
 using System.Text.RegularExpressions;
-using System.Threading;
 #endif
 #if NETFRAMEWORK
 using Microsoft.VisualStudio.Setup.Configuration;
@@ -24,18 +28,36 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public static class MSBuildAssemblyResolver
     {
+        private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
+
+#if !NETFRAMEWORK
+        private static readonly Regex DotNetListSdksRegex = new Regex("^(?<Name>(?<Version>\\d+\\.\\d+\\.\\d{3,4})(?<Tag>[-\\.\\w]*)) \\[(?<Directory>.*)\\]\\r?$", RegexOptions.Multiline);
+#endif
+
+#if NETCOREAPP || NET5_0_OR_GREATER
+        private static readonly AssemblyLoadContext LoadContext = new AssemblyLoadContext(nameof(MSBuildAssemblyResolver));
+#endif
+
+        private static readonly Lazy<string> DotNetSdksPathLazy = new Lazy<string>(
+        () =>
+        {
+#if NETFRAMEWORK
+            return null;
+#else
+            return GetDotNetBasePath();
+#endif
+        });
+
         private static readonly Lazy<string[]> MSBuildDirectoryLazy = new Lazy<string[]>(
             () =>
             {
 #if !NETFRAMEWORK
-                string basePath = GetDotNetBasePath();
-
-                if (!string.IsNullOrWhiteSpace(basePath))
+                if (!string.IsNullOrWhiteSpace(DotNetSdksPath))
                 {
                     return new[]
                     {
-                        basePath,
-                        Path.Combine(basePath, "Roslyn", "bincore"),
+                        DotNetSdksPath,
+                        Path.Combine(DotNetSdksPathLazy.Value, "Roslyn", "bincore"),
                     };
                 }
 #else
@@ -77,17 +99,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     };
                 }
 #endif
-
                 return null;
             });
 
+#if NETFRAMEWORK
         private static readonly char[] PathSplitChars = { Path.PathSeparator };
-
-        private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
-
-#if !NETFRAMEWORK
-        private static readonly Regex DotNetBasePathRegex = new Regex(@"^ Base Path:\s+(?<Path>.*)$");
 #endif
+
+        /// <summary>
+        /// Gets the path to the .NET SDKs.
+        /// </summary>
+        public static string DotNetSdksPath => DotNetSdksPathLazy.Value;
 
         /// <summary>
         /// Gets the full path to the MSBuild directory used.
@@ -99,7 +121,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="args">The event data.</param>
-        /// <returns>An MSBuild assembly if one could be located, otherwise <code>null</code>.</returns>
+        /// <returns>An MSBuild assembly if one could be located, otherwise <c>null</c>.</returns>
         public static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
         {
             if (SearchPaths == null)
@@ -124,103 +146,93 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     continue;
                 }
 
-                if (requestedAssemblyName.Flags.HasFlag(AssemblyNameFlags.PublicKey) && !requestedAssemblyName.GetPublicKeyToken().SequenceEqual(candidateAssemblyName.GetPublicKeyToken()))
+                if (requestedAssemblyName.Flags.HasFlag(AssemblyNameFlags.PublicKey) && !requestedAssemblyName.GetPublicKeyToken() !.SequenceEqual(candidateAssemblyName.GetPublicKeyToken() !))
                 {
                     // Requested assembly has a public key but it doesn't match the candidate assembly public key
                     continue;
                 }
-
+#if NET5_0_OR_GREATER
+                return LoadContext.LoadFromAssemblyPath(candidateAssemblyFile.FullName);
+#else
                 return Assembly.LoadFrom(candidateAssemblyFile.FullName);
+#endif
             }
 
             return null;
         }
 
 #if !NETFRAMEWORK
-
         private static string GetDotNetBasePath()
         {
-            string basePath = null;
-
-            using (ManualResetEvent processExited = new ManualResetEvent(false))
-            using (Process process = new Process
+            using Process process = new Process
             {
                 EnableRaisingEvents = true,
                 StartInfo = new ProcessStartInfo
                 {
-                    Arguments = "--info",
+                    Arguments = "--list-sdks",
                     CreateNoWindow = true,
                     FileName = "dotnet",
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     WorkingDirectory = Environment.CurrentDirectory,
                 },
-            })
+            };
+
+            process.StartInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"] = "en-US";
+            process.StartInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
+            process.StartInfo.EnvironmentVariables["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
+
+            try
             {
-                process.StartInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"] = "en-US";
-
-                process.ErrorDataReceived += (sender, args) => { };
-
-                process.OutputDataReceived += (sender, args) =>
-                {
-                    if (!String.IsNullOrWhiteSpace(args?.Data))
-                    {
-                        Match match = DotNetBasePathRegex.Match(args.Data);
-
-                        if (match.Success && match.Groups["Path"].Success)
-                        {
-                            basePath = match.Groups["Path"].Value.Trim();
-                        }
-                    }
-                };
-
-                process.Exited += (sender, args) => { processExited.Set(); };
-
-                try
-                {
-                    if (!process.Start())
-                    {
-                        return null;
-                    }
-                }
-                catch
+                if (!process.Start())
                 {
                     return null;
                 }
-
-                process.StandardInput.Close();
-
-                process.BeginErrorReadLine();
-                process.BeginOutputReadLine();
-
-                switch (WaitHandle.WaitAny(new WaitHandle[] { processExited }, TimeSpan.FromSeconds(5)))
-                {
-                    case WaitHandle.WaitTimeout:
-                        break;
-
-                    case 0:
-                        break;
-                }
-
-                if (!process.HasExited)
-                {
-                    try
-                    {
-                        process.Kill();
-                    }
-                    catch
-                    {
-                    }
-                }
-
-                return basePath;
             }
-        }
+            catch
+            {
+                return null;
+            }
 
+            process.WaitForExit();
+
+            // Gets the highest version SDK that is the same major version as the runtime
+            // You cannot always evaluate MSBuild projects using a different version of MSBuild than your runtime.  This is because
+            // if you're running as .NET 5.0, the .NET 6.0 MSBuild has dependencies that your app doesn't supply.
+            // This means that if your app is .NET Core 3.1, you can only use MSBuild from the .NET Core 3.1 SDK
+            DirectoryInfo GetFirstMatchingSdk(string output)
+            {
+                Match match = DotNetListSdksRegex.Match(output);
+
+                DirectoryInfo directoryInfo = null;
+
+                Version highestVersion = null;
+
+                while (match.Success)
+                {
+                    string versionString = match.Groups["Version"].Value.Trim();
+
+                    if (Version.TryParse(versionString, out Version version) && Environment.Version.Major == version.Major && (highestVersion == null || version > highestVersion))
+                    {
+                        highestVersion = version;
+
+                        directoryInfo = new DirectoryInfo(Path.Combine(match.Groups["Directory"].Value.Trim(), match.Groups["Name"].Value.Trim()));
+                    }
+
+                    match = match.NextMatch();
+                }
+
+                return directoryInfo;
+            }
+
+            DirectoryInfo basePath = GetFirstMatchingSdk(process.StandardOutput.ReadToEnd());
+
+            return basePath?.FullName;
+        }
 #endif
 
+#if NETFRAMEWORK
         private static string GetMSBuildVersionDirectory(string version)
         {
             if (Version.TryParse(version, out Version visualStudioVersion) && visualStudioVersion.Major >= 16)
@@ -230,8 +242,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return version;
         }
-
-#if NETFRAMEWORK
 
         private static string GetPathOfFirstInstalledVisualStudioInstance()
         {
@@ -273,7 +283,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return null;
         }
-
 #endif
     }
 }

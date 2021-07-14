@@ -12,15 +12,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         protected TestBase()
         {
             TestRootPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName;
+        }
 
-            File.WriteAllText(
-                Path.Combine(TestRootPath, "global.json"),
-                @"{
-   ""sdk"": {
-    ""version"": ""5.0.100"",
-    ""rollForward"": ""latestMinor""
-  }
-}");
+        public string TargetFramework
+        {
+            get =>
+#if NETCOREAPP3_1
+            "netcoreapp3.1";
+#elif NET5_0
+            "net5.0";
+#else
+            "net472";
+#endif
         }
 
         public string TestRootPath { get; }

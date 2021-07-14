@@ -5,6 +5,7 @@ variables:
   ArtifactsDirectoryName: 'artifacts'
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
+  DotNet3Version: '3.x'
   DotNet5Version: '5.x'
   MSBuildArgs: '"/p:Platform=$(BuildPlatform)" "/p:Configuration=$(BuildConfiguration)" "/BinaryLogger:$(Build.SourcesDirectory)\$(ArtifactsDirectoryName)\msbuild.binlog"'
   
@@ -35,6 +36,11 @@ jobs:
     vmImage: windows-latest
   steps:
   - task: UseDotNet@2
+    displayName: 'Install .NET Core $(DotNet3Version)'
+    inputs:
+      version: '$(DotNet3Version)'
+
+  - task: UseDotNet@2
     displayName: 'Install .NET $(DotNet5Version)'
     inputs:
       version: '$(DotNet5Version)'
@@ -45,6 +51,13 @@ jobs:
       command: 'build'
       projects: 'MSBuildProjectCreator.sln'
       arguments: '$(MSBuildArgs)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run Unit Tests (.NET Core 3.1)'
+    inputs:
+      command: 'test'
+      arguments: '--no-restore --no-build --framework netcoreapp3.1 "/restore:false"'
+      testRunTitle: 'Windows .NET 3.1'
 
   - task: DotNetCoreCLI@2
     displayName: 'Run Unit Tests (.NET 5)'
@@ -74,15 +87,27 @@ jobs:
     vmImage: ubuntu-latest
   steps:
   - task: UseDotNet@2
-    displayName: 'Install .NET Core $(DotNet5Version)'
+    displayName: 'Install .NET Core $(DotNet3Version)'
+    inputs:
+      version: '$(DotNet3Version)'
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET $(DotNet5Version)'
     inputs:
       version: '$(DotNet5Version)'
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
+    displayName: 'Build Solution'
     inputs:
       command: 'build'
       arguments: '$(MSBuildArgs)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run Unit Tests (.NET Core 3.1)'
+    inputs:
+      command: 'test'
+      arguments: '--no-restore --no-build --framework netcoreapp3.1 "/restore:false"'
+      testRunTitle: 'Linux .NET Core 3.1'
 
   - task: DotNetCoreCLI@2
     displayName: 'Run Unit Tests (.NET 5)'
@@ -104,15 +129,27 @@ jobs:
     vmImage: macOS-latest
   steps:
   - task: UseDotNet@2
-    displayName: 'Install .NET Core $(DotNet5Version)'
+    displayName: 'Install .NET Core $(DotNet3Version)'
+    inputs:
+      version: '$(DotNet3Version)'
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET $(DotNet5Version)'
     inputs:
       version: '$(DotNet5Version)'
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
+    displayName: 'Build Solution'
     inputs:
       command: 'build'
       arguments: '$(MSBuildArgs)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run Unit Tests (.NET Core 3.1)'
+    inputs:
+      command: 'test'
+      arguments: '--no-restore --no-build --framework netcoreapp3.1 "/restore:false"'
+      testRunTitle: 'MacOS .NET Core 3.1'
 
   - task: DotNetCoreCLI@2
     displayName: 'Run Unit Tests (.NET 5)'

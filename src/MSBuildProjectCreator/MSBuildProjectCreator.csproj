@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation</RootNamespace>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -9,7 +9,6 @@
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
   </PropertyGroup>
-  
   <PropertyGroup Label="Package properties">
     <IncludeSymbols>true</IncludeSymbols>
     <PackageId>MSBuild.ProjectCreation</PackageId>
@@ -21,30 +20,21 @@
     <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
     <PackageTags>MSBuild project creator generator</PackageTags>
   </PropertyGroup>
-
-  <ItemDefinitionGroup>
-    <PackageReference>
-      <ExcludeAssets>Runtime</ExcludeAssets>
-    </PackageReference>
-  </ItemDefinitionGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Condition="'$(TargetFramework)' == 'net472'" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
     <PackageReference Include="NuGet.Frameworks" />
     <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="NuGet.ProjectModel" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <None Include="build\MSBuild.ProjectCreation.props" Pack="true" PackagePath="build\" />
   </ItemGroup>
