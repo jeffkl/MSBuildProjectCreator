@@ -38,18 +38,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private static readonly AssemblyLoadContext LoadContext = new AssemblyLoadContext(nameof(MSBuildAssemblyResolver));
 #endif
 
+        private static readonly Lazy<string> DotNetSdksPathLazy = new Lazy<string>(
+        () =>
+        {
+#if NETFRAMEWORK
+            return null;
+#else
+            return GetDotNetBasePath();
+#endif
+        });
+
         private static readonly Lazy<string[]> MSBuildDirectoryLazy = new Lazy<string[]>(
             () =>
             {
 #if !NETFRAMEWORK
-                string basePath = GetDotNetBasePath();
-
-                if (!string.IsNullOrWhiteSpace(basePath))
+                if (!string.IsNullOrWhiteSpace(DotNetSdksPath))
                 {
                     return new[]
                     {
-                        basePath,
-                        Path.Combine(basePath, "Roslyn", "bincore"),
+                        DotNetSdksPath,
+                        Path.Combine(DotNetSdksPathLazy.Value, "Roslyn", "bincore"),
                     };
                 }
 #else
@@ -97,6 +105,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 #if NETFRAMEWORK
         private static readonly char[] PathSplitChars = { Path.PathSeparator };
 #endif
+
+        /// <summary>
+        /// Gets the path to the .NET SDKs.
+        /// </summary>
+        public static string DotNetSdksPath => DotNetSdksPathLazy.Value;
 
         /// <summary>
         /// Gets the full path to the MSBuild directory used.

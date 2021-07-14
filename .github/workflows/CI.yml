@@ -39,7 +39,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DotNet5Version }}
 
-    - name: Build
+    - name: Build Solution
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
       
     - name: Run Unit Tests (.NET Core 3.1)
@@ -86,7 +86,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DotNet5Version }}
     
-    - name: Build
+    - name: Build Solution
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
       
     - name: Run Unit Tests (.NET Core 3.1)
@@ -130,7 +130,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DotNet5Version }}
     
-    - name: Build
+    - name: Build Solution
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
 
     - name: Run Unit Tests (.NET Core 3.1)

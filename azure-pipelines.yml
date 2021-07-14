@@ -97,7 +97,7 @@ jobs:
       version: '$(DotNet5Version)'
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
+    displayName: 'Build Solution'
     inputs:
       command: 'build'
       arguments: '$(MSBuildArgs)'
@@ -139,7 +139,7 @@ jobs:
       version: '$(DotNet5Version)'
 
   - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
+    displayName: 'Build Solution'
     inputs:
       command: 'build'
       arguments: '$(MSBuildArgs)'
