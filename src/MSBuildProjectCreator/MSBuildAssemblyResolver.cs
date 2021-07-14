@@ -197,25 +197,33 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             process.WaitForExit();
 
+            // Gets the highest version SDK that is the same major version as the runtime
+            // You cannot always evaluate MSBuild projects using a different version of MSBuild than your runtime.  This is because
+            // if you're running as .NET 5.0, the .NET 6.0 MSBuild has dependencies that your app doesn't supply.
+            // This means that if your app is .NET Core 3.1, you can only use MSBuild from the .NET Core 3.1 SDK
             DirectoryInfo GetFirstMatchingSdk(string output)
             {
-                var match = DotNetListSdksRegex.Match(output);
+                Match match = DotNetListSdksRegex.Match(output);
+
+                DirectoryInfo directoryInfo = null;
+
+                Version highestVersion = null;
 
                 while (match.Success)
                 {
                     string versionString = match.Groups["Version"].Value.Trim();
 
-                    if (Version.TryParse(versionString, out Version version) && Environment.Version.Major == version.Major)
+                    if (Version.TryParse(versionString, out Version version) && Environment.Version.Major == version.Major && (highestVersion == null || version > highestVersion))
                     {
-                        DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(match.Groups["Directory"].Value.Trim(), match.Groups["Name"].Value.Trim()));
+                        highestVersion = version;
 
-                        return directoryInfo;
+                        directoryInfo = new DirectoryInfo(Path.Combine(match.Groups["Directory"].Value.Trim(), match.Groups["Name"].Value.Trim()));
                     }
 
                     match = match.NextMatch();
                 }
 
-                return null;
+                return directoryInfo;
             }
 
             DirectoryInfo basePath = GetFirstMatchingSdk(process.StandardOutput.ReadToEnd());
