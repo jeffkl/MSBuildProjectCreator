@@ -5,15 +5,36 @@
 using Microsoft.Build.Evaluation;
 using Shouldly;
 using System;
+using System.Collections;
+using System.Linq;
+using System.Reflection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public class SdkCsprojTests : TestBase
     {
+        private readonly ITestOutputHelper _testOutput;
+
+        public SdkCsprojTests(ITestOutputHelper testOutput)
+        {
+            _testOutput = testOutput;
+        }
+
         [Fact]
         public void CanBuild()
         {
+            foreach (DictionaryEntry dictionaryEntry in Environment.GetEnvironmentVariables().Cast<DictionaryEntry>().OrderBy(i => (string)i.Key))
+            {
+                _testOutput.WriteLine($"{dictionaryEntry.Key}={dictionaryEntry.Value}");
+            }
+
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic).OrderBy(i => i.FullName))
+            {
+                _testOutput.WriteLine($"{assembly.FullName} / {assembly.Location}");
+            }
+
             const string targetFramework = "net472";
 
             ProjectCreator.Templates.SdkCsproj(
