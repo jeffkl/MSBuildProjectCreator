@@ -12,15 +12,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         protected TestBase()
         {
             TestRootPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName;
-
-            File.WriteAllText(
-                Path.Combine(TestRootPath, "global.json"),
-                @"{
-   ""sdk"": {
-    ""version"": ""5.0.100"",
-    ""rollForward"": ""latestMinor""
-  }
-}");
         }
 
         public string TestRootPath { get; }

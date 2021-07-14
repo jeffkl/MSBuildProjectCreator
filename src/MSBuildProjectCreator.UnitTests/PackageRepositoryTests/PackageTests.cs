@@ -19,6 +19,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         [Fact]
         public void BuildCanConsumePackage()
         {
+            const string targetFramework =
+#if NETCOREAPP3_1
+                "netcoreapp3.1";
+#elif NETFRAMEWORK
+                "net472";
+#else
+                "net5.0";
+#endif
             using (PackageRepository.Create(TestRootPath)
                 .Package("PackageB", "1.0", out PackageIdentity packageB)
                     .Library("netstandard2.0")
@@ -27,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     .Library("netstandard2.0"))
             {
                 ProjectCreator.Templates.SdkCsproj(
-                        targetFramework: "net5.0")
+                        targetFramework: targetFramework)
                     .ItemPackageReference(packageA)
                     .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
                     .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);

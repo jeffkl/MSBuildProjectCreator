@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;netcoreapp3.1;net5.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <AssemblyName>Microsoft.Build.Utilities.ProjectCreation.UnitTests</AssemblyName>
     <RootNamespace>Microsoft.Build.Utilities.ProjectCreation.UnitTests</RootNamespace>

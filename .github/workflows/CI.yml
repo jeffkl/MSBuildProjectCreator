@@ -14,6 +14,7 @@ env:
   ArtifactsDirectoryName: 'artifacts'
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
+  DotNet3Version: '3.x'
   DotNet5Version: '5.x'
 
 jobs:
@@ -28,13 +29,21 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core
+    - name: Install .NET Core ${{ env.DotNet3Version }}
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DotNet3Version }}
+
+    - name: Install .NET ${{ env.DotNet5Version }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DotNet5Version }}
 
     - name: Build
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
+      
+    - name: Run Unit Tests (.NET Core 3.1)
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /restore:false
       
     - name: Run Unit Tests (.NET 5)
       run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
@@ -67,7 +76,12 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core
+    - name: Install .NET Core ${{ env.DotNet3Version }}
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DotNet3Version }}
+
+    - name: Install .NET ${{ env.DotNet5Version }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DotNet5Version }}
@@ -75,6 +89,9 @@ jobs:
     - name: Build
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
       
+    - name: Run Unit Tests (.NET Core 3.1)
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /restore:false
+
     - name: Run Unit Tests (.NET 5)
       run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
 
@@ -103,14 +120,22 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core
+    - name: Install .NET Core ${{ env.DotNet3Version }}
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DotNet3Version }}
+
+    - name: Install .NET ${{ env.DotNet5Version }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DotNet5Version }}
     
     - name: Build
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
-      
+
+    - name: Run Unit Tests (.NET Core 3.1)
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /restore:false
+
     - name: Run Unit Tests (.NET 5)
       run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
 
