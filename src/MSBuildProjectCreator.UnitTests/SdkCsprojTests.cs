@@ -15,30 +15,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public class SdkCsprojTests : TestBase
     {
-        private readonly ITestOutputHelper _testOutput;
-
-        public SdkCsprojTests(ITestOutputHelper testOutput)
-        {
-            _testOutput = testOutput;
-        }
-
         [Fact]
         public void CanBuild()
         {
-            foreach (DictionaryEntry dictionaryEntry in Environment.GetEnvironmentVariables().Cast<DictionaryEntry>().OrderBy(i => (string)i.Key))
-            {
-                _testOutput.WriteLine($"{dictionaryEntry.Key}={dictionaryEntry.Value}");
-            }
-
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic).OrderBy(i => i.FullName))
-            {
-                _testOutput.WriteLine($"{assembly.FullName} / {assembly.Location}");
-            }
-
-            const string targetFramework = "net472";
-
             ProjectCreator.Templates.SdkCsproj(
-                    targetFramework: targetFramework,
+                    targetFramework: TargetFramework,
                     path: GetTempFileName(".csproj"))
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);

@@ -14,6 +14,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             TestRootPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName;
         }
 
+        public string TargetFramework
+        {
+            get =>
+#if NETCOREAPP3_1
+            "netcoreapp3.1";
+#elif NET5_0
+            "net5.0";
+#else
+            "net472";
+#endif
+        }
+
         public string TestRootPath { get; }
 
         public void Dispose()
