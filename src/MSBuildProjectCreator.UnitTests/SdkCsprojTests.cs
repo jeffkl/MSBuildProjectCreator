@@ -2,14 +2,8 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Evaluation;
 using Shouldly;
-using System;
-using System.Collections;
-using System.Linq;
-using System.Reflection;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
@@ -58,7 +52,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
-        public void TargetFrameworks()
+        public void TargetFrameworksWithMultipleValues()
         {
             ProjectCreator.Templates.SdkCsproj(
                     targetFrameworks: new[]
@@ -73,6 +67,36 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   <PropertyGroup>
     <TargetFrameworks>86A865B7391B4AFBA7466B3882CB21BD;475340B7B92C4E35A9503B747996F5F6;9266B04DA648433F9BB76BBF42474545</TargetFrameworks>
   </PropertyGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void TargetFrameworksWithSingleValue()
+        {
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFrameworks: new[]
+                    {
+                        "8A683D24C9CE489C804C79897BC1A44C",
+                    })
+                .Xml
+                .ShouldBe(
+                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
+  <PropertyGroup>
+    <TargetFramework>8A683D24C9CE489C804C79897BC1A44C</TargetFramework>
+  </PropertyGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void TargetFrameworksNullDoesNothing()
+        {
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFrameworks: null)
+                .Xml
+                .ShouldBe(
+                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }

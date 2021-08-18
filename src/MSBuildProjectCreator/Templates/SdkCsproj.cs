@@ -5,6 +5,7 @@
 using Microsoft.Build.Evaluation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Build.Utilities.ProjectCreation
@@ -81,6 +82,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None,
             IDictionary<string, string> globalProperties = null)
         {
+            ICollection<string> targetFrameworkList = targetFrameworks?.ToList();
+
             return SdkCsproj(
                     path: path,
                     sdk: sdk,
@@ -92,7 +95,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     projectCollection: projectCollection,
                     projectFileOptions: projectFileOptions,
                     globalProperties: globalProperties)
-                .Property("TargetFrameworks", targetFrameworks == null ? null : string.Join(";", targetFrameworks))
+                .Property("TargetFramework", targetFrameworkList != null && targetFrameworkList.Count == 1 ? targetFrameworkList.First() : null)
+                .Property("TargetFrameworks", targetFrameworkList != null && targetFrameworkList.Count > 1 ? string.Join(";", targetFrameworkList) : null)
                 .CustomAction(projectCreator);
         }
     }
