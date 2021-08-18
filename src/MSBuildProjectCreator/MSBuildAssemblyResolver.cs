@@ -3,7 +3,7 @@
 // Licensed under the MIT license.
 
 using System;
-
+using System.Collections.Concurrent;
 #if !NETFRAMEWORK
 using System.Diagnostics;
 #endif
@@ -29,6 +29,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     public static class MSBuildAssemblyResolver
     {
         private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
+
+        private static readonly ConcurrentDictionary<string, Lazy<Assembly>> LoadedAssemblies = new ConcurrentDictionary<string, Lazy<Assembly>>(StringComparer.OrdinalIgnoreCase);
 
 #if !NETFRAMEWORK
         private static readonly Regex DotNetListSdksRegex = new Regex("^(?<Name>(?<Version>\\d+\\.\\d+\\.\\d{3,4})(?<Tag>[-\\.\\w]*)) \\[(?<Directory>.*)\\]\\r?$", RegexOptions.Multiline);
@@ -133,29 +135,43 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             foreach (FileInfo candidateAssemblyFile in SearchPaths.SelectMany(searchPath => AssemblyExtensions.Select(extension => new FileInfo(Path.Combine(searchPath, $"{requestedAssemblyName.Name}{extension}")))))
             {
-                if (!candidateAssemblyFile.Exists)
-                {
-                    continue;
-                }
+                Lazy<Assembly> assemblyLazy = LoadedAssemblies.GetOrAdd(
+                    candidateAssemblyFile.FullName,
+                    _ =>
+                    {
+                        return new Lazy<Assembly>(() =>
+                        {
+                            if (!candidateAssemblyFile.Exists)
+                            {
+                                return null;
+                            }
 
-                AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
+                            AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
 
-                if (requestedAssemblyName.ProcessorArchitecture != ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
-                {
-                    // The requested assembly has a processor architecture and the candidate assembly has a different value
-                    continue;
-                }
+                            if (requestedAssemblyName.ProcessorArchitecture != ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
+                            {
+                                // The requested assembly has a processor architecture and the candidate assembly has a different value
+                                return null;
+                            }
 
-                if (requestedAssemblyName.Flags.HasFlag(AssemblyNameFlags.PublicKey) && !requestedAssemblyName.GetPublicKeyToken() !.SequenceEqual(candidateAssemblyName.GetPublicKeyToken() !))
-                {
-                    // Requested assembly has a public key but it doesn't match the candidate assembly public key
-                    continue;
-                }
+                            if (requestedAssemblyName.Flags.HasFlag(AssemblyNameFlags.PublicKey) && !requestedAssemblyName.GetPublicKeyToken() !.SequenceEqual(candidateAssemblyName.GetPublicKeyToken() !))
+                            {
+                                // Requested assembly has a public key but it doesn't match the candidate assembly public key
+                                return null;
+                            }
+
 #if NET5_0_OR_GREATER
-                return LoadContext.LoadFromAssemblyPath(candidateAssemblyFile.FullName);
+                            return LoadContext.LoadFromAssemblyPath(candidateAssemblyFile.FullName);
 #else
-                return Assembly.LoadFrom(candidateAssemblyFile.FullName);
+                            return Assembly.LoadFrom(candidateAssemblyFile.FullName);
 #endif
+                        });
+                    });
+
+                if (assemblyLazy.Value != null)
+                {
+                    return assemblyLazy.Value;
+                }
             }
 
             return null;
