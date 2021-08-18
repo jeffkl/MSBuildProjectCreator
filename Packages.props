@@ -7,7 +7,7 @@
     <PackageReference Update="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="15.0.36" />
     <PackageReference Update="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" />
     <PackageReference Update="NuGet.Frameworks" Version="5.10.0" />
-    <PackageReference Update="NuGet.Packaging" Version="5.10.0" />
+    <PackageReference Update="NuGet.Packaging" Version="5.11.0" />
     <PackageReference Update="NuGet.ProjectModel" Version="5.10.0" />
     <PackageReference Update="Shouldly" Version="4.0.3" />
     <PackageReference Update="xunit" Version="2.4.1" />
@@ -16,7 +16,7 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <PackageReference Update="Microsoft.Build" Version="16.9.0" />
     <PackageReference Update="NuGet.Frameworks" Version="5.7.1" />
-    <PackageReference Update="NuGet.Packaging" Version="5.7.1" />
+    <PackageReference Update="NuGet.Packaging" Version="5.11.0" />
     <PackageReference Update="NuGet.ProjectModel" Version="5.7.1" />
   </ItemGroup>
   <ItemGroup>
