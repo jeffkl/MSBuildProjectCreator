@@ -22,6 +22,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </remarks>
         public ProjectCreator Property(string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false, string label = null)
         {
+            if (unevaluatedValue == null)
+            {
+                return this;
+            }
+
             return Property(LastPropertyGroup, name, unevaluatedValue, condition, setIfEmpty, label);
         }
 
