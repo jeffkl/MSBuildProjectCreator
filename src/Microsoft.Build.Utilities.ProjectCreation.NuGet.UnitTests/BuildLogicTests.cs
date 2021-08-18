@@ -2,13 +2,13 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
+using Microsoft.Build.Utilities.ProjectCreation.UnitTests;
 using Shouldly;
 using System;
 using System.IO;
 using Xunit;
 
-namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests
 {
     public class BuildLogicTests : TestBase
     {

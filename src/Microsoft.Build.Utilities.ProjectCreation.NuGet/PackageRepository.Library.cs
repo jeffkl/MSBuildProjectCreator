@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -12,7 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.Build.Utilities.ProjectCreation
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet
 {
     public partial class PackageRepository
     {

@@ -163,7 +163,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 #if NET5_0_OR_GREATER
                             return LoadContext.LoadFromAssemblyPath(candidateAssemblyFile.FullName);
 #else
-                            return Assembly.LoadFrom(candidateAssemblyFile.FullName);
+                            return Assembly.LoadFile(candidateAssemblyFile.FullName);
 #endif
                         });
                     });

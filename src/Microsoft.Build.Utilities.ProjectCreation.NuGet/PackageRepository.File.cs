@@ -2,26 +2,14 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using System;
 using System.Globalization;
 using System.IO;
 
-namespace Microsoft.Build.Utilities.ProjectCreation
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet
 {
     public partial class PackageRepository
     {
-        /// <summary>
-        /// Adds a text file to the package.
-        /// </summary>
-        /// <param name="relativePath">The relative path of the text file within the package.</param>
-        /// <param name="contents">The contents of the text file.</param>
-        /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository FileText(string relativePath, string contents)
-        {
-            return File(relativePath, file => System.IO.File.WriteAllText(file.FullName, contents));
-        }
-
         /// <summary>
         /// Adds a custom file to the package.
         /// </summary>
@@ -57,6 +45,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             sourceFileInfo.CopyTo(destinationFileInfo.FullName);
 
             return this;
+        }
+
+        /// <summary>
+        /// Adds a text file to the package.
+        /// </summary>
+        /// <param name="relativePath">The relative path of the text file within the package.</param>
+        /// <param name="contents">The contents of the text file.</param>
+        /// <returns>The current <see cref="PackageRepository" />.</returns>
+        public PackageRepository FileText(string relativePath, string contents)
+        {
+            return File(relativePath, file => System.IO.File.WriteAllText(file.FullName, contents));
         }
 
         private PackageRepository File(string relativePath, Action<FileInfo> writeAction)

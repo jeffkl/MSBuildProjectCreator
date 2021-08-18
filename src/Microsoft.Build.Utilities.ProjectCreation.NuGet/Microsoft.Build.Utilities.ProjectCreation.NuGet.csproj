@@ -9,32 +9,31 @@
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <IncludeSymbols>true</IncludeSymbols>
-    <PackageId>MSBuild.ProjectCreation</PackageId>
-    <Description>A fluent interface for generation MSBuild project files.</Description>
+    <PackageId>MSBuild.ProjectCreation.NuGet</PackageId>
+    <Description>A fluent interface for generation NuGet package repositories.</Description>
     <Authors>jeffkl</Authors>
     <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
-    <PackageTags>MSBuild project creator generator</PackageTags>
+    <PackageTags>MSBuild project creator generator nuget</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-    <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Condition="'$(TargetFramework)' == 'net472'" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
+    <PackageReference Include="NuGet.Frameworks" />
+    <PackageReference Include="NuGet.Packaging" />
+    <PackageReference Include="NuGet.ProjectModel" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Strings.resx">
+    <ProjectReference Include="..\Microsoft.Build.Utilities.ProjectCreation\Microsoft.Build.Utilities.ProjectCreation.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="build\MSBuild.ProjectCreation.props" Pack="true" PackagePath="build\;buildTransitive" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Resources\Strings.Designer.cs">
+    <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>

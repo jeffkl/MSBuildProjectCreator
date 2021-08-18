@@ -36,6 +36,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\CI.yml = .github\workflows\CI.yml
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Build.Utilities.ProjectCreation.NuGet", "src\Microsoft.Build.Utilities.ProjectCreation.NuGet\Microsoft.Build.Utilities.ProjectCreation.NuGet.csproj", "{18BA32DA-FDA6-47C9-9A11-73E18D1B7911}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests", "src\Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests\Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests.csproj", "{59D2095A-F034-4B75-BC36-E509DC21C388}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,14 @@ Global
 		{772A0EE5-6B57-4736-B387-A6E50B75DE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{772A0EE5-6B57-4736-B387-A6E50B75DE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{772A0EE5-6B57-4736-B387-A6E50B75DE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18BA32DA-FDA6-47C9-9A11-73E18D1B7911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18BA32DA-FDA6-47C9-9A11-73E18D1B7911}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18BA32DA-FDA6-47C9-9A11-73E18D1B7911}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18BA32DA-FDA6-47C9-9A11-73E18D1B7911}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D2095A-F034-4B75-BC36-E509DC21C388}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D2095A-F034-4B75-BC36-E509DC21C388}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59D2095A-F034-4B75-BC36-E509DC21C388}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59D2095A-F034-4B75-BC36-E509DC21C388}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

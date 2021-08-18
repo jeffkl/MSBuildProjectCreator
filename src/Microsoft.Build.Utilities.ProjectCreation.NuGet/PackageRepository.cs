@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.Build.Utilities.ProjectCreation
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet
 {
     /// <summary>
     /// Represents a NuGet package repository.

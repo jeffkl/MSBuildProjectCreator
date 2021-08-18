@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Utilities.ProjectCreation.UnitTests;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -12,7 +13,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests
 {
     public class DependencyTests : TestBase
     {

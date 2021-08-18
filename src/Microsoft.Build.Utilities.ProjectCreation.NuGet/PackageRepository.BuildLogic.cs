@@ -3,11 +3,10 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using System;
 using System.IO;
 
-namespace Microsoft.Build.Utilities.ProjectCreation
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet
 {
     public partial class PackageRepository
     {

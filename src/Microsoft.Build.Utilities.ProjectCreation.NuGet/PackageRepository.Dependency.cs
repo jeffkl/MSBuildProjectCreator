@@ -11,7 +11,7 @@ using NuGet.Versioning;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.Build.Utilities.ProjectCreation
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet
 {
     public partial class PackageRepository
     {

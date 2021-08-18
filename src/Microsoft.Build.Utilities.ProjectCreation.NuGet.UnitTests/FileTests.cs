@@ -2,12 +2,13 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Utilities.ProjectCreation.UnitTests;
 using NuGet.Packaging.Core;
 using Shouldly;
 using System.IO;
 using Xunit;
 
-namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests
 {
     public class FileTests : TestBase
     {

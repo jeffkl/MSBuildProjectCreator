@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Utilities.ProjectCreation.UnitTests;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -12,30 +13,10 @@ using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
-namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
+namespace Microsoft.Build.Utilities.ProjectCreation.NuGet.UnitTests
 {
     public class PackageTests : TestBase
     {
-        [Fact]
-        public void BuildCanConsumePackage()
-        {
-            using (PackageRepository.Create(TestRootPath)
-                .Package("PackageB", "1.0", out PackageIdentity packageB)
-                    .Library("netstandard2.0")
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                    .Dependency(packageB, "netstandard2.0")
-                    .Library("netstandard2.0"))
-            {
-                ProjectCreator.Templates.SdkCsproj(
-                        targetFramework: TargetFramework)
-                    .ItemPackageReference(packageA)
-                    .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
-                    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
-
-                result.ShouldBeTrue(buildOutput.GetConsoleLog());
-            }
-        }
-
         [Fact]
         public void BasicPackage()
         {
@@ -59,6 +40,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     manifest.Metadata.Id.ShouldBe("PackageD");
                     manifest.Metadata.RequireLicenseAcceptance.ShouldBeFalse();
                 }
+            }
+        }
+
+        [Fact]
+        public void BuildCanConsumePackage()
+        {
+            using (PackageRepository.Create(TestRootPath)
+                .Package("PackageB", "1.0", out PackageIdentity packageB)
+                    .Library("netstandard2.0")
+                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
+                    .Dependency(packageB, "netstandard2.0")
+                    .Library("netstandard2.0"))
+            {
+                ProjectCreator.Templates.SdkCsproj(
+                        targetFramework: TargetFramework)
+                    .ItemPackageReference(packageA)
+                    .Save(Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"))
+                    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+
+                result.ShouldBeTrue(buildOutput.GetConsoleLog());
             }
         }
 
