@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29011.400
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSBuildProjectCreator", "src\MSBuildProjectCreator\MSBuildProjectCreator.csproj", "{0CCB62BE-922F-480F-B8EA-823CB8A9CBDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Build.Utilities.ProjectCreation", "src\Microsoft.Build.Utilities.ProjectCreation\Microsoft.Build.Utilities.ProjectCreation.csproj", "{0CCB62BE-922F-480F-B8EA-823CB8A9CBDC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MSBuildProjectCreator.UnitTests", "src\MSBuildProjectCreator.UnitTests\MSBuildProjectCreator.UnitTests.csproj", "{772A0EE5-6B57-4736-B387-A6E50B75DE5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Build.Utilities.ProjectCreation.UnitTests", "src\Microsoft.Build.Utilities.ProjectCreation.UnitTests\Microsoft.Build.Utilities.ProjectCreation.UnitTests.csproj", "{772A0EE5-6B57-4736-B387-A6E50B75DE5F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8339FD67-CFE5-4951-B9DD-F7E6EAB77ADC}"
 	ProjectSection(SolutionItems) = preProject
