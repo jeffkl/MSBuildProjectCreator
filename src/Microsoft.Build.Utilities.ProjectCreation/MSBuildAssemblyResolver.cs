@@ -160,7 +160,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                                 return null;
                             }
 
-#if NET5_0_OR_GREATER
+#if NETCOREAPP || NET5_0_OR_GREATER
                             return LoadContext.LoadFromAssemblyPath(candidateAssemblyFile.FullName);
 #else
                             return Assembly.LoadFile(candidateAssemblyFile.FullName);

@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 
 using Shouldly;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -18,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            result.ShouldBeTrue(string.Join(Environment.NewLine, AppDomain.CurrentDomain.GetAssemblies().Where(i => !i.IsDynamic && !string.IsNullOrEmpty(i.Location)).OrderBy(i => i.FullName).Select(i => $"{i.FullName} / {i.Location}")) + Environment.NewLine + buildOutput.GetConsoleLog());
         }
 
         [Fact]
@@ -47,6 +49,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   <PropertyGroup>
     <TargetFramework>{ProjectCreatorConstants.SdkCsprojDefaultTargetFramework}</TargetFramework>
   </PropertyGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void TargetFrameworksNullDoesNothing()
+        {
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFrameworks: null)
+                .Xml
+                .ShouldBe(
+                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
@@ -85,18 +99,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   <PropertyGroup>
     <TargetFramework>8A683D24C9CE489C804C79897BC1A44C</TargetFramework>
   </PropertyGroup>
-</Project>",
-                    StringCompareShould.IgnoreLineEndings);
-        }
-
-        [Fact]
-        public void TargetFrameworksNullDoesNothing()
-        {
-            ProjectCreator.Templates.SdkCsproj(
-                    targetFrameworks: null)
-                .Xml
-                .ShouldBe(
-                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
