@@ -49,7 +49,6 @@ jobs:
     displayName: 'Build Solution'
     inputs:
       command: 'build'
-      projects: 'MSBuildProjectCreator.sln'
       arguments: '$(MSBuildArgs)'
 
   - task: DotNetCoreCLI@2
