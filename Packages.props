@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MicrosoftBuildPackageVersion>16.11.0</MicrosoftBuildPackageVersion>
     <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">16.9.0</MicrosoftBuildPackageVersion>
-    <NuGetPackageVersion>5.10.0</NuGetPackageVersion>
+    <NuGetPackageVersion>5.11.0</NuGetPackageVersion>
     <NuGetPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">5.7.1</NuGetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
