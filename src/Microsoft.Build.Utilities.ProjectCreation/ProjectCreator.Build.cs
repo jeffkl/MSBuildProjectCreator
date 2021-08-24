@@ -476,24 +476,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             buildOutput = BuildOutput.Create();
 
-            lock (BuildManager.DefaultBuildManager)
-            {
-                BuildParameters buildParameters = new BuildParameters
-                {
-                    Loggers = new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
-                };
-
-                BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
-
-                try
-                {
-                    Restore(globalProperties, out result, out targetOutputs);
-                }
-                finally
-                {
-                    BuildManager.DefaultBuildManager.EndBuild();
-                }
-            }
+            Restore(globalProperties, buildOutput, out result, out targetOutputs);
 
             return this;
         }
@@ -507,78 +490,51 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private void Build(bool restore, string[] targets, IDictionary<string, string> globalProperties, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
+            Save();
+
             targetOutputs = null;
 
-            lock (BuildManager.DefaultBuildManager)
+            if (restore)
             {
-                BuildParameters buildParameters = new BuildParameters
-                {
-                    Loggers = new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
-                };
+                Restore(globalProperties, buildOutput, out result, out targetOutputs);
 
-                if (globalProperties != null)
+                if (!result)
                 {
-                    buildParameters.GlobalProperties = globalProperties;
+                    return;
                 }
+            }
 
-                BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
-                try
+            ProjectInstance projectInstance;
+
+            if (globalProperties != null)
+            {
+                TryGetProject(out Project project, globalProperties);
+
+                projectInstance = project.CreateProjectInstance();
+            }
+            else
+            {
+                projectInstance = ProjectInstance;
+            }
+
+            BuildResult buildResult = BuildManagerHost.Build(projectInstance, targets ?? projectInstance.DefaultTargets.ToArray(), globalProperties, new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())), BuildRequestDataFlags.ReplaceExistingProjectInstance);
+
+            result = buildResult.OverallResult == BuildResultCode.Success;
+
+            if (targetOutputs != null)
+            {
+                foreach (KeyValuePair<string, TargetResult> targetResult in buildResult.ResultsByTarget)
                 {
-                    if (restore)
-                    {
-                        Restore(out result, out targetOutputs);
-
-                        if (!result)
-                        {
-                            return;
-                        }
-                    }
-
-                    ProjectInstance projectInstance;
-
-                    if (globalProperties != null)
-                    {
-                        TryGetProject(out Project project, globalProperties);
-
-                        projectInstance = project.CreateProjectInstance();
-                    }
-                    else
-                    {
-                        projectInstance = ProjectInstance;
-                    }
-
-                    BuildRequestData buildRequestData = new BuildRequestData(
-                        projectInstance,
-                        targetsToBuild: targets ?? projectInstance.DefaultTargets.ToArray(),
-                        hostServices: null,
-                        flags: BuildRequestDataFlags.ReplaceExistingProjectInstance);
-
-                    BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
-
-                    BuildResult buildResult = buildSubmission.Execute();
-
-                    result = buildResult.OverallResult == BuildResultCode.Success;
-
-                    if (targetOutputs != null)
-                    {
-                        foreach (KeyValuePair<string, TargetResult> targetResult in buildResult.ResultsByTarget)
-                        {
-                            targetOutputs[targetResult.Key] = targetResult.Value;
-                        }
-                    }
-                    else
-                    {
-                        targetOutputs = buildResult.ResultsByTarget;
-                    }
+                    targetOutputs[targetResult.Key] = targetResult.Value;
                 }
-                finally
-                {
-                    BuildManager.DefaultBuildManager.EndBuild();
-                }
+            }
+            else
+            {
+                targetOutputs = buildResult.ResultsByTarget;
             }
         }
 
-        private void Restore(IDictionary<string, string> globalProperties, out bool result, out IDictionary<string, TargetResult> targetOutputs)
+        private void Restore(IDictionary<string, string> globalProperties, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
             Save();
 
@@ -587,17 +543,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             globalProperties["ExcludeRestorePackageImports"] = "true";
             globalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
 
-            BuildRequestData buildRequestData = new BuildRequestData(
-                FullPath,
-                globalProperties,
-                ProjectCollection.DefaultToolsVersion,
-                targetsToBuild: new[] { "Restore" },
-                hostServices: null,
-                flags: BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
-
-            BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
-
-            BuildResult buildResult = buildSubmission.Execute();
+            BuildResult buildResult = BuildManagerHost.Build(FullPath, new[] { "Restore" }, globalProperties, new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())), BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
 
             Project.MarkDirty();
 
@@ -612,7 +558,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private void Restore(out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
-            Restore(null, out result, out targetOutputs);
+            Restore(null, null, out result, out targetOutputs);
         }
     }
 }

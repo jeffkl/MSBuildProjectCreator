@@ -7,7 +7,9 @@ variables:
   BuildPlatform: 'Any CPU'
   DotNet3Version: '3.x'
   DotNet5Version: '5.x'
-  MSBuildArgs: '"/p:Platform=$(BuildPlatform)" "/p:Configuration=$(BuildConfiguration)" "/BinaryLogger:$(Build.SourcesDirectory)\$(ArtifactsDirectoryName)\msbuild.binlog"'
+  MSBuildArgs: '"/p:Platform=$(BuildPlatform)" "/p:Configuration=$(BuildConfiguration)" "/BinaryLogger:$(Build.SourcesDirectory)/$(ArtifactsDirectoryName)/msbuild.binlog"'
+  MSBUILDDEBUGCOMM: '1'
+  MSBUILDDEBUGPATH: '$(Build.SourcesDirectory)/$(ArtifactsDirectoryName)'
   
 
 trigger:

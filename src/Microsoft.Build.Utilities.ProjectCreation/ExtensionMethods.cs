@@ -22,6 +22,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public static IEnumerable<T> AsEnumerable<T>(this T item)
             where T : class
         {
+            if (item == null)
+            {
+                return Enumerable.Empty<T>();
+            }
+
             // Return the item in an array for now unless we can find a cheaper way to do this (ie custom Enumerator?)
             return new[]
             {

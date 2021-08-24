@@ -50,17 +50,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 #endif
         });
 
-        private static readonly Lazy<string[]> MSBuildDirectoryLazy = new Lazy<string[]>(
+        private static readonly Lazy<(string[] SearchPaths, string MSBuildExePath)> MSBuildDirectoryLazy = new Lazy<(string[], string)>(
             () =>
             {
 #if !NETFRAMEWORK
                 if (!string.IsNullOrWhiteSpace(DotNetSdksPath))
                 {
-                    return new[]
-                    {
-                        DotNetSdksPath,
-                        Path.Combine(DotNetSdksPathLazy.Value, "Roslyn", "bincore"),
-                    };
+                    return (
+                        new[]
+                        {
+                            DotNetSdksPath,
+                            Path.Combine(DotNetSdksPathLazy.Value, "Roslyn", "bincore"),
+                        },
+                        Path.Combine(DotNetSdksPath, "MSBuild.dll"));
                 }
 #else
                 string msbuildBinPath = null;
@@ -93,15 +95,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 if (!string.IsNullOrWhiteSpace(msbuildBinPath))
                 {
-                    return new[]
-                    {
-                        Path.GetFullPath(msbuildBinPath),
-                        Path.Combine(msbuildBinPath, "Roslyn"),
-                        Path.GetFullPath(Path.Combine(msbuildBinPath, @"..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet")),
-                    };
+                    return (
+                        new[]
+                        {
+                            Path.GetFullPath(msbuildBinPath),
+                            Path.Combine(msbuildBinPath, "Roslyn"),
+                            Path.GetFullPath(Path.Combine(msbuildBinPath, @"..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet")),
+                        },
+                        Environment.Is64BitProcess ? Path.Combine(msbuildBinPath, "amd64", "MSBuild.exe") : Path.Combine(msbuildBinPath, "MSBuild.exe"));
                 }
 #endif
-                return null;
+                return (null, null);
             });
 
 #if NETFRAMEWORK
@@ -116,7 +120,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the full path to the MSBuild directory used.
         /// </summary>
-        public static string[] SearchPaths => MSBuildDirectoryLazy.Value;
+        public static string[] SearchPaths => MSBuildDirectoryLazy.Value.SearchPaths;
+
+        /// <summary>
+        /// Gets the full path to the MSBuild executable used.
+        /// </summary>
+        public static string MSBuildExePath => MSBuildDirectoryLazy.Value.MSBuildExePath;
 
         /// <summary>
         /// A <see cref="ResolveEventHandler"/> for MSBuild related assemblies.
@@ -148,7 +157,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                             AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
 
-                            if (requestedAssemblyName.ProcessorArchitecture != ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
+                            if (requestedAssemblyName.ProcessorArchitecture != System.Reflection.ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
                             {
                                 // The requested assembly has a processor architecture and the candidate assembly has a different value
                                 return null;
