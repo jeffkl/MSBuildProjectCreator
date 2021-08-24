@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MicrosoftBuildPackageVersion>16.10.0</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">16.9.0</MicrosoftBuildPackageVersion>
+    <NuGetPackageVersion>5.10.0</NuGetPackageVersion>
+    <NuGetPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">5.7.1</NuGetPackageVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.Build" Version="16.10.0" />
+    <PackageReference Update="Microsoft.Build" Version="$(MicrosoftBuildPackageVersion)" />
+    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildPackageVersion)" />
     <PackageReference Update="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
     <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Update="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="15.0.36" />
     <PackageReference Update="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" />
-    <PackageReference Update="NuGet.Frameworks" Version="5.10.0" />
-    <PackageReference Update="NuGet.Packaging" Version="5.10.0" />
-    <PackageReference Update="NuGet.ProjectModel" Version="5.10.0" />
+    <PackageReference Update="NuGet.Frameworks" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.Packaging" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.ProjectModel" Version="$(NuGetPackageVersion)" />
     <PackageReference Update="Shouldly" Version="4.0.3" />
     <PackageReference Update="xunit" Version="2.4.1" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageReference Update="Microsoft.Build" Version="16.9.0" />
-    <PackageReference Update="NuGet.Frameworks" Version="5.7.1" />
-    <PackageReference Update="NuGet.Packaging" Version="5.7.1" />
-    <PackageReference Update="NuGet.ProjectModel" Version="5.7.1" />
   </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="2.2.0" />

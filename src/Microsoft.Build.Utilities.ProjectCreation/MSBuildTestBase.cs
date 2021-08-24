@@ -14,7 +14,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     {
         static MSBuildTestBase()
         {
-            Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", string.IsNullOrWhiteSpace(MSBuildAssemblyResolver.DotNetSdksPath) ? null : Path.Combine(MSBuildAssemblyResolver.DotNetSdksPath, "MSBuild.dll"));
+            Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", MSBuildAssemblyResolver.MSBuildExePath);
             Environment.SetEnvironmentVariable("MSBuildExtensionsPath", MSBuildAssemblyResolver.DotNetSdksPath);
             Environment.SetEnvironmentVariable("MSBuildSDKsPath", string.IsNullOrWhiteSpace(MSBuildAssemblyResolver.DotNetSdksPath) ? null : Path.Combine(MSBuildAssemblyResolver.DotNetSdksPath, "Sdks"));
 
