@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using System;
 using System.Globalization;
 using System.IO;

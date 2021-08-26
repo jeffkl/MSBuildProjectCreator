@@ -159,10 +159,16 @@ And the resulting project would look like this:
 </Project>
 ```
 
-# Package Repositories
-NuGet and MSBuild are very tightly coupled and a lot of times you need packages available when building projects.
+# Package Repositories and Feeds
+NuGet and MSBuild are very tightly coupled and a lot of times you need packages available when building projects.  This API offers two solutions:
 
-## Example
+1. Package repository - This allows you to create a repository of restored packages as if NuGet has already installed them.
+2. Package feed - This allows you to create a file-based package feed of actual `.nupkg` files.
+
+## Package Repository
+Create a package repository if you want to generate packages as if they've already been installed.  If you want to create actual `.nupkg` packages, see [Package Feed]
+
+### Example
 
 Create a package repository with a package that supports two target frameworks:
 
@@ -191,3 +197,24 @@ using(PackageRepository.Create(rootPath)
 ```
 
 The result would be a project that references the `MyPackage` package and would restore and build accordingly.
+
+## Package Feed
+Create a package feed if you want to generate `.nupkg` packages that can be installed by NuGet.  If you want to create a repository of packages as if they've already been installed, see [Package Repository].
+
+### Example
+
+Create a package feed with a package that supports two target frameworks:
+
+```C#
+PackageFeed.Create(rootPath)
+    .Package("MyPackage", "1.2.3", out Package package)
+        .Library("net472")
+        .Library("netstandard2.0"))
+    .Save();
+
+ProjectCreator projectCreator = ProjectCreator.Create()
+    .ItemPackageReference(package)
+
+```
+
+The resulting package would have a `lib\net472\MyPackage.dll` and `lib\netstandard2.0\MyPackage.dll` class library.  This allows you to restore and build projects that consume the packages

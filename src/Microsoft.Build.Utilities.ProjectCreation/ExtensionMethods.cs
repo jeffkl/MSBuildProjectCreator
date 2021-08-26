@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using NuGet.LibraryModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,52 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 item,
             };
+        }
+
+        /// <summary>
+        /// Enumerates <see cref="LibraryIncludeFlags" /> for exclude.
+        /// </summary>
+        /// <param name="libraryIncludeFlags">The <see cref="LibraryIncludeFlags" /> to enumerate.</param>
+        /// <returns>Nothing if <paramref name="libraryIncludeFlags" /> is <see cref="LibraryIncludeFlags.None" />, <see cref="LibraryIncludeFlags.All" />, or all flags.</returns>
+        public static IEnumerable<LibraryIncludeFlags> EnumerateExcludeFlags(this LibraryIncludeFlags libraryIncludeFlags)
+        {
+            if (libraryIncludeFlags == LibraryIncludeFlags.All)
+            {
+                yield return LibraryIncludeFlags.All;
+            }
+            else if (libraryIncludeFlags != LibraryIncludeFlags.None)
+            {
+                foreach (LibraryIncludeFlags flags in Enum
+                    .GetValues(typeof(LibraryIncludeFlags))
+                    .Cast<LibraryIncludeFlags>()
+                    .Where(i => i != LibraryIncludeFlags.All && i != LibraryIncludeFlags.None && libraryIncludeFlags.HasFlag(i)))
+                {
+                    yield return flags;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enumerates <see cref="LibraryIncludeFlags" /> for include.
+        /// </summary>
+        /// <param name="libraryIncludeFlags">The <see cref="LibraryIncludeFlags" /> to enumerate.</param>
+        /// <returns>Nothing if <paramref name="libraryIncludeFlags" /> is <see cref="LibraryIncludeFlags.All" />, <see cref="LibraryIncludeFlags.None" />, or all flags.</returns>
+        public static IEnumerable<LibraryIncludeFlags> EnumerateIncludeFlags(this LibraryIncludeFlags libraryIncludeFlags)
+        {
+            if (libraryIncludeFlags == LibraryIncludeFlags.None)
+            {
+                yield return LibraryIncludeFlags.None;
+            }
+            else if (libraryIncludeFlags != LibraryIncludeFlags.All)
+            {
+                foreach (LibraryIncludeFlags flags in Enum
+                    .GetValues(typeof(LibraryIncludeFlags))
+                    .Cast<LibraryIncludeFlags>()
+                    .Where(i => i != LibraryIncludeFlags.All && i != LibraryIncludeFlags.None && libraryIncludeFlags.HasFlag(i)))
+                {
+                    yield return flags;
+                }
+            }
         }
 
         /// <summary>

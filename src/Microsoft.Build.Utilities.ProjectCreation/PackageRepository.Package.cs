@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;

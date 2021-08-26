@@ -27,11 +27,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableStyleCopAnalyzers)' != 'false' ">
-    <Compile Include="..\Shared\GlobalSuppressions.cs">
-      <Link>Shared\GlobalSuppressions.cs</Link>
-    </Compile>
-    <AdditionalFiles Include="..\Shared\stylecop.json">
-      <Link>Shared\stylecop.json</Link>
-    </AdditionalFiles>
+    <Compile Include="..\Shared\GlobalSuppressions.cs" />
+    <AdditionalFiles Include="..\Shared\stylecop.json" />
   </ItemGroup>
 </Project>

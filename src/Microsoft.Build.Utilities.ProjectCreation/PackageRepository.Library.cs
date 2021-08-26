@@ -2,15 +2,9 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 using NuGet.Frameworks;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -51,6 +45,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 filename = $"{_packageManifest.Metadata.Id}.dll";
             }
 
+            if (string.IsNullOrWhiteSpace(@namespace))
+            {
+                @namespace = _packageManifest.Metadata.Id;
+            }
+
             if (string.IsNullOrWhiteSpace(className))
             {
                 className = $"{_packageManifest.Metadata.Id}_Class";
@@ -60,59 +59,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return File(
                 Path.Combine("lib", targetFramework.GetShortFolderName(), filename),
-                fileInfo => CreateAssembly(fileInfo, @namespace, className, assemblyVersion, targetFramework.GetDotNetFrameworkName(DefaultFrameworkNameProvider.Instance)));
-        }
-
-        private void CreateAssembly(FileInfo fileInfo, string @namespace, string className, string version, string targetFramework)
-        {
-            if (fileInfo == null)
-            {
-                throw new ArgumentNullException(nameof(fileInfo));
-            }
-
-            if (fileInfo.Directory == null)
-            {
-                throw new ArgumentNullException(nameof(fileInfo.Directory));
-            }
-
-            fileInfo.Directory.Create();
-
-            string name = string.IsNullOrWhiteSpace(@namespace) ? Path.GetFileNameWithoutExtension(fileInfo.Name) : @namespace;
-
-            CreateAssembly(
-                fileInfo,
-                name,
-                $@"
-[assembly: System.Reflection.AssemblyVersionAttribute(""{version}"")]
-[assembly: System.Runtime.Versioning.TargetFramework(""{targetFramework}"")]
-namespace {name}
-{{
-    public class {className}
-    {{
-    }}
-}}",
-                new[]
+                fileInfo =>
                 {
-                    typeof(object).Assembly.Location,
+                    fileInfo.Directory.Create();
+
+                    using (Stream stream = System.IO.File.Create(fileInfo.FullName))
+                    {
+                        AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace, className, assemblyVersion, targetFramework);
+                    }
                 });
-        }
-
-        private void CreateAssembly(FileInfo fileInfo, string name, string code, IEnumerable<string> references, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary)
-        {
-            CSharpCompilation compilation = CSharpCompilation.Create(
-                assemblyName: name,
-                syntaxTrees: new[]
-                {
-                    CSharpSyntaxTree.ParseText(code),
-                },
-                references: references.Select(i => MetadataReference.CreateFromFile(i)),
-                options: new CSharpCompilationOptions(outputKind));
-
-            EmitResult result = compilation.Emit(fileInfo.FullName);
-
-            if (!result.Success)
-            {
-            }
         }
     }
 }
