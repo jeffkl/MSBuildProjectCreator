@@ -150,6 +150,9 @@
   <data name="ErrorUsingTaskParameterRequiresUsingTask" xml:space="preserve">
     <value>You must add a UsingTask before adding a UsingTask parameter.</value>
   </data>
+  <data name="ErrorWhenAddingAnythingBeforePackage" xml:space="preserve">
+    <value>You must add a package to a feed before adding content.</value>
+  </data>
   <data name="ErrorWhenAddingBuildLogicRequiresPackage" xml:space="preserve">
     <value>You must add a package before adding build logic.</value>
   </data>

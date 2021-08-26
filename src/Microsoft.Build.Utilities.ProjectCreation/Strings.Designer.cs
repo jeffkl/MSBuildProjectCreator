@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
+namespace Microsoft.Build.Utilities.ProjectCreation {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Build.Utilities.ProjectCreation.Resources.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Build.Utilities.ProjectCreation.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -156,6 +156,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.Resources {
         internal static string ErrorUsingTaskParameterRequiresUsingTask {
             get {
                 return ResourceManager.GetString("ErrorUsingTaskParameterRequiresUsingTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must add a package to a feed before adding content..
+        /// </summary>
+        internal static string ErrorWhenAddingAnythingBeforePackage {
+            get {
+                return ResourceManager.GetString("ErrorWhenAddingAnythingBeforePackage", resourceCulture);
             }
         }
         

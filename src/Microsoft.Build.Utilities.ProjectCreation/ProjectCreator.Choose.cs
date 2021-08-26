@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Construction;
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using System.Collections.Generic;
 
 namespace Microsoft.Build.Utilities.ProjectCreation

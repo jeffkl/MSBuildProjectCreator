@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using System;
 using System.IO;
 

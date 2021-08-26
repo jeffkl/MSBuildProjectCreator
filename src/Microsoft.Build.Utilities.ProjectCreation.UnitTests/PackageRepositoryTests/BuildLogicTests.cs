@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Utilities.ProjectCreation.Resources;
 using Shouldly;
 using System;
 using System.IO;

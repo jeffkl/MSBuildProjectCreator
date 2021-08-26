@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
 {
-    public class PackageTests : TestBase
+    public class RepositoryTests : TestBase
     {
         [Fact]
         public void BuildCanConsumePackage()
