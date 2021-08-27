@@ -22,6 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="2.2.0" />
+    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" />
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.4.231" Condition=" '$(EnableGitVersioning)' != 'false' " />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" Condition=" '$(EnableStyleCopAnalyzers)' != 'false' " />
   </ItemGroup>

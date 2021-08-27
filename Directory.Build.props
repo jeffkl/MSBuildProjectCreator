@@ -9,5 +9,6 @@
     <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
     <LangVersion>Latest</LangVersion>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 </Project>

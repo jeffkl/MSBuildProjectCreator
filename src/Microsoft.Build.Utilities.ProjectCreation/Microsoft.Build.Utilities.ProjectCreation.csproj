@@ -8,15 +8,19 @@
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
-    <IncludeSymbols>true</IncludeSymbols>
     <PackageId>MSBuild.ProjectCreation</PackageId>
-    <Description>A fluent interface for generation MSBuild project files.</Description>
+    <Description>A fluent interface for generating and building MSBuild project files.</Description>
     <Authors>jeffkl</Authors>
     <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
+    <RepositoryType>Git</RepositoryType>
     <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
     <PackageTags>MSBuild project creator generator</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
