@@ -21,6 +21,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             "netcoreapp3.1";
 #elif NET5_0
             "net5.0";
+#elif NET6_0
+            "net6.0";
 #else
             "net472";
 #endif
