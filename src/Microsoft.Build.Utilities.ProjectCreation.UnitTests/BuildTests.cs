@@ -17,6 +17,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
     public class BuildTests : TestBase
     {
         [Fact]
+        public void BasicBuild()
+        {
+            ProjectCreator
+                .Create(
+                    Path.Combine(TestRootPath, "project1.proj"),
+                    defaultTargets: "Build")
+                .Target("Build")
+                .Target("Restore")
+                .TryBuild("Build", out bool result1)
+                .TryBuild(restore: true, "Build", out bool result2)
+                .TryBuild(restore: true, out bool result3);
+
+            result1.ShouldBeTrue();
+            result2.ShouldBeTrue();
+            result3.ShouldBeTrue();
+        }
+
+        [Fact]
         public void BuildTargetOutputsTest()
         {
             ProjectCreator
@@ -49,7 +67,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Target("Build")
                 .TaskMessage("Value = $(Property1)", MessageImportance.High)
                 .TryBuild("Build", out bool resultWithoutGlobalProperties, out BuildOutput buildOutputWithoutGlobalProperties)
-                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties);
+                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties, out IDictionary<string, TargetResult> targetOutputs);
 
             resultWithoutGlobalProperties.ShouldBeTrue();
 
