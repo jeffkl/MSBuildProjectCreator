@@ -260,7 +260,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(string target, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
-            return TryBuild(restore: false, target, out result, out buildOutput, out targetOutputs);
+            return TryBuild(restore: false, target, globalProperties, out result, out buildOutput, out targetOutputs);
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(bool restore, string target, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
-            return TryBuild(restore, new[] { target }, out result, out buildOutput, out targetOutputs);
+            return TryBuild(restore, new[] { target }, globalProperties, out result, out buildOutput, out targetOutputs);
         }
 
         /// <summary>
@@ -538,7 +538,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             Save();
 
-            globalProperties = globalProperties ?? new Dictionary<string, string>(ProjectCollection.GlobalProperties);
+            globalProperties ??= new Dictionary<string, string>(ProjectCollection.GlobalProperties);
 
             globalProperties["ExcludeRestorePackageImports"] = "true";
             globalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
@@ -554,11 +554,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             targetOutputs = buildResult.ResultsByTarget;
 
             result = buildResult.OverallResult == BuildResultCode.Success;
-        }
-
-        private void Restore(out bool result, out IDictionary<string, TargetResult> targetOutputs)
-        {
-            Restore(null, null, out result, out targetOutputs);
         }
     }
 }
