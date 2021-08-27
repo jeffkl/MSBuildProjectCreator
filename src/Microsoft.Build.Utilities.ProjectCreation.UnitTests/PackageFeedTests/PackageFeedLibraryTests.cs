@@ -23,15 +23,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             ValidateAssembly(packageA, @"lib/net45/CustomFile.dll", "CustomFile, Version=2.3.4.5, Culture=neutral, PublicKeyToken=null", "Custom.Namespace.CustomClass");
         }
 
-        [Fact]
-        public void LibraryDefault()
+        [Theory]
+        [InlineData("PackageA")]
+        [InlineData("Package.A")]
+        public void LibraryDefault(string packageName)
         {
             PackageFeed.Create(FeedRootPath)
-                .Package("PackageA", "1.0.0", out Package packageA)
+                .Package(packageName, "1.0.0", out Package packageA)
                     .Library(FrameworkConstants.CommonFrameworks.Net45)
                 .Save();
 
-            ValidateAssembly(packageA, @"lib/net45/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
+            ValidateAssembly(packageA, $@"lib/net45/{packageName}.dll", $"{packageName}, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", $"{packageName}.{packageName.Replace(".", "_")}_Class");
         }
 
         [Fact]
