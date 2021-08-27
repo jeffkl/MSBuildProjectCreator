@@ -14,6 +14,7 @@ env:
   ArtifactsDirectoryName: 'artifacts'
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
+  ContinuousIntegrationBuild: 'true'
   DotNet3Version: '3.x'
   DotNet5Version: '5.x'
   DotNet6Version: '6.x'
