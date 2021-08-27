@@ -3,8 +3,5 @@
     "version": "6.0.100-preview",
     "rollForward": "latestMinor",
     "allowPrelease": true
-  },
-  "msbuild-sdks": {
-    "Microsoft.Build.CentralPackageVersions": "2.0.79"
   }
 }
