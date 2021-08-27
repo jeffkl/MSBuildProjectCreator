@@ -79,7 +79,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             if (string.IsNullOrWhiteSpace(className))
             {
-                className = $"{LastPackage.Id}_Class";
+                className = $"{LastPackage.Id.Replace(".", "_")}_Class";
             }
 
             string relativePath = Path.Combine(rootFolderName, targetFramework.GetShortFolderName(), filename);
