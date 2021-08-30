@@ -82,6 +82,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Adds a custom file to a package.
+        /// </summary>
+        /// <param name="relativePath">The relative path of the text file within the package.</param>
+        /// <param name="sourceFileInfo">The <see cref="FileInfo" /> of the file to copy from.</param>
+        /// <returns>The current <see cref="PackageFeed" />.</returns>
+        public PackageFeed FileCustom(string relativePath, FileInfo sourceFileInfo)
+        {
+            LastPackage.AddFile(relativePath, sourceFileInfo);
+
+            return this;
+        }
+
+        /// <summary>
         /// Adds a text file to a package.
         /// </summary>
         /// <param name="relativePath">The relative path for the file.</param>
