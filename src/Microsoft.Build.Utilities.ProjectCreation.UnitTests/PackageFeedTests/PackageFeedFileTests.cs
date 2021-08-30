@@ -69,14 +69,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             PackageFeed.Create(FeedRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                    .FileCustom($@"tools\net46\{fileName}", fileInfo)
+                    .FileCustom(Path.Combine("tools", "net46", fileName), fileInfo)
                 .Save();
 
             using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
 
             GetFileContents(packageArchiveReader, $"tools/net46/{fileName}").ShouldBe("585B55DD5AC54A10B841B3D9A00129D8");
 
-            packageArchiveReader.NuspecReader.GetDependencyGroups().Select(i => i.TargetFramework).ShouldContain(FrameworkConstants.CommonFrameworks.Net46);
+            packageArchiveReader.NuspecReader.GetDependencyGroups().Select(i => i.TargetFramework).ToList().ShouldContain(FrameworkConstants.CommonFrameworks.Net46);
         }
 
         [Fact]
