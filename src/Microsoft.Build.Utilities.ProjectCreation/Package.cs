@@ -23,13 +23,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private readonly HashSet<ManifestContentFiles> _contentFiles = new HashSet<ManifestContentFiles>();
         private readonly Dictionary<NuGetFramework, HashSet<PackageDependency>> _dependencies = new Dictionary<NuGetFramework, HashSet<PackageDependency>>();
 
-        private readonly Dictionary<string, Func<MemoryStream>> _files = new Dictionary<string, Func<MemoryStream>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, IPackageFile> _files = new Dictionary<string, IPackageFile>(StringComparer.OrdinalIgnoreCase);
         private readonly PackageBuilder _packageBuilder;
 
         private readonly HashSet<NuGetFramework> _targetFrameworks = new HashSet<NuGetFramework>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Package"/> class.
+        /// Initializes a new instance of the <see cref="Package" /> class.
         /// </summary>
         /// <param name="id">The name or ID of the package.</param>
         /// <param name="version">The version of the package.</param>
@@ -193,7 +193,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="versionRange">The <see cref="VersionRange" /> of the dependency.</param>
         /// <param name="include">The <see cref="LibraryIncludeFlags" /> of the assets to include.</param>
         /// <param name="exclude">The <see cref="LibraryIncludeFlags" /> of the assets to exclude.</param>
-        /// <param name="suppressParent">The <see cref="LibraryIncludeFlags" /> of the assets to suppress from dependents.  The default is <see cref="LibraryIncludeFlags.Analyzers" /> | <see cref="LibraryIncludeFlags.Build "/> | <see cref="LibraryIncludeFlags.ContentFiles" />.</param>
+        /// <param name="suppressParent">The <see cref="LibraryIncludeFlags" /> of the assets to suppress from dependents.  The default is <see cref="LibraryIncludeFlags.Analyzers" /> | <see cref="LibraryIncludeFlags.Build" /> | <see cref="LibraryIncludeFlags.ContentFiles" />.</param>
         internal void AddDependency(NuGetFramework targetFramework, string id, VersionRange versionRange, LibraryIncludeFlags include = LibraryIncludeFlags.All, LibraryIncludeFlags exclude = LibraryIncludeFlags.None, LibraryIncludeFlags suppressParent = LibraryIncludeFlags.Analyzers | LibraryIncludeFlags.Build | LibraryIncludeFlags.ContentFiles)
         {
             _targetFrameworks.Add(targetFramework);
@@ -240,12 +240,30 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Adds a file to the package.
         /// </summary>
         /// <param name="relativePath">The relative path of the file to add.</param>
-        /// <param name="streamAction">A <see cref="Func{TResult}" /> that generates the file's content.</param>
-        internal void AddFile(string relativePath, Func<MemoryStream> streamAction)
+        /// <param name="streamFunc">A <see cref="Func{TResult}" /> that generates the file's content.</param>
+        internal void AddFile(string relativePath, Func<Stream> streamFunc)
         {
-            _files[relativePath] = streamAction;
+            AddFile(
+                relativePath,
+                new PackageFileStream(relativePath, streamFunc)
+                {
+                    Path = relativePath,
+                });
+        }
 
-            Saved = false;
+        /// <summary>
+        /// Adds a file to the package.
+        /// </summary>
+        /// <param name="relativePath">The relative path of the file to add.</param>
+        /// <param name="fileInfo">A <see cref="FileInfo" /> that represents a file on disk.</param>
+        internal void AddFile(string relativePath, FileInfo fileInfo)
+        {
+            AddFile(
+                relativePath,
+                new PackageFileStream(relativePath, fileInfo)
+                {
+                    Path = relativePath,
+                });
         }
 
         /// <summary>
@@ -281,12 +299,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             using (Stream stream = File.Create(FullPath))
             {
-                foreach (KeyValuePair<string, Func<MemoryStream>> keyValuePair in _files)
+                foreach (var file in _files.Values)
                 {
-                    _packageBuilder.Files.Add(new PhysicalPackageFile(keyValuePair.Value())
-                    {
-                        TargetPath = keyValuePair.Key,
-                    });
+                    _packageBuilder.Files.Add(file);
                 }
 
                 foreach (NuGetFramework targetFramework in _targetFrameworks)
@@ -305,6 +320,35 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             Saved = true;
+        }
+
+        /// <summary>
+        /// Adds a file to the package.
+        /// </summary>
+        /// <param name="relativePath">The relative path of the file to add.</param>
+        /// <param name="packageFile">An <see cref="IPackageFile" /> that represents a file to add to the package.</param>
+        private void AddFile(string relativePath, IPackageFile packageFile)
+        {
+#if NETCOREAPP3_1
+            if (packageFile.TargetFramework != null)
+            {
+                NuGetFramework nuGetFramework = NuGetFramework.ParseFrameworkName(packageFile.TargetFramework.FullName, DefaultFrameworkNameProvider.Instance);
+
+                if (nuGetFramework != null)
+                {
+                    AddTargetFramework(nuGetFramework);
+                }
+            }
+#else
+            if (packageFile.NuGetFramework != null)
+            {
+                AddTargetFramework(packageFile.NuGetFramework);
+            }
+#endif
+
+            _files[relativePath] = packageFile;
+
+            Saved = false;
         }
     }
 }

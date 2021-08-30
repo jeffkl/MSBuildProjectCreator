@@ -7,7 +7,9 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using Shouldly;
+using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
@@ -57,6 +59,41 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         }
 
         [Fact]
+        public void FileCustom()
+        {
+            string fileName = $"{Guid.NewGuid():N}.txt";
+
+            FileInfo fileInfo = new FileInfo(Path.Combine(TestRootPath, fileName));
+
+            File.WriteAllText(fileInfo.FullName, "585B55DD5AC54A10B841B3D9A00129D8");
+
+            PackageFeed.Create(FeedRootPath)
+                .Package("PackageA", "1.0.0", out Package packageA)
+                    .FileCustom(Path.Combine("tools", "net46", fileName), fileInfo)
+                .Save();
+
+            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
+
+            GetFileContents(packageArchiveReader, $"tools/net46/{fileName}").ShouldBe("585B55DD5AC54A10B841B3D9A00129D8");
+
+            packageArchiveReader.NuspecReader.GetDependencyGroups().Select(i => i.TargetFramework).ToList().ShouldContain(FrameworkConstants.CommonFrameworks.Net46);
+        }
+
+        [Fact]
+        public void FileCustomDoesNotExist()
+        {
+            Should.Throw<FileNotFoundException>(() =>
+            {
+                FileInfo fileInfo = new FileInfo(Path.Combine(TestRootPath, "foo.txt"));
+
+                PackageFeed.Create(FeedRootPath)
+                    .Package("PackageA", "1.0.0")
+                        .FileCustom("foo.txt", fileInfo)
+                    .Save();
+            });
+        }
+
+        [Fact]
         public void FileText()
         {
             PackageFeed.Create(FeedRootPath)
@@ -67,6 +104,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
 
             GetFileContents(packageArchiveReader, "something/nothing.txt").ShouldBe("607779BADE3645F8A288543213BFE948");
+
+            packageArchiveReader.NuspecReader.GetDependencyGroups().ShouldBeEmpty();
         }
 
         [Fact]
