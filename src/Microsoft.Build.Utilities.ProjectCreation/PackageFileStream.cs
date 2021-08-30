@@ -67,12 +67,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             set
             {
-                if (string.Compare(_path, value, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(_path, value, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _path = value;
+
 #if NETCOREAPP3_1
                 TargetFramework = FrameworkNameUtility.ParseFrameworkNameFromFilePath(_path, out string effectivePath);
 #else
