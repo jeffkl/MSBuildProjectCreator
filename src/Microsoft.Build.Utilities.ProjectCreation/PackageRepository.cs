@@ -5,6 +5,7 @@
 using NuGet.Configuration;
 using NuGet.Packaging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -26,16 +27,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             VersionFolderPathResolver = new VersionFolderPathResolver(GlobalPackagesFolder);
 
             Environment.SetEnvironmentVariable("NUGET_PACKAGES", null);
-
-            ISettings settings = new Settings(rootPath, Settings.DefaultSettingsFileName);
-
-            SettingsUtility.SetConfigValue(settings, ConfigurationConstants.GlobalPackagesFolder, GlobalPackagesFolder);
-
-            settings.Remove(ConfigurationConstants.PackageSources, settings.GetSection(ConfigurationConstants.PackageSources).Items.First());
-
-            settings.AddOrUpdate(ConfigurationConstants.PackageSources, new ClearItem());
-
-            settings.SaveToDisk();
         }
 
         /// <summary>
@@ -52,10 +43,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Creates a new <see cref="PackageRepository" /> instance.
         /// </summary>
         /// <param name="rootPath">The root directory to create a package repository directory in.</param>
+        /// <param name="feeds">Optional feeds to include in the configuration.</param>
         /// <returns>A <see cref="PackageRepository" /> object that is used to construct an NuGet package repository.</returns>
-        public static PackageRepository Create(string rootPath)
+        public static PackageRepository Create(string rootPath, IEnumerable<Uri> feeds = null)
         {
-            return new PackageRepository(rootPath);
+            return new PackageRepository(rootPath, feeds);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

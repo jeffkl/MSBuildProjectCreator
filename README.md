@@ -198,6 +198,27 @@ using(PackageRepository.Create(rootPath)
 
 The result would be a project that references the `MyPackage` package and would restore and build accordingly.
 
+By default, all package sources are disabled so that when running unit tests packages are not pulled from the network.  This is because the package repository is supposed to simulate that packages have already been restored.
+
+You can add feeds if needed with the following examples:
+
+```c#
+using(PackageRepository.Create(
+    rootPath,
+    feeds: new[] { new Uri("https://api.nuget.org/v3/index.json") })
+{
+}
+
+```
+
+```c#
+using(PackageRepository.Create(rootPath)
+    .Feed("https://api.nuget.org/v3/index.json")
+{
+}
+
+```
+
 ## Package Feed
 Create a package feed if you want to generate `.nupkg` packages that can be installed by NuGet.  If you want to create a repository of packages as if they've already been installed, see [Package Repository].
 
