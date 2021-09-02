@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="build\MSBuild.ProjectCreation.props" Pack="true" PackagePath="build\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Strings.Designer.cs">
