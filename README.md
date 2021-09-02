@@ -88,6 +88,47 @@ The above extension method would add the following item:
   </MyCustomType>
 </ItemGroup>
 ```
+## Resolving MSBuild
+This API does not redistribute MSBuild and so it must be located at run-time.  There are three ways to do this:
+
+1. If your project is a unit test, have your test class inherit from [MSBuildTestBase](https://github.com/jeffkl/MSBuildProjectCreator/blob/main/src/MSBuildProjectCreator/MSBuildTestBase.cs)
+```C#
+/// <summary>
+/// A base class for all unit tests that inherits from MSBuildTestBase.
+/// </summary>
+public class MyTestBase : MSBuildTestBase
+{
+    // Custom base class logic.
+}
+
+/// <summary>
+/// A unit test class that will be able to use this API since MSBuild is located at run-time.
+/// </summary>
+public class MyTest : MyTestBase
+{
+}
+```
+2. Attach the [assembly resolve event handler](https://docs.microsoft.com/en-us/dotnet/standard/assembly/resolve-loads) to [MSBuildAssemblyResolver.AssemblyResolve](https://github.com/jeffkl/MSBuildProjectCreator/blob/main/src/MSBuildProjectCreator/MSBuildAssemblyResolver.cs)
+
+``` C#
+public static class MyApp
+{
+    public static MyApp()
+    {
+        AppDomain.CurrentDomain.AssemblyResolve += MSBuildAssemblyResolver.AssemblyResolve;
+    }
+}
+```
+3. Use [MSBuildLocator](https://docs.microsoft.com/en-us/visualstudio/msbuild/updating-an-existing-application?view=vs-2019#use-microsoftbuildlocator) to register an instance of MSBuild.
+```C#
+public static class MyApp
+{
+    public static MyApp()
+    {
+        MSBuildLocator.RegisterDefaults();
+    }
+}
+```
 
 ## Templates
 Several project templates are included for convenience purposes.  One template is the SDK-style C# project:
@@ -202,7 +243,7 @@ By default, all package sources are disabled so that when running unit tests pac
 
 You can add feeds if needed with the following examples:
 
-```c#
+```C#
 using(PackageRepository.Create(
     rootPath,
     feeds: new[] { new Uri("https://api.nuget.org/v3/index.json") })
@@ -211,7 +252,7 @@ using(PackageRepository.Create(
 
 ```
 
-```c#
+```C#
 using(PackageRepository.Create(rootPath)
     .Feed("https://api.nuget.org/v3/index.json")
 {
