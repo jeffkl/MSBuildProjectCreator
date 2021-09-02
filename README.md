@@ -1,5 +1,5 @@
 # Overview
-[![Build Status](https://jeffkl.visualstudio.com/Public/_apis/build/status/MSBuildProjectCreator?branchName=main)](https://jeffkl.visualstudio.com/Public/_build/latest?definitionId=18&branchName=main)
+[![Build Status](https://github.com/jeffkl/MSBuildProjectCreator/actions/workflows/CI.yml/badge.svg)](https://github.com/jeffkl/MSBuildProjectCreator/actions/workflows/CI.yml)
 [![NuGet](https://img.shields.io/nuget/v/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 [![NuGet](https://img.shields.io/nuget/dt/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 
