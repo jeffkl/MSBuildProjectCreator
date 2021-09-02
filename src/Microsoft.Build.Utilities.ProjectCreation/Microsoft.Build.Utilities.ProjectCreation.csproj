@@ -13,6 +13,7 @@
     <Authors>jeffkl</Authors>
     <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/jeffkl/MSBuildProjectCreator</PackageProjectUrl>
     <RepositoryType>Git</RepositoryType>
     <RepositoryUrl>https://github.com/jeffkl/MSBuildProjectCreator.git</RepositoryUrl>
