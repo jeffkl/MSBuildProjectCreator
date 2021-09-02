@@ -3,12 +3,14 @@ name: CI
 on:
   push:
     branches: 
-    - main
-    - rel/*
+      - main
+      - rel/*
+    tags:
+      - v*.*.*
   pull_request:
     branches: 
-    - main
-    - rel/*
+      - main
+      - rel/*
 
 env:
   ArtifactsDirectoryName: 'artifacts'
