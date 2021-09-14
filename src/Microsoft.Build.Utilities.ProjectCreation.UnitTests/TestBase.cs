@@ -54,5 +54,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             return Path.Combine(TestRootPath, $"{Path.GetRandomFileName()}{extension ?? string.Empty}");
         }
+
+        protected string GetTempProjectPath(string extension = null)
+        {
+            DirectoryInfo tempDirectoryInfo = Directory.CreateDirectory(Path.Combine(TestRootPath, Path.GetRandomFileName()));
+
+            return Path.Combine(tempDirectoryInfo.FullName, $"{Path.GetRandomFileName()}{extension ?? string.Empty}");
+        }
     }
 }

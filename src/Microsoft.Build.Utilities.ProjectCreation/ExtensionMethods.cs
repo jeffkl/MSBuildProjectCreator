@@ -5,6 +5,7 @@
 using NuGet.LibraryModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
@@ -20,6 +21,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <typeparam name="T">The type of the object.</typeparam>
         /// <param name="item">The item to make into an <see cref="IEnumerable{T}"/>.</param>
         /// <returns>The current object as an <see cref="IEnumerable{T}"/>.</returns>
+        [DebuggerStepThrough]
         public static IEnumerable<T> AsEnumerable<T>(this T item)
             where T : class
         {
@@ -40,6 +42,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="libraryIncludeFlags">The <see cref="LibraryIncludeFlags" /> to enumerate.</param>
         /// <returns>Nothing if <paramref name="libraryIncludeFlags" /> is <see cref="LibraryIncludeFlags.None" />, <see cref="LibraryIncludeFlags.All" />, or all flags.</returns>
+        [DebuggerStepThrough]
         public static IEnumerable<LibraryIncludeFlags> EnumerateExcludeFlags(this LibraryIncludeFlags libraryIncludeFlags)
         {
             if (libraryIncludeFlags == LibraryIncludeFlags.All)
@@ -63,6 +66,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="libraryIncludeFlags">The <see cref="LibraryIncludeFlags" /> to enumerate.</param>
         /// <returns>Nothing if <paramref name="libraryIncludeFlags" /> is <see cref="LibraryIncludeFlags.All" />, <see cref="LibraryIncludeFlags.None" />, or all flags.</returns>
+        [DebuggerStepThrough]
         public static IEnumerable<LibraryIncludeFlags> EnumerateIncludeFlags(this LibraryIncludeFlags libraryIncludeFlags)
         {
             if (libraryIncludeFlags == LibraryIncludeFlags.None)
@@ -87,6 +91,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="first">The first dictionary and all of its values to start with.</param>
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
         /// <returns>A merged <see cref="IDictionary{String,String}"/> with the values of the first dictionary overridden by the second.</returns>
+        [DebuggerStepThrough]
         public static IDictionary<string, string> Merge(this IDictionary<string, string> first, IDictionary<string, string> second)
         {
             return Merge(first, second, StringComparer.OrdinalIgnoreCase);
@@ -99,6 +104,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
         /// <param name="comparer">The <see cref="IEqualityComparer{String}"/> implementation to use when comparing keys, or null to use the default <see cref="IEqualityComparer{String}"/> for the type of the key. </param>
         /// <returns>A merged <see cref="IDictionary{String,String}"/> with the values of the first dictionary overridden by the second.</returns>
+        [DebuggerStepThrough]
         public static IDictionary<string, string> Merge(this IDictionary<string, string> first, IDictionary<string, string> second, IEqualityComparer<string> comparer)
         {
             Dictionary<string, string> result = first == null
@@ -119,6 +125,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <typeparam name="T">The type of the object.</typeparam>
         /// <param name="item">The item to make into an array.</param>
         /// <returns>An array of T objects.</returns>
+        [DebuggerStepThrough]
         public static T[] ToArrayWithSingleElement<T>(this T item)
             where T : class
         {

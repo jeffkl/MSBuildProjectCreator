@@ -44,10 +44,13 @@ The resulting project would look like this:
 ## Building Projects
 Use the `TryBuild` methods to build your projects.  `TryBuild` returns a `BuildOutput` object which captures the build output for you.
 
-This example creates a project that logs a message, executes `TryBuild`, and asserts some conditions against the build output.
+**Note:** Projects are built in a different process to avoid assembly load conflicts so projects must be saved before being built.
+
+This example creates a project that logs a message, saves the project, executes `TryBuild`, and asserts some conditions against the build output.
 ```C#
 ProjectCreator.Create()
     .TaskMessage("Hello, World!")
+    .Save(path)
     .TryBuild(out bool success, out BuildOutput log);
 
 Assert.True(success);

@@ -205,8 +205,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 _dependencies[targetFramework] = packageDependencies;
             }
 
-            var includes = new List<string>();
-            var excludes = new List<string>();
+            List<string> includes = new List<string>();
+            List<string> excludes = new List<string>();
 
             LibraryIncludeFlags effectiveInclude = include & ~exclude & ~suppressParent;
 
@@ -299,7 +299,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             using (Stream stream = File.Create(FullPath))
             {
-                foreach (var file in _files.Values)
+                foreach (IPackageFile file in _files.Values)
                 {
                     _packageBuilder.Files.Add(file);
                 }
