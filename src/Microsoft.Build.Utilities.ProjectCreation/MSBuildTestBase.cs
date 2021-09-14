@@ -17,6 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", MSBuildAssemblyResolver.MSBuildExePath);
             Environment.SetEnvironmentVariable("MSBuildExtensionsPath", MSBuildAssemblyResolver.DotNetSdksPath);
             Environment.SetEnvironmentVariable("MSBuildSDKsPath", string.IsNullOrWhiteSpace(MSBuildAssemblyResolver.DotNetSdksPath) ? null : Path.Combine(MSBuildAssemblyResolver.DotNetSdksPath, "Sdks"));
+            Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "1");
 
             AppDomain.CurrentDomain.AssemblyResolve += MSBuildAssemblyResolver.AssemblyResolve;
         }

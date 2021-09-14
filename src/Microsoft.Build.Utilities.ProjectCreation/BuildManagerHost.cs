@@ -30,11 +30,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         private static readonly Lazy<FileInfo> MSBuildAssemblyFullPathLazy = new Lazy<FileInfo>(() => new FileInfo(typeof(BuildManager).Assembly.Location));
 
-        static BuildManagerHost()
-        {
-            Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "1");
-        }
-
         /// <summary>
         /// Executes a build for the specified project.
         /// </summary>
