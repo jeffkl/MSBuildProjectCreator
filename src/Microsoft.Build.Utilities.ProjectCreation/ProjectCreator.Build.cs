@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using System;
 using System.Collections.Generic;
@@ -316,7 +315,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryBuild(string[] targets, IDictionary<string, string> globalProperties, out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs)
         {
-            return TryBuild(restore: false, targets, out result, out buildOutput, out targetOutputs);
+            return TryBuild(restore: false, targets, globalProperties, out result, out buildOutput, out targetOutputs);
         }
 
         /// <summary>
@@ -490,9 +489,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private void Build(bool restore, string[] targets, IDictionary<string, string> globalProperties, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
         {
-            Save();
-
             targetOutputs = null;
+
+            Save();
 
             if (restore)
             {
@@ -504,20 +503,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
             }
 
-            ProjectInstance projectInstance;
-
-            if (globalProperties != null)
-            {
-                TryGetProject(out Project project, globalProperties);
-
-                projectInstance = project.CreateProjectInstance();
-            }
-            else
-            {
-                projectInstance = ProjectInstance;
-            }
-
-            BuildResult buildResult = BuildManagerHost.Build(projectInstance, targets ?? projectInstance.DefaultTargets.ToArray(), globalProperties, new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())), BuildRequestDataFlags.ReplaceExistingProjectInstance);
+            BuildResult buildResult = BuildManagerHost.Build(
+                FullPath,
+                targets,
+                globalProperties,
+                new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
+                BuildRequestDataFlags.None);
 
             result = buildResult.OverallResult == BuildResultCode.Success;
 
@@ -543,15 +534,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             globalProperties["ExcludeRestorePackageImports"] = "true";
             globalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
 
-            BuildResult buildResult = BuildManagerHost.Build(FullPath, new[] { "Restore" }, globalProperties, new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())), BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
-
-            Project.MarkDirty();
-
-            Project.ReevaluateIfNecessary();
-
-            _projectInstance = Project.CreateProjectInstance();
+            BuildResult buildResult = BuildManagerHost.Build(
+                FullPath,
+                new[] { "Restore" },
+                globalProperties,
+                new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
+                BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
 
             targetOutputs = buildResult.ResultsByTarget;
+
+            if (buildResult.Exception != null)
+            {
+                throw buildResult.Exception;
+            }
 
             result = buildResult.OverallResult == BuildResultCode.Success;
         }

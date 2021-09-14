@@ -30,6 +30,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         private static readonly Lazy<FileInfo> MSBuildAssemblyFullPathLazy = new Lazy<FileInfo>(() => new FileInfo(typeof(BuildManager).Assembly.Location));
 
+        static BuildManagerHost()
+        {
+            Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "1");
+        }
+
         /// <summary>
         /// Executes a build for the specified project.
         /// </summary>
@@ -43,7 +48,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             BuildRequestData buildRequestData = new BuildRequestData(
                 projectFullPath,
-                globalProperties,
+                globalProperties ?? new Dictionary<string, string>(),
                 toolsVersion: null,
                 targets ?? Array.Empty<string>(),
                 hostServices: null,
@@ -144,9 +149,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             lock (LockObject)
             {
-                using BuildManager buildManager = new BuildManager();
-
-                MuxLogger muxLogger = new MuxLogger()
+                MuxLogger muxLogger = new MuxLogger
                 {
                     Verbosity = LoggerVerbosity.Diagnostic,
                 };
@@ -155,7 +158,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     DisableInProcNode = true,
                     EnableNodeReuse = false,
-                    MaxNodeCount = 1,
+                    MaxNodeCount = Environment.ProcessorCount,
                     ResetCaches = true,
                 };
 
@@ -175,11 +178,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     forwardingLoggerRecord,
                 };
 
-                buildManager.BeginBuild(buildParameters);
+                BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
 
                 try
                 {
-                    BuildSubmission buildSubmission = buildManager.PendBuildRequest(buildRequestData);
+                    BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
 
                     foreach (ILogger logger in loggers)
                     {
@@ -188,7 +191,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                     try
                     {
-                        SetCurrentHost(buildManager);
+                        SetCurrentHost(BuildManager.DefaultBuildManager);
 
                         BuildResult buildResult = buildSubmission.Execute();
 
@@ -206,7 +209,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
                 finally
                 {
-                    buildManager.EndBuild();
+                    BuildManager.DefaultBuildManager.EndBuild();
                 }
             }
         }

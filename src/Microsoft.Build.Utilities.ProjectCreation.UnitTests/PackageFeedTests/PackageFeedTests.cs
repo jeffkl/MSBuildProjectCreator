@@ -38,7 +38,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         [Fact]
         public void Test1()
         {
-            var targetFrameworks = new[]
+            string[] targetFrameworks = new[]
             {
                 "net45",
                 "net46",

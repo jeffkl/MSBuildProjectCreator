@@ -48,7 +48,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the <see cref="ProjectInstance" /> for the current project.
         /// </summary>
-        public ProjectInstance ProjectInstance => _projectInstance ?? (_projectInstance = Project.CreateProjectInstance());
+        public ProjectInstance ProjectInstance => _projectInstance ??= Project.CreateProjectInstance();
 
         /// <summary>
         /// Gets a <see cref="Project"/> instance from the current project.

@@ -7,9 +7,11 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using Shouldly;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -21,7 +23,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             ProjectCreator
                 .Create(
-                    Path.Combine(TestRootPath, "project1.proj"),
+                    Path.Combine(TestRootPath, "project2.proj"),
                     defaultTargets: "Build")
                 .Target("Build")
                 .Target("Restore")
@@ -76,6 +78,53 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             resultWithGlobalProperties.ShouldBeTrue();
 
             buildOutputWithGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = D7BBABDFB2D142D3A75E0C1A33E33780", buildOutputWithGlobalProperties.GetConsoleLog());
+        }
+
+        [Fact]
+        public void ProjectWithNoPathBuildThrowsInvalidOperationException()
+        {
+            InvalidOperationException exception = Should.Throw<InvalidOperationException>(() =>
+            {
+                ProjectCreator.Templates.LogsMessage("6E83EF78-959F-45A2-9FE3-08BAD99C0F92")
+                    .TryBuild(out bool _);
+            });
+
+            exception.Message.ShouldBe("Project has not been given a path to save to.");
+        }
+
+        [Fact]
+        public void CanBuildLotsOfProjects()
+        {
+            int maxBuilds = Environment.ProcessorCount * 2;
+
+            List<ProjectCreator> projects = new List<ProjectCreator>(maxBuilds);
+
+            for (int i = 0; i < maxBuilds; i++)
+            {
+                projects.Add(
+                    ProjectCreator.Create(GetTempProjectPath())
+                        .Target("Build")
+                        .Task(
+                            "Exec",
+                            parameters: new Dictionary<string, string>
+                            {
+                                ["Command"] = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ping 127.0.0.1 -n 2 >NUL" : "sleep 2s",
+                            })
+                        .Save());
+            }
+
+            ProjectCreator.Create(path: GetTempProjectPath())
+                .ForEach(projects, (project, creator) => creator.ItemProjectReference(project))
+                .Target("Build")
+                .Task("MSBuild", parameters: new Dictionary<string, string>
+                {
+                    ["Projects"] = "@(ProjectReference)",
+                    ["BuildInParallel"] = bool.TrueString,
+                })
+                .Save()
+                .TryBuild(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
         }
 
         [Fact]
