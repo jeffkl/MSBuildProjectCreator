@@ -529,15 +529,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             Save();
 
-            globalProperties ??= new Dictionary<string, string>(ProjectCollection.GlobalProperties);
+            // IMPORTANT: Make a copy of the global properties here so as not to modify the ones passed in
+            Dictionary<string, string> restoreGlobalProperties = new Dictionary<string, string>(globalProperties ?? ProjectCollection.GlobalProperties);
 
-            globalProperties["ExcludeRestorePackageImports"] = "true";
-            globalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
+            restoreGlobalProperties["ExcludeRestorePackageImports"] = "true";
+            restoreGlobalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
 
             BuildResult buildResult = BuildManagerHost.Build(
                 FullPath,
                 new[] { "Restore" },
-                globalProperties,
+                restoreGlobalProperties,
                 new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
                 BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports);
 
