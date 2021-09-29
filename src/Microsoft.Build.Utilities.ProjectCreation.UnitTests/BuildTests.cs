@@ -81,18 +81,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
-        public void ProjectWithNoPathBuildThrowsInvalidOperationException()
-        {
-            InvalidOperationException exception = Should.Throw<InvalidOperationException>(() =>
-            {
-                ProjectCreator.Templates.LogsMessage("6E83EF78-959F-45A2-9FE3-08BAD99C0F92")
-                    .TryBuild(out bool _);
-            });
-
-            exception.Message.ShouldBe("Project has not been given a path to save to.");
-        }
-
-        [Fact]
         public void CanBuildLotsOfProjects()
         {
             int maxBuilds = Environment.ProcessorCount * 2;
@@ -231,6 +219,77 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             fileLogContents.ShouldContain("38EC33B686134B3C8DE4B8E571D4FB24", Case.Sensitive, fileLogContents);
             fileLogContents.ShouldContain("B7F9A257198D4A44A06BB6146AB27440", Case.Sensitive, fileLogContents);
+        }
+
+        [Fact]
+        public void ProjectWithNoPathBuildThrowsInvalidOperationException()
+        {
+            InvalidOperationException exception = Should.Throw<InvalidOperationException>(() =>
+            {
+                ProjectCreator.Templates.LogsMessage("6E83EF78-959F-45A2-9FE3-08BAD99C0F92")
+                    .TryBuild(out bool _);
+            });
+
+            exception.Message.ShouldBe("Project has not been given a path to save to.");
+        }
+
+        [Fact]
+        public void RestoreAndBuildUseDifferentGlobalPropertiesWhenGlobalPropertiesSpecified()
+        {
+            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            {
+                ["Something"] = bool.TrueString,
+            };
+
+            ProjectCreator.Create(
+                    path: GetTempFileName(".csproj"))
+                .Target("Restore")
+                    .TaskMessage("Restore $(ExcludeRestorePackageImports)", MessageImportance.High)
+                    .TaskMessage("Restore Something $(Something)", MessageImportance.High)
+                .Target("Build")
+                    .TaskMessage("Build $(ExcludeRestorePackageImports)", MessageImportance.High)
+                    .TaskMessage("Build Something $(Something)", MessageImportance.High)
+                .Save()
+                .TryBuild(restore: true, "Build", globalProperties, out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void RestoreAndBuildUseDifferentGlobalPropertiesWhenProjectCollectionSpecified()
+        {
+            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            {
+                ["Something"] = bool.TrueString,
+            };
+
+            using ProjectCollection projectCollection = new ProjectCollection(globalProperties);
+
+            ProjectCreator.Create(
+                    path: GetTempFileName(".csproj"),
+                    projectCollection: projectCollection)
+                .Target("Restore")
+                    .TaskMessage("Restore $(ExcludeRestorePackageImports)", MessageImportance.High)
+                    .TaskMessage("Restore Something $(Something)", MessageImportance.High)
+                .Target("Build")
+                    .TaskMessage("Build $(ExcludeRestorePackageImports)", MessageImportance.High)
+                    .TaskMessage("Build Something $(Something)", MessageImportance.High)
+                .Save()
+                .TryBuild(restore: true, "Build", globalProperties, out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", buildOutput.GetConsoleLog());
         }
 
         [Fact]
