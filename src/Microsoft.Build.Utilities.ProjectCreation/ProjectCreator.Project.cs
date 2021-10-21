@@ -15,17 +15,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the global properties for the project.
         /// </summary>
-        private readonly IDictionary<string, string> _globalProperties;
+        private readonly IDictionary<string, string>? _globalProperties;
 
         /// <summary>
         /// Stores the <see cref="Lazy{Project}"/> instance used to create a <see cref="Project"/> object lazily.
         /// </summary>
-        private Project _project;
+        private Project? _project;
 
         /// <summary>
         /// Stores the <see cref="ProjectInstance" /> for the current project.
         /// </summary>
-        private ProjectInstance _projectInstance;
+        private ProjectInstance? _projectInstance;
 
         /// <summary>
         /// Gets the <see cref="Project"/> instance for the current project.  The project is re-evaluated if necessary every time this property is accessed.
@@ -61,9 +61,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator TryGetProject(
             out Project project,
-            IDictionary<string, string> globalProperties = null,
-            string toolsVersion = null,
-            ProjectCollection projectCollection = null,
+            IDictionary<string, string>? globalProperties = null,
+            string? toolsVersion = null,
+            ProjectCollection? projectCollection = null,
             ProjectLoadSettings projectLoadSettings = ProjectLoadSettings.Default)
         {
             project = new Project(
@@ -89,9 +89,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator TryGetProject(
             out Project project,
             out BuildOutput buildOutput,
-            IDictionary<string, string> globalProperties = null,
-            string toolsVersion = null,
-            ProjectCollection projectCollection = null,
+            IDictionary<string, string>? globalProperties = null,
+            string? toolsVersion = null,
+            ProjectCollection? projectCollection = null,
             ProjectLoadSettings projectLoadSettings = ProjectLoadSettings.Default)
         {
             buildOutput = BuildOutput.Create();
@@ -120,7 +120,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator TryGetProjectInstance(
             out ProjectInstance projectInstance,
             ProjectInstanceSettings projectInstanceSettings = ProjectInstanceSettings.None,
-            EvaluationContext evaluationContext = null)
+            EvaluationContext? evaluationContext = null)
         {
             projectInstance = Project.CreateProjectInstance(projectInstanceSettings, evaluationContext);
 

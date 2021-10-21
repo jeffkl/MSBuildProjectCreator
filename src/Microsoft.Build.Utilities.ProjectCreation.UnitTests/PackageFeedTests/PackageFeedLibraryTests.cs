@@ -30,7 +30,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             PackageFeed.Create(FeedRootPath)
                 .Package(packageName, "1.0.0", out Package packageA)
-                    .Library(FrameworkConstants.CommonFrameworks.Net45)
+                    .Library(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName())
                 .Save();
 
             ValidateAssembly(packageA, $@"lib/net45/{packageName}.dll", $"{packageName}, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", $"{packageName}.{packageName.Replace(".", "_")}_Class");
@@ -42,17 +42,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             ShouldThrowExceptionIfNoPackageAdded(() =>
             {
                 PackageFeed.Create(FeedRootPath)
-                    .Library(FrameworkConstants.CommonFrameworks.Net45);
+                    .Library(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName());
             });
         }
 
         [Fact]
         public void MultipleTargetFrameworks()
         {
-            NuGetFramework[] targetFrameworks =
+            string[] targetFrameworks =
             {
-                FrameworkConstants.CommonFrameworks.Net45,
-                FrameworkConstants.CommonFrameworks.Net46,
+                FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName(),
+                FrameworkConstants.CommonFrameworks.Net46.GetShortFolderName(),
             };
 
             PackageFeed.Create(FeedRootPath)
@@ -66,10 +66,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     })
                 .Save();
 
-            foreach (NuGetFramework targetFramework in targetFrameworks)
+            foreach (string targetFramework in targetFrameworks)
             {
-                ValidateAssembly(packageA, $@"lib/{targetFramework.GetShortFolderName()}/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
-                ValidateAssembly(packageA, $@"ref/{targetFramework.GetShortFolderName()}/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
+                ValidateAssembly(packageA, $@"lib/{targetFramework}/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
+                ValidateAssembly(packageA, $@"ref/{targetFramework}/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
             }
         }
 
@@ -89,7 +89,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             PackageFeed.Create(FeedRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                    .ReferenceAssembly(FrameworkConstants.CommonFrameworks.Net45)
+                    .ReferenceAssembly(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName())
                 .Save();
 
             ValidateAssembly(packageA, @"ref/net45/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
@@ -101,15 +101,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             ShouldThrowExceptionIfNoPackageAdded(() =>
             {
                 PackageFeed.Create(FeedRootPath)
-                    .ReferenceAssembly(FrameworkConstants.CommonFrameworks.Net45);
+                    .ReferenceAssembly(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName());
             });
         }
 
         private void ValidateAssembly(Package package, string filePath, string expectedAssemblyFullName, string expectedTypeFullName)
         {
-            PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(package);
-
-            Assembly assembly = LoadAssembly(packageArchiveReader, filePath);
+            Assembly assembly = LoadAssembly(package.FullPath, filePath);
 
             assembly.FullName.ShouldBe(expectedAssemblyFullName);
 

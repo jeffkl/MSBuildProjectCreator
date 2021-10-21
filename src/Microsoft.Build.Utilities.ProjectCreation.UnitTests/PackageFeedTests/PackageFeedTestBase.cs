@@ -7,7 +7,9 @@ using Shouldly;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 {
@@ -23,8 +25,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         /// </summary>
         protected DirectoryInfo FeedRootPath { get; }
 
-        protected byte[] GetFileBytes(PackageArchiveReader packageArchiveReader, string filePath)
+        protected byte[] GetFileBytes(string packageFullPath, string filePath)
         {
+            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageFullPath);
+
             return ReadFile(packageArchiveReader, filePath, (stream, archiveEntry) =>
             {
                 using BinaryReader binaryReader = new BinaryReader(stream);
@@ -33,8 +37,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        protected string GetFileContents(PackageArchiveReader packageArchiveReader, string filePath)
+        protected string GetFileContents(string packageFullPath, string filePath)
         {
+            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageFullPath);
+
             return ReadFile(packageArchiveReader, filePath, (stream, _) =>
             {
                 using TextReader reader = new StreamReader(stream);
@@ -43,16 +49,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        protected PackageArchiveReader GetPackageArchiveReader(Package package)
+        protected string GetFileContents(string packageFullPath, Func<string, bool> fileFunc)
         {
-            return new PackageArchiveReader(
-                new FileStream(package.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096),
-                leaveStreamOpen: false);
+            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageFullPath);
+
+            return ReadFile(packageArchiveReader, fileFunc, (stream, _) =>
+            {
+                using TextReader reader = new StreamReader(stream);
+
+                return reader.ReadToEnd();
+            });
         }
 
-        protected Assembly LoadAssembly(PackageArchiveReader packageArchiveReader, string filePath)
+        protected NuspecReader GetNuspecReader(Package package)
         {
-            byte[] bytes = GetFileBytes(packageArchiveReader, filePath);
+            return new NuspecReader(XDocument.Parse(GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase))));
+        }
+
+        protected Assembly LoadAssembly(string packageFullPath, string filePath)
+        {
+            byte[] bytes = GetFileBytes(packageFullPath, filePath);
 
             return Assembly.Load(bytes);
         }
@@ -73,6 +89,26 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             using Stream fileStream = archiveEntry.Open();
 
             return streamFunc(fileStream, archiveEntry);
+        }
+
+        private T ReadFile<T>(PackageArchiveReader packageArchiveReader, Func<string, bool> fileFunc, Func<Stream, ZipArchiveEntry, T> streamFunc)
+        {
+            string filePath = packageArchiveReader.GetFiles().FirstOrDefault(fileFunc);
+
+            filePath.ShouldNotBeNull();
+
+            ZipArchiveEntry archiveEntry = packageArchiveReader.GetEntry(filePath);
+
+            using Stream fileStream = archiveEntry.Open();
+
+            return streamFunc(fileStream, archiveEntry);
+        }
+
+        private PackageArchiveReader GetPackageArchiveReader(string fullPath)
+        {
+            return new PackageArchiveReader(
+                new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096),
+                leaveStreamOpen: false);
         }
     }
 }

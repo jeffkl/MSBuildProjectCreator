@@ -51,28 +51,28 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string fullPath,
             string name,
             string version,
-            string authors = null,
-            string description = null,
-            string copyright = null,
+            string? authors = null,
+            string? description = null,
+            string? copyright = null,
             bool developmentDependency = false,
-            string icon = null,
-            string iconUrl = null,
-            string language = null,
-            string licenseUrl = null,
-            LicenseMetadata licenseMetadata = null,
-            string owners = null,
-            IEnumerable<PackageType> packageTypes = null,
-            string projectUrl = null,
-            string releaseNotes = null,
-            string repositoryType = null,
-            string repositoryUrl = null,
-            string repositoryBranch = null,
-            string repositoryCommit = null,
+            string? icon = null,
+            string? iconUrl = null,
+            string? language = null,
+            string? licenseUrl = null,
+            LicenseMetadata? licenseMetadata = null,
+            string? owners = null,
+            IEnumerable<PackageType>? packageTypes = null,
+            string? projectUrl = null,
+            string? releaseNotes = null,
+            string? repositoryType = null,
+            string? repositoryUrl = null,
+            string? repositoryBranch = null,
+            string? repositoryCommit = null,
             bool requireLicenseAcceptance = false,
             bool serviceable = false,
-            string summary = null,
-            string tags = null,
-            string title = null)
+            string? summary = null,
+            string? tags = null,
+            string? title = null)
             : base(
                 GetManifestMetadata(
                     name,
@@ -117,7 +117,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             FullPath = fullPath;
 
-            Directory = Path.GetDirectoryName(fullPath);
+            Directory = Path.GetDirectoryName(fullPath)!;
 
             Save();
 
@@ -201,28 +201,28 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private static ManifestMetadata GetManifestMetadata(
             string name,
             string version,
-            string authors = null,
-            string description = null,
-            string copyright = null,
+            string? authors = null,
+            string? description = null,
+            string? copyright = null,
             bool developmentDependency = false,
-            string icon = null,
-            string iconUrl = null,
-            string language = null,
-            string licenseUrl = null,
-            LicenseMetadata licenseMetadata = null,
-            string owners = null,
-            IEnumerable<PackageType> packageTypes = null,
-            string projectUrl = null,
-            string releaseNotes = null,
-            string repositoryType = null,
-            string repositoryUrl = null,
-            string repositoryBranch = null,
-            string repositoryCommit = null,
+            string? icon = null,
+            string? iconUrl = null,
+            string? language = null,
+            string? licenseUrl = null,
+            LicenseMetadata? licenseMetadata = null,
+            string? owners = null,
+            IEnumerable<PackageType>? packageTypes = null,
+            string? projectUrl = null,
+            string? releaseNotes = null,
+            string? repositoryType = null,
+            string? repositoryUrl = null,
+            string? repositoryBranch = null,
+            string? repositoryCommit = null,
             bool requireLicenseAcceptance = false,
             bool serviceable = false,
-            string summary = null,
-            string tags = null,
-            string title = null)
+            string? summary = null,
+            string? tags = null,
+            string? title = null)
         {
             ManifestMetadata metadata = new ManifestMetadata
             {

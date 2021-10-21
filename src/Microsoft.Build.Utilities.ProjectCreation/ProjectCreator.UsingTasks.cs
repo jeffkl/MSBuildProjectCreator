@@ -11,7 +11,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the last UsingTask that was added.
         /// </summary>
-        private ProjectUsingTaskElement _lastUsingTask;
+        private ProjectUsingTaskElement? _lastUsingTask;
 
         /// <summary>
         /// Adds a &lt;UsingTask /&gt; that refers to an assembly by a file path.
@@ -24,7 +24,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator UsingTaskAssemblyFile(string taskName, string assemblyFile, string taskFactory = null, string runtime = null, string architecture = null, string condition = null, string label = null)
+        public ProjectCreator UsingTaskAssemblyFile(string taskName, string assemblyFile, string? taskFactory = null, string? runtime = null, string? architecture = null, string? condition = null, string? label = null)
         {
             _lastUsingTask = AddTopLevelElement(RootElement.CreateUsingTaskElement(taskName, assemblyFile, null, runtime, architecture));
 
@@ -46,7 +46,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator UsingTaskAssemblyName(string taskName, string assemblyName, string taskFactory, string runtime = null, string architecture = null, string condition = null, string label = null)
+        public ProjectCreator UsingTaskAssemblyName(string taskName, string assemblyName, string taskFactory, string? runtime = null, string? architecture = null, string? condition = null, string? label = null)
         {
             _lastUsingTask = AddTopLevelElement(RootElement.CreateUsingTaskElement(taskName, null, assemblyName, runtime, architecture));
 
@@ -88,7 +88,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="output">An optional value indicating whether or not the property is an output.</param>
         /// <param name="required">An optional value indicating whether or not the property is required.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator UsingTaskParameter(string name, string parameterType = null, bool? output = null, bool? required = null)
+        public ProjectCreator UsingTaskParameter(string name, string? parameterType = null, bool? output = null, bool? required = null)
         {
             if (_lastUsingTask == null)
             {
@@ -101,7 +101,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             // ReSharper disable once PossibleNullReferenceException
-            _lastUsingTask.ParameterGroup.AddParameter(
+            _lastUsingTask!.ParameterGroup!.AddParameter(
                 name,
                 output?.ToString() ?? string.Empty,
                 required?.ToString() ?? string.Empty,

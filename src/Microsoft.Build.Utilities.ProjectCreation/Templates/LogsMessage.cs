@@ -29,15 +29,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator LogsMessage(
             string text,
             MessageImportance? importance = null,
-            string condition = null,
-            string targetName = null,
-            string path = null,
-            string defaultTargets = null,
-            string initialTargets = null,
-            string sdk = null,
-            string toolsVersion = null,
-            string treatAsLocalProperty = null,
-            ProjectCollection projectCollection = null,
+            string? condition = null,
+            string? targetName = null,
+            string? path = null,
+            string? defaultTargets = null,
+            string? initialTargets = null,
+            string? sdk = null,
+            string? toolsVersion = null,
+            string? treatAsLocalProperty = null,
+            ProjectCollection? projectCollection = null,
             NewProjectFileOptions? projectFileOptions = null)
         {
             return ProjectCreator.Create(

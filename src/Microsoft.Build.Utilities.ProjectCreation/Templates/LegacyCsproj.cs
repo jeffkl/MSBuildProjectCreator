@@ -37,23 +37,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator LegacyCsproj(
-            string path = null,
+            string? path = null,
             string outputType = "Library",
             string targetFrameworkVersion = "v4.6",
             string rootNamespace = "ClassLibrary",
             string assemblyName = "ClassLibrary",
             string defaultConfiguration = "Debug",
             string defaultPlatform = "AnyCPU",
-            string projectGuid = null,
+            string? projectGuid = null,
             string fileAlignment = "512",
-            Action<ProjectCreator> projectCreator = null,
+            Action<ProjectCreator>? projectCreator = null,
             string defaultTargets = "Build",
-            string initialTargets = null,
-            string toolsVersion = null,
-            string treatAsLocalProperty = null,
-            ProjectCollection projectCollection = null,
+            string? initialTargets = null,
+            string? toolsVersion = null,
+            string? treatAsLocalProperty = null,
+            ProjectCollection? projectCollection = null,
             NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.IncludeAllOptions,
-            IDictionary<string, string> globalProperties = null)
+            IDictionary<string, string>? globalProperties = null)
         {
             if (path != null)
             {

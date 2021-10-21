@@ -22,17 +22,20 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the last top-level element added to the project XML.
         /// </summary>
-        private ProjectElement _lastTopLevelElement;
+        private ProjectElement? _lastTopLevelElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectCreator"/> class.
         /// </summary>
         /// <param name="rootElement">The <see cref="ProjectRootElement"/> of the backing MSBuild project.</param>
         /// <param name="globalProperties">An <see cref="IDictionary{String,String}" /> containing global properties to use when creating the project.</param>
-        private ProjectCreator(ProjectRootElement rootElement, IDictionary<string, string> globalProperties)
+        private ProjectCreator(ProjectRootElement rootElement, IDictionary<string, string>? globalProperties)
         {
             RootElement = rootElement;
+
             _globalProperties = globalProperties;
+
+            ProjectCollection = ProjectCollection.GlobalProjectCollection;
         }
 
         /// <summary>
@@ -69,20 +72,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public static ProjectCreator Create(
-            string path = null,
-            string defaultTargets = null,
-            string initialTargets = null,
-            string sdk = null,
-            string toolsVersion = null,
-            string treatAsLocalProperty = null,
-            ProjectCollection projectCollection = null,
+            string? path = null,
+            string? defaultTargets = null,
+            string? initialTargets = null,
+            string? sdk = null,
+            string? toolsVersion = null,
+            string? treatAsLocalProperty = null,
+            ProjectCollection? projectCollection = null,
             NewProjectFileOptions? projectFileOptions = null,
-            IDictionary<string, string> globalProperties = null)
+            IDictionary<string, string>? globalProperties = null)
         {
-            if (projectCollection == null)
-            {
-                projectCollection = ProjectCollection.GlobalProjectCollection;
-            }
+            projectCollection ??= ProjectCollection.GlobalProjectCollection;
 
             ProjectRootElement rootElement = projectFileOptions == null ? ProjectRootElement.Create(projectCollection) : ProjectRootElement.Create(projectCollection, projectFileOptions.Value);
 
@@ -124,7 +124,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="projectCreator">An <see cref="Action{ProjectCreator}"/> delegate to execute against the current <see cref="ProjectCreator"/>.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator CustomAction(Action<ProjectCreator> projectCreator)
+        public ProjectCreator CustomAction(Action<ProjectCreator>? projectCreator)
         {
             projectCreator?.Invoke(this);
 
@@ -146,10 +146,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Saves the project to the specified path.
         /// </summary>
         /// <param name="path">The path to save the file to.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="path" /> is <c>null</c>.</exception>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator Save(string path)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
             RootElement.Save(path);
 

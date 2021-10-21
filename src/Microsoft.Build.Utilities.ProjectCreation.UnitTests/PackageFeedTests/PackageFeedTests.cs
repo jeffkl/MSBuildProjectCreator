@@ -25,14 +25,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             packageA.Description.ShouldBe("Custom Description");
             packageA.DevelopmentDependency.ShouldBeTrue();
             packageA.Id.ShouldBe("PackageA");
-            packageA.Version.OriginalVersion.ShouldBe("1.0.0");
+            packageA.Version.ShouldBe("1.0.0");
 
-            using PackageArchiveReader reader = GetPackageArchiveReader(packageA);
+            NuspecReader nuspecReader = GetNuspecReader(packageA);
 
-            reader.NuspecReader.GetAuthors().ShouldBe("John Smith");
-            reader.NuspecReader.GetDescription().ShouldBe("Custom Description");
-            reader.NuspecReader.GetId().ShouldBe("PackageA");
-            reader.NuspecReader.GetVersion().OriginalVersion.ShouldBe("1.0.0");
+            nuspecReader.GetAuthors().ShouldBe("John Smith");
+            nuspecReader.GetDescription().ShouldBe("Custom Description");
+            nuspecReader.GetId().ShouldBe("PackageA");
+            nuspecReader.GetVersion().OriginalVersion.ShouldBe("1.0.0");
         }
 
         [Fact]

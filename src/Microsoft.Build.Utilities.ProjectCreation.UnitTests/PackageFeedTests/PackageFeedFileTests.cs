@@ -5,7 +5,6 @@
 using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
-using NuGet.ProjectModel;
 using Shouldly;
 using System;
 using System.IO;
@@ -23,17 +22,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             PackageFeed.Create(FeedRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                .ContentFileText("file.cs", "A1CF42B9F20B4155B6B70753784615B5", FrameworkConstants.CommonFrameworks.NetStandard20, BuildAction.Compile, copyToOutput: false, flatten: true, language)
+                .ContentFileText("file.cs", "A1CF42B9F20B4155B6B70753784615B5", "netstandard2.0", "Compile", copyToOutput: false, flatten: true, language)
                 .Save();
 
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
-
             VerifyContentFile(
-                packageArchiveReader,
+                packageA,
                 "file.cs",
                 "A1CF42B9F20B4155B6B70753784615B5",
                 FrameworkConstants.CommonFrameworks.NetStandard20,
-                expectedBuildAction: BuildAction.Compile.Value,
+                expectedBuildAction: "Compile",
                 expectedCopyToOutput: false,
                 expectedFlatten: true,
                 expectedLanguage: language);
@@ -44,17 +41,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             PackageFeed.Create(FeedRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                    .ContentFileText("file.txt", "F1BE6E0E408141459C9728FBE0CD5751", FrameworkConstants.CommonFrameworks.Net45)
+                    .ContentFileText("file.txt", "F1BE6E0E408141459C9728FBE0CD5751", "net45")
                 .Save();
 
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
-
             VerifyContentFile(
-                packageArchiveReader,
+                packageA,
                 "file.txt",
                 "F1BE6E0E408141459C9728FBE0CD5751",
                 FrameworkConstants.CommonFrameworks.Net45,
-                expectedBuildAction: BuildAction.Content.Value,
+                expectedBuildAction: "Content",
                 expectedCopyToOutput: true);
         }
 
@@ -72,11 +67,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .FileCustom(Path.Combine("tools", "net46", fileName), fileInfo)
                 .Save();
 
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
+            GetFileContents(packageA.FullPath, $"tools/net46/{fileName}")
+                .ShouldBe("585B55DD5AC54A10B841B3D9A00129D8");
 
-            GetFileContents(packageArchiveReader, $"tools/net46/{fileName}").ShouldBe("585B55DD5AC54A10B841B3D9A00129D8");
-
-            packageArchiveReader.NuspecReader.GetDependencyGroups().Select(i => i.TargetFramework).ToList().ShouldContain(FrameworkConstants.CommonFrameworks.Net46);
+            GetNuspecReader(packageA)
+                .GetDependencyGroups().Select(i => i.TargetFramework.GetShortFolderName()).ToList()
+                .ShouldContain("net46");
         }
 
         [Fact]
@@ -101,11 +97,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .FileText(@"something\nothing.txt", "607779BADE3645F8A288543213BFE948")
                 .Save();
 
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageA);
+            GetFileContents(packageA.FullPath, "something/nothing.txt")
+                .ShouldBe("607779BADE3645F8A288543213BFE948");
 
-            GetFileContents(packageArchiveReader, "something/nothing.txt").ShouldBe("607779BADE3645F8A288543213BFE948");
-
-            packageArchiveReader.NuspecReader.GetDependencyGroups().ShouldBeEmpty();
+            GetNuspecReader(packageA)
+                .GetDependencyGroups()
+                .ShouldBeEmpty();
         }
 
         [Fact]
@@ -118,13 +115,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        private void VerifyContentFile(PackageArchiveReader packageArchiveReader, string relativePath, string expectedContents, NuGetFramework expectedTargetFramework, string expectedExclude = null, string expectedBuildAction = null, bool expectedCopyToOutput = false, bool expectedFlatten = false, string expectedLanguage = "any")
+        private void VerifyContentFile(Package package, string relativePath, string expectedContents, NuGetFramework expectedTargetFramework, string expectedExclude = null, string expectedBuildAction = null, bool expectedCopyToOutput = false, bool expectedFlatten = false, string expectedLanguage = "any")
         {
-            GetFileContents(packageArchiveReader, $"contentFiles/{expectedLanguage}/{expectedTargetFramework.GetShortFolderName()}/{relativePath}").ShouldBe(expectedContents);
+            GetFileContents(package.FullPath, $"contentFiles/{expectedLanguage}/{expectedTargetFramework.GetShortFolderName()}/{relativePath}").ShouldBe(expectedContents);
 
-            ContentFilesEntry file = packageArchiveReader.NuspecReader.GetContentFiles().ShouldHaveSingleItem();
+            NuspecReader nuspecReader = GetNuspecReader(package);
 
-            file.BuildAction.ShouldBe(expectedBuildAction);
+            ContentFilesEntry file = nuspecReader.GetContentFiles().ShouldHaveSingleItem();
+
+            file.BuildAction.ShouldBe(expectedBuildAction, StringCompareShould.IgnoreCase);
 
             if (expectedCopyToOutput)
             {

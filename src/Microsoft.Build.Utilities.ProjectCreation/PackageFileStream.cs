@@ -2,12 +2,7 @@
 //
 // Licensed under the MIT license.
 
-#if !NETCOREAPP3_1
-
 using NuGet.Frameworks;
-
-#endif
-
 using NuGet.Packaging;
 using System;
 using System.IO;
@@ -30,6 +25,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="streamFunc">A <see cref="Func{TResult}" /> to be called to get a stream to the file.</param>
         public PackageFileStream(string targetPath, Func<Stream> streamFunc)
         {
+            _path = string.Empty;
+            EffectivePath = string.Empty;
+            NuGetFramework = NuGetFramework.AnyFramework;
+            TargetFramework = new FrameworkName(NuGetFramework.DotNetFrameworkName);
+
             Path = targetPath;
             _streamFunc = streamFunc ?? throw new ArgumentNullException(nameof(streamFunc));
 
@@ -53,12 +53,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <inheritdoc />
         public DateTimeOffset LastWriteTime { get; }
 
-#if !NETCOREAPP3_1
-
         /// <inheritdoc />
         public NuGetFramework NuGetFramework { get; private set; }
-
-#endif
 
         /// <inheritdoc />
         public string Path
@@ -74,16 +70,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 _path = value;
 
-#if NETCOREAPP3_1
-                TargetFramework = FrameworkNameUtility.ParseFrameworkNameFromFilePath(_path, out string effectivePath);
-#else
                 NuGetFramework = FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(_path, out string effectivePath);
 
                 if (NuGetFramework != null && NuGetFramework.Version.Major < 5)
                 {
                     TargetFramework = new FrameworkName(NuGetFramework.DotNetFrameworkName);
                 }
-#endif
 
                 EffectivePath = effectivePath;
             }

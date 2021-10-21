@@ -6,6 +6,9 @@
     <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoWarn>$(NoWarn);RS0026</NoWarn>
+    <Nullable>Enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <PackageId>MSBuild.ProjectCreation</PackageId>
@@ -21,16 +24,21 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <MonoCecilAssemblyRoot Condition="'$(PkgMono_Cecil)' != '' And '$(TargetFramework)' == 'net472'">$(PkgMono_Cecil)\lib\net40</MonoCecilAssemblyRoot>
+    <MonoCecilAssemblyRoot Condition="'$(PkgMono_Cecil)' != '' And '$(TargetFramework)' != 'net472'">$(PkgMono_Cecil)\lib\netstandard2.0</MonoCecilAssemblyRoot>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Condition="'$(TargetFramework)' == 'net472'" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
-    <PackageReference Include="NuGet.Frameworks" />
-    <PackageReference Include="NuGet.Packaging" />
-    <PackageReference Include="NuGet.ProjectModel" />
+    <PackageReference Include="Mono.Cecil" VersionOverride="0.11.4" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="NuGet.Frameworks" PrivateAssets="All" />
+    <PackageReference Include="NuGet.Packaging" PrivateAssets="All" />
+    <PackageReference Include="NuGet.ProjectModel" PrivateAssets="All" />
+    <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Strings.resx">
@@ -43,10 +51,110 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="ShadeAssemblies.cs" />
+    <None Include="ShadeAssemblies.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != ''">
+    <None Include="PublicAPI\**" />
+    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <Target Name="GetAssembliesToShade" DependsOnTargets="$(ResolvePackageDependenciesForBuildDependsOn)">
+    <GetAssembliesToShade References="@(Reference)" ReferenceCopyLocalPaths="@(ReferenceCopyLocalPaths)" OutputPath="$(IntermediateOutputPath)\ShadedAssemblies">
+      <Output TaskParameter="AssembliesToShade" ItemName="_AssembliesToShade" />
+      <Output TaskParameter="ReferencesToAdd" ItemName="_ReferencesToAdd" />
+      <Output TaskParameter="ReferencesToRemove" ItemName="_ReferencesToRemove" />
+    </GetAssembliesToShade>
+    <ItemGroup>
+      <FileWrites Include="@(_AssembliesToShade->'%(OutputPath)')" />
+
+      <Reference Remove="@(_ReferencesToRemove)" />
+      <Reference Include="@(_ReferencesToAdd)" />
+
+      <ReferenceCopyLocalPaths Remove="@(_ReferencesToRemove)" />
+      <ReferenceCopyLocalPaths Include="@(_ReferencesToAdd)" />
+
+      <TfmSpecificPackageFile Include="@(_ReferencesToAdd)" Pack="true" PackagePath="lib/$(TargetFramework)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ShadeAssemblies" DependsOnTargets="GetAssembliesToShade" BeforeTargets="ResolveAssemblyReferences" Condition="'$(DesignTimeBuild)' != 'true'" Inputs="$(ProjectAssetsFile);ShadeAssemblies.cs" Outputs="@(_AssembliesToShade->'%(OutputPath)')">
+    <ShadeAssemblies AssemblySearchPaths="$(MonoCecilAssemblyRoot);$(MSBuildToolsPath32)\ref;$(FrameworkPathOverride);@(Reference->'%(RootDir)%(Directory)')" AssembliesToShade="@(_AssembliesToShade)" />
+  </Target>
+
+  <UsingTask TaskName="GetAssembliesToShade" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <References ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <ReferenceCopyLocalPaths ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <OutputPath ParameterType="System.String" Required="true" />
+      <AssembliesToShade ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+      <ReferencesToAdd ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+      <ReferencesToRemove ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.Reflection" />
+      <Code Language="cs" Type="Fragment">
+<![CDATA[
+        List<ITaskItem> assembliesToShade = new List<ITaskItem>(References.Length);
+        List<ITaskItem> referencesToRemove = new List<ITaskItem>();
+        List<ITaskItem> referencesToAdd = new List<ITaskItem>();
+        
+        foreach(ITaskItem item in References)
+        {
+            ITaskItem referenceCopyLocalPath = ReferenceCopyLocalPaths.FirstOrDefault(i => i.ItemSpec == item.ItemSpec);
+            
+            if (referenceCopyLocalPath == null)
+            {
+                continue;
+            }
+
+            referencesToRemove.Add(new TaskItem(item.ItemSpec));
+
+            AssemblyName assemblyName = AssemblyName.GetAssemblyName(item.ItemSpec);
+            
+            FileInfo shadedAssemblyFileInfo = new FileInfo(Path.Combine(OutputPath, $"{assemblyName.Name}.{assemblyName.Version}.dll"));
+
+            var newItem = new TaskItem(item.ItemSpec, item.CloneCustomMetadata());
+            
+            newItem.SetMetadata("AssemblyFullName", assemblyName.FullName);
+            newItem.SetMetadata("OldAssemblyName", assemblyName.Name);
+            newItem.SetMetadata("NewAssemblyName", $"{assemblyName.Name}.{assemblyName.Version}");
+            
+            newItem.SetMetadata("OutputPath", shadedAssemblyFileInfo.FullName);
+            
+            assembliesToShade.Add(newItem);
+
+            TaskItem referenceToAdd = new TaskItem(shadedAssemblyFileInfo.FullName, item.CloneCustomMetadata());
+
+            referenceToAdd.SetMetadata("HintPath", shadedAssemblyFileInfo.FullName);
+            referenceToAdd.SetMetadata("AssetType", "runtime");
+
+            referencesToAdd.Add(referenceToAdd);
+        }
+        
+        AssembliesToShade = assembliesToShade.ToArray();
+        ReferencesToAdd = referencesToAdd.ToArray();
+        ReferencesToRemove = referencesToRemove.ToArray();
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  
+  <UsingTask TaskName="ShadeAssemblies" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" Condition="'$(PkgMono_Cecil)' != ''">
+    <Task>
+      <Reference Include="$(MonoCecilAssemblyRoot)/Mono.Cecil.dll" />
+      <Reference Include="$(MonoCecilAssemblyRoot)/Mono.Cecil.Mdb.dll" />
+      <Reference Include="$(MonoCecilAssemblyRoot)/Mono.Cecil.Pdb.dll" />
+      <Reference Include="$(MonoCecilAssemblyRoot)/Mono.Cecil.Rocks.dll" />
+      <Code Language="cs" Source="ShadeAssemblies.cs" />
+    </Task>
+  </UsingTask>
 </Project>

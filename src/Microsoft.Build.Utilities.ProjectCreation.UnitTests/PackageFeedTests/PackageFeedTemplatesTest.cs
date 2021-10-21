@@ -15,7 +15,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             PackageFeed.Templates.SinglePackage(FeedRootPath, out Package package);
 
             package.Id.ShouldBe("SomePackage");
-            package.Version.OriginalVersion.ShouldBe("1.0.0");
+            package.Version.ShouldBe("1.0.0");
         }
     }
 }
