@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <remarks>
         /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
-        public ProjectCreator Property(string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false, string label = null)
+        public ProjectCreator Property(string name, string? unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
             if (unevaluatedValue == null)
             {
@@ -56,7 +56,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <remarks>
         /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
-        private ProjectCreator Property(ProjectPropertyGroupElement propertyGroup, string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false, string label = null)
+        private ProjectCreator Property(ProjectPropertyGroupElement propertyGroup, string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
             if (unevaluatedValue == null)
             {

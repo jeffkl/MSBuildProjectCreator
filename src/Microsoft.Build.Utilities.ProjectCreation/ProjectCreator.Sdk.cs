@@ -12,7 +12,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="name">The name of the SDK.</param>
         /// <param name="version">An optional version of the SDK.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator Sdk(string name, string version = null)
+        public ProjectCreator Sdk(string name, string? version = null)
         {
             AddTopLevelElement(RootElement.CreateProjectSdkElement(name, version));
 

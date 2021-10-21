@@ -22,10 +22,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the <see cref="BuildFinishedEventArgs"/> that were logged when the build finished.
         /// </summary>
-        private BuildFinishedEventArgs _buildFinished;
+        private BuildFinishedEventArgs? _buildFinished;
 
         private BuildOutput()
         {
+            Parameters = string.Empty;
         }
 
         /// <inheritdoc cref="ILogger.Parameters"/>

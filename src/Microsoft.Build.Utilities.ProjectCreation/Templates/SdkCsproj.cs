@@ -5,6 +5,7 @@
 using Microsoft.Build.Evaluation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 // ReSharper disable once CheckNamespace
@@ -28,17 +29,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator SdkCsproj(
-            string path = null,
+            string? path = null,
             string sdk = ProjectCreatorConstants.SdkCsprojDefaultSdk,
-            string targetFramework = ProjectCreatorConstants.SdkCsprojDefaultTargetFramework,
-            string outputType = null,
-            Action<ProjectCreator> projectCreator = null,
-            string defaultTargets = null,
-            string initialTargets = null,
-            string treatAsLocalProperty = null,
-            ProjectCollection projectCollection = null,
+            string? targetFramework = ProjectCreatorConstants.SdkCsprojDefaultTargetFramework,
+            string? outputType = null,
+            Action<ProjectCreator>? projectCreator = null,
+            string? defaultTargets = null,
+            string? initialTargets = null,
+            string? treatAsLocalProperty = null,
+            ProjectCollection? projectCollection = null,
             NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None,
-            IDictionary<string, string> globalProperties = null)
+            IDictionary<string, string>? globalProperties = null)
         {
             return ProjectCreator.Create(
                     path,
@@ -70,19 +71,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
         /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator SdkCsproj(
-            IEnumerable<string> targetFrameworks,
-            string path = null,
+            IEnumerable<string>? targetFrameworks,
+            string? path = null,
             string sdk = "Microsoft.NET.Sdk",
-            string outputType = null,
-            Action<ProjectCreator> projectCreator = null,
-            string defaultTargets = null,
-            string initialTargets = null,
-            string treatAsLocalProperty = null,
-            ProjectCollection projectCollection = null,
+            string? outputType = null,
+            Action<ProjectCreator>? projectCreator = null,
+            string? defaultTargets = null,
+            string? initialTargets = null,
+            string? treatAsLocalProperty = null,
+            ProjectCollection? projectCollection = null,
             NewProjectFileOptions? projectFileOptions = NewProjectFileOptions.None,
-            IDictionary<string, string> globalProperties = null)
+            IDictionary<string, string>? globalProperties = null)
         {
-            ICollection<string> targetFrameworkList = targetFrameworks?.ToList();
+            ICollection<string>? targetFrameworkList = targetFrameworks?.ToList();
 
             return SdkCsproj(
                     path: path,

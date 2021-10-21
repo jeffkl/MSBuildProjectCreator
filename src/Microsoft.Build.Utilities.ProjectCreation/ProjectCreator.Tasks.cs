@@ -14,7 +14,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the last task that was added to the project.
         /// </summary>
-        private ProjectTaskElement _lastTask;
+        private ProjectTaskElement? _lastTask;
 
         /// <summary>
         /// Adds a task element to the current target.
@@ -39,7 +39,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="runtime">An optional runtime for the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator Task(string name, string condition = null, IDictionary<string, string> parameters = null, string continueOnError = null, string architecture = null, string runtime = null, string label = null)
+        public ProjectCreator Task(string name, string? condition = null, IDictionary<string, string?>? parameters = null, string? continueOnError = null, string? architecture = null, string? runtime = null, string? label = null)
         {
             _lastTask = LastTarget.AddTask(name);
 
@@ -51,7 +51,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             if (parameters != null)
             {
-                foreach (KeyValuePair<string, string> parameter in parameters.Where(i => i.Value != null))
+                foreach (KeyValuePair<string, string?> parameter in parameters.Where(i => i.Value != null))
                 {
                     _lastTask.SetParameter(parameter.Key, parameter.Value);
                 }
@@ -70,12 +70,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskError(string text, string code = null, string file = null, string helpKeyword = null, string condition = null, string label = null)
+        public ProjectCreator TaskError(string text, string? code = null, string? file = null, string? helpKeyword = null, string? condition = null, string? label = null)
         {
             return Task(
                 "Error",
                 condition,
-                new Dictionary<string, string>
+                new Dictionary<string, string?>
                 {
                     { "Text", text },
                     { "Code", code },
@@ -93,12 +93,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskMessage(string text, MessageImportance? importance = null, string condition = null, string label = null)
+        public ProjectCreator TaskMessage(string text, MessageImportance? importance = null, string? condition = null, string? label = null)
         {
             return Task(
                 "Message",
                 condition,
-                new Dictionary<string, string>
+                new Dictionary<string, string?>
                 {
                     { "Text", text },
                     { "Importance", importance?.ToString() },
@@ -114,7 +114,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the output element.</param>
         /// <param name="label">An optional label to add to the output element.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskOutputItem(string taskParameter, string itemType, string condition = null, string label = null)
+        public ProjectCreator TaskOutputItem(string taskParameter, string itemType, string? condition = null, string? label = null)
         {
             if (_lastTask == null)
             {
@@ -135,7 +135,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the output element.</param>
         /// <param name="label">An optional label to add to the output element.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskOutputProperty(string taskParameter, string propertyName, string condition = null, string label = null)
+        public ProjectCreator TaskOutputProperty(string taskParameter, string propertyName, string? condition = null, string? label = null)
         {
             if (_lastTask == null)
             {
@@ -158,12 +158,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TaskWarning(string text, string code = null, string file = null, string helpKeyword = null, string condition = null, string label = null)
+        public ProjectCreator TaskWarning(string text, string? code = null, string? file = null, string? helpKeyword = null, string? condition = null, string? label = null)
         {
             return Task(
                 "Warning",
                 condition,
-                new Dictionary<string, string>
+                new Dictionary<string, string?>
                 {
                     { "Text", text },
                     { "Code", code },

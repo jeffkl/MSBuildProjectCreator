@@ -17,7 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">A <see cref="ProjectCreator"/> to convert.</param>
         public static implicit operator Project(ProjectCreator creator)
         {
-            return creator?.Project;
+            return creator.Project;
         }
 
         /// <summary>

@@ -13,23 +13,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class PackageRepository
     {
-        private readonly HashSet<PackageIdentity> _packages = new HashSet<PackageIdentity>();
+        private readonly HashSet<Package> _packages = new HashSet<Package>();
 
         /// <summary>
         /// Gets the current packages in the repository.
         /// </summary>
-        public IReadOnlyCollection<PackageIdentity> Packages => _packages;
+        public IReadOnlyCollection<Package> Packages => _packages;
 
         /// <inheritdoc cref="NuGet.Packaging.VersionFolderPathResolver" />
-        public string GetInstallPath(string packageId, NuGetVersion version)
+        public string GetInstallPath(string packageId, string version)
         {
-            return VersionFolderPathResolver.GetInstallPath(packageId, version);
+            return VersionFolderPathResolver.GetInstallPath(packageId, NuGetVersion.Parse(version));
         }
 
         /// <inheritdoc cref="NuGet.Packaging.VersionFolderPathResolver.GetManifestFilePath" />
-        public string GetManifestFilePath(string packageId, NuGetVersion version)
+        public string GetManifestFilePath(string packageId, string version)
         {
-            return VersionFolderPathResolver.GetManifestFilePath(packageId, version);
+            return VersionFolderPathResolver.GetManifestFilePath(packageId, NuGetVersion.Parse(version));
         }
 
         /// <summary>
@@ -45,7 +45,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="iconUrl">An optional URL to the icon of the package.</param>
         /// <param name="language">An optional language of the package.</param>
         /// <param name="licenseUrl">An optional URL to the license of the package.</param>
-        /// <param name="licenseMetadata">An optional <see cref="LicenseMetadata" /> of the package.</param>
+        /// <param name="licenseExpression">An optional license expression.</param>
+        /// <param name="licenseVersion">An optional license version.</param>
         /// <param name="owners">An optional semicolon delimited list of owners of the package.</param>
         /// <param name="packageTypes">An optional <see cref="IEnumerable{PackageType}" /> containing the package types of the package.</param>
         /// <param name="projectUrl">An optional URL to the project of the package.</param>
@@ -63,33 +64,34 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public PackageRepository Package(
             string name,
             string version,
-            string authors = null,
-            string description = null,
-            string copyright = null,
+            string? authors = null,
+            string? description = null,
+            string? copyright = null,
             bool developmentDependency = false,
-            string icon = null,
-            string iconUrl = null,
-            string language = null,
-            string licenseUrl = null,
-            LicenseMetadata licenseMetadata = null,
-            string owners = null,
-            IEnumerable<PackageType> packageTypes = null,
-            string projectUrl = null,
-            string releaseNotes = null,
-            string repositoryType = null,
-            string repositoryUrl = null,
-            string repositoryBranch = null,
-            string repositoryCommit = null,
+            string? icon = null,
+            string? iconUrl = null,
+            string? language = null,
+            string? licenseUrl = null,
+            string? licenseExpression = null,
+            string? licenseVersion = null,
+            string? owners = null,
+            IEnumerable<string>? packageTypes = null,
+            string? projectUrl = null,
+            string? releaseNotes = null,
+            string? repositoryType = null,
+            string? repositoryUrl = null,
+            string? repositoryBranch = null,
+            string? repositoryCommit = null,
             bool requireLicenseAcceptance = false,
             bool serviceable = false,
-            string summary = null,
-            string tags = null,
-            string title = null)
+            string? summary = null,
+            string? tags = null,
+            string? title = null)
         {
             return Package(
                 name,
                 version,
-                out PackageIdentity _,
+                out Package _,
                 authors,
                 description,
                 copyright,
@@ -98,7 +100,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 iconUrl,
                 language,
                 licenseUrl,
-                licenseMetadata,
+                licenseExpression,
+                licenseVersion,
                 owners,
                 packageTypes,
                 projectUrl,
@@ -128,7 +131,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="iconUrl">An optional URL to the icon of the package.</param>
         /// <param name="language">An optional language of the package.</param>
         /// <param name="licenseUrl">An optional URL to the license of the package.</param>
-        /// <param name="licenseMetadata">An optional <see cref="LicenseMetadata" /> of the package.</param>
+        /// <param name="licenseExpression">An optional license expression.</param>
+        /// <param name="licenseVersion">An optional license version.</param>
         /// <param name="owners">An optional semicolon delimited list of owners of the package.</param>
         /// <param name="packageTypes">An optional <see cref="IEnumerable{PackageType}" /> containing the package types of the package.</param>
         /// <param name="projectUrl">An optional URL to the project of the package.</param>
@@ -146,29 +150,30 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public PackageRepository Package(
             string name,
             string version,
-            out PackageIdentity package,
-            string authors = null,
-            string description = null,
-            string copyright = null,
+            out Package package,
+            string? authors = null,
+            string? description = null,
+            string? copyright = null,
             bool developmentDependency = false,
-            string icon = null,
-            string iconUrl = null,
-            string language = null,
-            string licenseUrl = null,
-            LicenseMetadata licenseMetadata = null,
-            string owners = null,
-            IEnumerable<PackageType> packageTypes = null,
-            string projectUrl = null,
-            string releaseNotes = null,
-            string repositoryType = null,
-            string repositoryUrl = null,
-            string repositoryBranch = null,
-            string repositoryCommit = null,
+            string? icon = null,
+            string? iconUrl = null,
+            string? language = null,
+            string? licenseUrl = null,
+            string? licenseExpression = null,
+            string? licenseVersion = null,
+            string? owners = null,
+            IEnumerable<string>? packageTypes = null,
+            string? projectUrl = null,
+            string? releaseNotes = null,
+            string? repositoryType = null,
+            string? repositoryUrl = null,
+            string? repositoryBranch = null,
+            string? repositoryCommit = null,
             bool requireLicenseAcceptance = false,
             bool serviceable = false,
-            string summary = null,
-            string tags = null,
-            string title = null)
+            string? summary = null,
+            string? tags = null,
+            string? title = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -180,13 +185,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw new ArgumentNullException(nameof(version));
             }
 
-            package = new PackageIdentity(name, NuGetVersion.Parse(version));
+            PackageIdentity packageIdentity = new PackageIdentity(name, NuGetVersion.Parse(version));
 
-            string manifestFilePath = VersionFolderPathResolver.GetManifestFilePath(package.Id, package.Version);
+            package = new Package(packageIdentity.Id, packageIdentity.Version.ToNormalizedString(), authors!, description!, developmentDependency);
+
+            string manifestFilePath = VersionFolderPathResolver.GetManifestFilePath(package.Id, packageIdentity.Version);
 
             if (System.IO.File.Exists(manifestFilePath))
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ErrorPackageAlreadyCreated, name, version));
+            }
+
+            LicenseMetadata? licenseMetadata = null;
+
+            if (licenseExpression != null)
+            {
+                licenseMetadata = new LicenseMetadata(LicenseType.Expression, licenseExpression, null, null, licenseVersion == null ? new Version("1.0.0") : Version.Parse(licenseVersion));
             }
 
             _packageManifest = new PackageManifest(
@@ -203,7 +217,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 licenseUrl,
                 licenseMetadata,
                 owners,
-                packageTypes,
+                packageTypes!.ToPackageTypes(),
                 projectUrl,
                 releaseNotes,
                 repositoryType,

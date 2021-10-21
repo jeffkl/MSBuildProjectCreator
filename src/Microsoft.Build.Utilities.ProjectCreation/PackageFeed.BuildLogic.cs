@@ -32,7 +32,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action" /> to generate the .props file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
-        public PackageFeed BuildMultiTargetingProps(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageFeed BuildMultiTargetingProps(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(PropsExtension, BuildMultiTargeting, creator, projectFileOptions);
 
@@ -55,7 +55,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action{ProjectCreator}" /> to generate the .targets file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .targets file.</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
-        public PackageFeed BuildMultiTargetingTargets(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageFeed BuildMultiTargetingTargets(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(TargetsExtension, BuildMultiTargeting, creator, projectFileOptions);
 
@@ -78,7 +78,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action{ProjectCreator}" /> to generate the .props file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
-        public PackageFeed BuildProps(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageFeed BuildProps(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(PropsExtension, Build, creator, projectFileOptions);
 
@@ -101,7 +101,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action{ProjectCreator}" /> to generate the .targets file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .targets file.</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
-        public PackageFeed BuildTargets(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageFeed BuildTargets(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(TargetsExtension, Build, creator, projectFileOptions);
 
@@ -124,7 +124,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action{ProjectCreator}" /> to generate the .props file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
-        public PackageFeed BuildTransitiveProps(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageFeed BuildTransitiveProps(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(PropsExtension, BuildTransitive, creator, projectFileOptions);
 
@@ -147,14 +147,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action{ProjectCreator}" /> to generate the .targets file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .targets file.</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
-        public PackageFeed BuildTransitiveTargets(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageFeed BuildTransitiveTargets(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(TargetsExtension, BuildTransitive, creator, projectFileOptions);
 
             return this;
         }
 
-        private void CreateBuildFile(string extension, string folderName, Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions)
+        private void CreateBuildFile(string extension, string folderName, Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions)
         {
             if (string.IsNullOrWhiteSpace(extension))
             {

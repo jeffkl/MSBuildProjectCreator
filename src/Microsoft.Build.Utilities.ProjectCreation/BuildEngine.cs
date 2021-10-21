@@ -27,7 +27,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public int LineNumberOfTaskNode => 0;
 
         /// <inheritdoc cref="IBuildEngine.ProjectFileOfTaskNode"/>
-        public string ProjectFileOfTaskNode => null;
+        public string? ProjectFileOfTaskNode => null;
 
         /// <summary>
         /// Creates an instance of the <see cref="BuildEngine"/> class.

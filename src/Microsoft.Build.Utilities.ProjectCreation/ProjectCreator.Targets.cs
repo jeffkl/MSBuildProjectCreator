@@ -12,17 +12,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the last target that was added.
         /// </summary>
-        private ProjectTargetElement _lastTarget;
+        private ProjectTargetElement? _lastTarget;
 
         /// <summary>
         /// Stores the last item group that was added to the current target.
         /// </summary>
-        private ProjectItemGroupElement _lastTargetItemGroup;
+        private ProjectItemGroupElement? _lastTargetItemGroup;
 
         /// <summary>
         /// Stores the last property group that was added to the current target.
         /// </summary>
-        private ProjectPropertyGroupElement _lastTargetPropertyGroup;
+        private ProjectPropertyGroupElement? _lastTargetPropertyGroup;
 
         /// <summary>
         /// Gets the last target that was added if there is one, otherwise one is added with a default name from <see cref="ProjectCreatorConstants.DefaultTargetName"/>.
@@ -36,7 +36,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     Target(ProjectCreatorConstants.DefaultTargetName);
                 }
 
-                return _lastTarget;
+                return _lastTarget!;
             }
         }
 
@@ -56,15 +56,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         public ProjectCreator Target(
             string name,
-            string condition = null,
-            string afterTargets = null,
-            string beforeTargets = null,
-            string dependsOnTargets = null,
-            string inputs = null,
-            string outputs = null,
-            string returns = null,
+            string? condition = null,
+            string? afterTargets = null,
+            string? beforeTargets = null,
+            string? dependsOnTargets = null,
+            string? inputs = null,
+            string? outputs = null,
+            string? returns = null,
             bool? keepDuplicateOutputs = null,
-            string label = null)
+            string? label = null)
         {
             _lastTarget = AddTopLevelElement(RootElement.CreateTargetElement(name));
 
@@ -91,7 +91,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TargetItemGroup(string condition = null, string label = null)
+        public ProjectCreator TargetItemGroup(string? condition = null, string? label = null)
         {
             _lastTargetItemGroup = ItemGroup(LastTarget, condition, label);
 
@@ -111,10 +111,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator TargetItemInclude(
             string itemType,
             string include,
-            string exclude = null,
-            IDictionary<string, string> metadata = null,
-            string condition = null,
-            string label = null)
+            string? exclude = null,
+            IDictionary<string, string?>? metadata = null,
+            string? condition = null,
+            string? label = null)
         {
             if (_lastTargetItemGroup == null)
             {
@@ -122,7 +122,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             return Item(
-                itemGroup: _lastTargetItemGroup,
+                itemGroup: _lastTargetItemGroup!,
                 itemType: itemType,
                 include: include,
                 exclude: exclude,
@@ -140,7 +140,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">Condition to be evaluated.</param>
         /// <param name="label">An optional label to add.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TargetOnError(string executeTargets, string condition = null, string label = null)
+        public ProjectCreator TargetOnError(string executeTargets, string? condition = null, string? label = null)
         {
             ProjectOnErrorElement onErrorElement = RootElement.CreateOnErrorElement(executeTargets);
 
@@ -164,14 +164,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <remarks>
         /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
-        public ProjectCreator TargetProperty(string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false, string label = null)
+        public ProjectCreator TargetProperty(string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
             if (_lastTargetPropertyGroup == null)
             {
                 TargetPropertyGroup();
             }
 
-            return Property(_lastTargetPropertyGroup, name, unevaluatedValue, condition, setIfEmpty, label);
+            return Property(_lastTargetPropertyGroup!, name, unevaluatedValue, condition, setIfEmpty, label);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property group.</param>
         /// <param name="label">An optional label to add to the property group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator TargetPropertyGroup(string condition = null, string label = null)
+        public ProjectCreator TargetPropertyGroup(string? condition = null, string? label = null)
         {
             _lastTargetPropertyGroup = PropertyGroup(LastTarget, condition, label);
 

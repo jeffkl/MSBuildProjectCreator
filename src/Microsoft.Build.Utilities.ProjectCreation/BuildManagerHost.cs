@@ -84,7 +84,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 return;
             }
 
-            string hostExePath = Path.Combine(Path.GetFullPath(Path.Combine(MSBuildAssemblyFullPathLazy.Value.DirectoryName, "..", "..")), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet");
+            string hostExePath = Path.Combine(Path.GetFullPath(Path.Combine(MSBuildAssemblyFullPathLazy.Value.DirectoryName!, "..", "..")), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet");
 
             if (!File.Exists(hostExePath))
             {
@@ -93,14 +93,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             Type buildManagerType = buildManager.GetType();
 
-            FieldInfo nodeManagerFieldInfo = buildManagerType.GetField("_nodeManager", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo? nodeManagerFieldInfo = buildManagerType.GetField("_nodeManager", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (nodeManagerFieldInfo == null)
             {
                 return;
             }
 
-            object nodeManager = nodeManagerFieldInfo.GetValue(buildManager);
+            object? nodeManager = nodeManagerFieldInfo.GetValue(buildManager);
 
             if (nodeManager == null)
             {
@@ -109,28 +109,28 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             Type nodeManagerType = nodeManager.GetType();
 
-            FieldInfo outOfProcNodeProviderFieldInfo = nodeManagerType.GetField("_outOfProcNodeProvider", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo? outOfProcNodeProviderFieldInfo = nodeManagerType.GetField("_outOfProcNodeProvider", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (outOfProcNodeProviderFieldInfo == null)
             {
                 return;
             }
 
-            object outOfProcNodeProvider = outOfProcNodeProviderFieldInfo.GetValue(nodeManager);
+            object? outOfProcNodeProvider = outOfProcNodeProviderFieldInfo.GetValue(nodeManager);
 
             if (outOfProcNodeProvider == null)
             {
                 return;
             }
 
-            Type nodeProviderOutOfProcBaseType = outOfProcNodeProvider.GetType().BaseType;
+            Type? nodeProviderOutOfProcBaseType = outOfProcNodeProvider.GetType().BaseType;
 
             if (nodeProviderOutOfProcBaseType == null)
             {
                 return;
             }
 
-            FieldInfo currentHostFieldInfo = nodeProviderOutOfProcBaseType.GetField("CurrentHost", BindingFlags.Static | BindingFlags.NonPublic);
+            FieldInfo? currentHostFieldInfo = nodeProviderOutOfProcBaseType.GetField("CurrentHost", BindingFlags.Static | BindingFlags.NonPublic);
 
             if (currentHostFieldInfo == null)
             {
@@ -151,7 +151,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 BuildParameters buildParameters = new BuildParameters
                 {
-                    DisableInProcNode = true,
                     EnableNodeReuse = false,
                     MaxNodeCount = Environment.ProcessorCount,
                     ResetCaches = true,

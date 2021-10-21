@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.LibraryModel;
+using NuGet.Packaging.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// <summary>
     /// Provides extension methods.
     /// </summary>
-    public static class ExtensionMethods
+    internal static class ExtensionMethods
     {
         /// <summary>
         /// Gets the current object as an <see cref="IEnumerable{T}"/>.
@@ -22,7 +22,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="item">The item to make into an <see cref="IEnumerable{T}"/>.</param>
         /// <returns>The current object as an <see cref="IEnumerable{T}"/>.</returns>
         [DebuggerStepThrough]
-        public static IEnumerable<T> AsEnumerable<T>(this T item)
+        public static IEnumerable<T> AsEnumerable<T>(this T? item)
             where T : class
         {
             if (item == null)
@@ -38,61 +38,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Enumerates <see cref="LibraryIncludeFlags" /> for exclude.
-        /// </summary>
-        /// <param name="libraryIncludeFlags">The <see cref="LibraryIncludeFlags" /> to enumerate.</param>
-        /// <returns>Nothing if <paramref name="libraryIncludeFlags" /> is <see cref="LibraryIncludeFlags.None" />, <see cref="LibraryIncludeFlags.All" />, or all flags.</returns>
-        [DebuggerStepThrough]
-        public static IEnumerable<LibraryIncludeFlags> EnumerateExcludeFlags(this LibraryIncludeFlags libraryIncludeFlags)
-        {
-            if (libraryIncludeFlags == LibraryIncludeFlags.All)
-            {
-                yield return LibraryIncludeFlags.All;
-            }
-            else if (libraryIncludeFlags != LibraryIncludeFlags.None)
-            {
-                foreach (LibraryIncludeFlags flags in Enum
-                    .GetValues(typeof(LibraryIncludeFlags))
-                    .Cast<LibraryIncludeFlags>()
-                    .Where(i => i != LibraryIncludeFlags.All && i != LibraryIncludeFlags.None && libraryIncludeFlags.HasFlag(i)))
-                {
-                    yield return flags;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Enumerates <see cref="LibraryIncludeFlags" /> for include.
-        /// </summary>
-        /// <param name="libraryIncludeFlags">The <see cref="LibraryIncludeFlags" /> to enumerate.</param>
-        /// <returns>Nothing if <paramref name="libraryIncludeFlags" /> is <see cref="LibraryIncludeFlags.All" />, <see cref="LibraryIncludeFlags.None" />, or all flags.</returns>
-        [DebuggerStepThrough]
-        public static IEnumerable<LibraryIncludeFlags> EnumerateIncludeFlags(this LibraryIncludeFlags libraryIncludeFlags)
-        {
-            if (libraryIncludeFlags == LibraryIncludeFlags.None)
-            {
-                yield return LibraryIncludeFlags.None;
-            }
-            else if (libraryIncludeFlags != LibraryIncludeFlags.All)
-            {
-                foreach (LibraryIncludeFlags flags in Enum
-                    .GetValues(typeof(LibraryIncludeFlags))
-                    .Cast<LibraryIncludeFlags>()
-                    .Where(i => i != LibraryIncludeFlags.All && i != LibraryIncludeFlags.None && libraryIncludeFlags.HasFlag(i)))
-                {
-                    yield return flags;
-                }
-            }
-        }
-
-        /// <summary>
         /// Merges two dictionaries by combining all values and overriding with the first with the second.
         /// </summary>
         /// <param name="first">The first dictionary and all of its values to start with.</param>
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
         /// <returns>A merged <see cref="IDictionary{String,String}"/> with the values of the first dictionary overridden by the second.</returns>
         [DebuggerStepThrough]
-        public static IDictionary<string, string> Merge(this IDictionary<string, string> first, IDictionary<string, string> second)
+        public static IDictionary<string, string?> Merge(this IDictionary<string, string?>? first, IDictionary<string, string?> second)
         {
             return Merge(first, second, StringComparer.OrdinalIgnoreCase);
         }
@@ -105,13 +57,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="comparer">The <see cref="IEqualityComparer{String}"/> implementation to use when comparing keys, or null to use the default <see cref="IEqualityComparer{String}"/> for the type of the key. </param>
         /// <returns>A merged <see cref="IDictionary{String,String}"/> with the values of the first dictionary overridden by the second.</returns>
         [DebuggerStepThrough]
-        public static IDictionary<string, string> Merge(this IDictionary<string, string> first, IDictionary<string, string> second, IEqualityComparer<string> comparer)
+        public static IDictionary<string, string?> Merge(this IDictionary<string, string?>? first, IDictionary<string, string?> second, IEqualityComparer<string> comparer)
         {
-            Dictionary<string, string> result = first == null
-                ? new Dictionary<string, string>(comparer)
-                : new Dictionary<string, string>(first, comparer);
+            Dictionary<string, string?> result = first == null
+                ? new Dictionary<string, string?>(comparer)
+                : new Dictionary<string, string?>(first, comparer);
 
-            foreach (KeyValuePair<string, string> item in second.Where(i => i.Value != null))
+            foreach (KeyValuePair<string, string?> item in second.Where(i => i.Value != null))
             {
                 result[item.Key] = item.Value;
             }
@@ -133,6 +85,48 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 item,
             };
+        }
+
+        /// <summary>
+        /// Gets the current list of strings as <see cref="PackageType" /> objects instead.
+        /// </summary>
+        /// <param name="packageTypes">An <see cref="IEnumerable{String}" /> containing package types.</param>
+        /// <returns>An <see cref="IEnumerable{PackageType}" /> containing the package types.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Any package types are invalid.</exception>
+        public static IEnumerable<PackageType> ToPackageTypes(this IEnumerable<string>? packageTypes)
+        {
+            if (packageTypes == null)
+            {
+                yield break;
+            }
+
+            foreach (string packageType in packageTypes)
+            {
+                if (string.Equals(PackageType.Dependency.Name, packageType, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return PackageType.Dependency;
+                }
+                else if (string.Equals(PackageType.DotnetCliTool.Name, packageType, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return PackageType.DotnetCliTool;
+                }
+                else if (string.Equals(PackageType.DotnetPlatform.Name, packageType, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return PackageType.DotnetPlatform;
+                }
+                else if (string.Equals(PackageType.DotnetTool.Name, packageType, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return PackageType.DotnetTool;
+                }
+                else if (string.Equals(PackageType.Legacy.Name, packageType, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return PackageType.Legacy;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException($"Unknown package type '{packageType}'");
+                }
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the last property group that was added.
         /// </summary>
-        private ProjectPropertyGroupElement _lastPropertyGroup;
+        private ProjectPropertyGroupElement? _lastPropertyGroup;
 
         /// <summary>
         /// Gets the last property group that was added if there is one, otherwise one is added.
@@ -25,7 +25,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     PropertyGroup();
                 }
 
-                return _lastPropertyGroup;
+                return _lastPropertyGroup!;
             }
         }
 
@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property group.</param>
         /// <param name="label">An optional label to add to the property group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator PropertyGroup(string condition = null, string label = null)
+        public ProjectCreator PropertyGroup(string? condition = null, string? label = null)
         {
             _lastPropertyGroup = AddTopLevelElement(RootElement.CreatePropertyGroupElement());
 
@@ -53,7 +53,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property group.</param>
         /// <param name="label">An optional label to add to the property group.</param>
         /// <returns>The <see cref="ProjectElementContainer"/> that was added.</returns>
-        protected ProjectPropertyGroupElement PropertyGroup(ProjectElementContainer parent, string condition = null, string label = null)
+        protected ProjectPropertyGroupElement PropertyGroup(ProjectElementContainer parent, string? condition = null, string? label = null)
         {
             ProjectPropertyGroupElement propertyGroup = RootElement.CreatePropertyGroupElement();
 

@@ -19,21 +19,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="className">An optional class name for the library.  The default value is &lt;PackageId&gt;_Class.</param>
         /// <param name="assemblyVersion">An optional assembly version for the library.  The default value is &quot;1.0.0.0&quot;</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Library(string targetFramework, string filename = null, string @namespace = null, string className = null, string assemblyVersion = "1.0.0.0")
-        {
-            return Library(NuGetFramework.Parse(targetFramework), filename, @namespace, className, assemblyVersion);
-        }
-
-        /// <summary>
-        /// Adds a library to the package.
-        /// </summary>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> of the library.</param>
-        /// <param name="filename">An optional filename for the library.  The default value is &lt;PackageId&gt;.dll.</param>
-        /// <param name="namespace">An optional namespace for the library.  The default value is &lt;PackageId&gt;.</param>
-        /// <param name="className">An optional class name for the library.  The default value is &lt;PackageId&gt;_Class.</param>
-        /// <param name="assemblyVersion">An optional assembly version for the library.  The default value is &quot;1.0.0.0&quot;</param>
-        /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Library(NuGetFramework targetFramework, string filename = null, string @namespace = null, string className = null, string assemblyVersion = "1.0.0.0")
+        public PackageRepository Library(string targetFramework, string? filename = null, string? @namespace = null, string? className = null, string assemblyVersion = "1.0.0.0")
         {
             if (_packageManifest == null)
             {
@@ -55,17 +41,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 className = $"{_packageManifest.Metadata.Id}_Class";
             }
 
-            _packageManifest.AddDependencyGroup(targetFramework);
+            NuGetFramework nuGetFramework = NuGetFramework.Parse(targetFramework);
+
+            _packageManifest.AddDependencyGroup(nuGetFramework);
 
             return File(
-                Path.Combine("lib", targetFramework.GetShortFolderName(), filename),
+                Path.Combine("lib", nuGetFramework.GetShortFolderName(), filename!),
                 fileInfo =>
                 {
-                    fileInfo.Directory.Create();
+                    fileInfo.Directory!.Create();
 
                     using (Stream stream = System.IO.File.Create(fileInfo.FullName))
                     {
-                        AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace, className, assemblyVersion, targetFramework);
+                        AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace!, className!, assemblyVersion, nuGetFramework);
                     }
                 });
         }

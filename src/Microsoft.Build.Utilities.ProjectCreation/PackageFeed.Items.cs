@@ -19,9 +19,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the item.</param>
         /// <param name="label">An optional label to add to the item.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemPackageReference(Package package, string includeAssets = null, string excludeAssets = null, string privateAssets = null, IDictionary<string, string> metadata = null, string condition = null, string label = null)
+        public ProjectCreator ItemPackageReference(Package package, string? includeAssets = null, string? excludeAssets = null, string? privateAssets = null, IDictionary<string, string?>? metadata = null, string? condition = null, string? label = null)
         {
-            return ItemPackageReference(package.Id, package.Version.ToNormalizedString(), includeAssets, excludeAssets, privateAssets, metadata, condition, label);
+            return ItemPackageReference(package.Id, package.Version, includeAssets, excludeAssets, privateAssets, metadata, condition, label);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void CanAddDependenciesToMultipleGroups()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity package)
+                .Package("PackageA", "1.0.0", out Package package)
                 .Dependency("PackageB", "1.0.0", "net45")
                 .Dependency("PackageB", "1.0.0", "net46")
                 .Dependency("PackageB", "1.0.0", "netstandard2.0"))
@@ -56,7 +56,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void CanAddMultipleDependenciesToSameGroup()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity package)
+                .Package("PackageA", "1.0.0", out Package package)
                 .Dependency("PackageB", "1.0.0", "net45")
                 .Dependency("PackageC", "1.1.0", "net45")
                 .Dependency("PackageD", "1.2.0", "net45"))
@@ -78,7 +78,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             }
         }
 
-        private void ValidatePackageDependencies(PackageRepository packageRepository, PackageIdentity package, IEnumerable<PackageDependencyGroup> expectedDependencyGroups)
+        private void ValidatePackageDependencies(PackageRepository packageRepository, Package package, IEnumerable<PackageDependencyGroup> expectedDependencyGroups)
         {
             FileInfo nuspecFile = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version));
 
