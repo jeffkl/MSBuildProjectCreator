@@ -2,12 +2,11 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Common;
 using NuGet.Frameworks;
-using NuGet.LibraryModel;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,51 +17,25 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Adds a dependency to the current package.
         /// </summary>
-        /// <param name="packageIdentity">The <see cref="PackageIdentity" /> of the dependency.</param>
-        /// <param name="targetFramework">An optional target framework for the dependency.</param>
-        /// <param name="include">An optional <see cref="LibraryIncludeFlags" /> representing the assets to include for the dependency.</param>
-        /// <param name="exclude">An optional <see cref="LibraryIncludeFlags" /> representing the assets to exclude from the dependency.</param>
+        /// <param name="package">The <see cref="Microsoft.Build.Utilities.ProjectCreation.Package" /> representing the package.</param>
+        /// <param name="targetFramework">The target framework for the dependency.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Dependency(PackageIdentity packageIdentity, string targetFramework, LibraryIncludeFlags? include = null, LibraryIncludeFlags? exclude = null)
+        public PackageRepository Dependency(Package package, string targetFramework)
         {
-            return Dependency(
-                packageIdentity.Id,
-                new VersionRange(packageIdentity.Version),
-                targetFramework,
-                include,
-                exclude);
+            return Dependency(package, targetFramework, null, null);
         }
 
         /// <summary>
         /// Adds a dependency to the current package.
         /// </summary>
-        /// <param name="packageIdentity">The <see cref="PackageIdentity" /> of the dependency.</param>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> for the dependency.</param>
-        /// <param name="include">An optional <see cref="LibraryIncludeFlags" /> representing the assets to include for the dependency.</param>
-        /// <param name="exclude">An optional <see cref="LibraryIncludeFlags" /> representing the assets to exclude from the dependency.</param>
+        /// <param name="package">The <see cref="Microsoft.Build.Utilities.ProjectCreation.Package" /> representing the package.</param>
+        /// <param name="targetFramework">The target framework for the dependency.</param>
+        /// <param name="include">An optional array of strings representing the assets to include for the dependency.</param>
+        /// <param name="exclude">An optional array of strings representing the assets to exclude from the dependency.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Dependency(PackageIdentity packageIdentity, NuGetFramework targetFramework, LibraryIncludeFlags? include = null, LibraryIncludeFlags? exclude = null)
+        public PackageRepository Dependency(Package package, string targetFramework, string[]? include, string[]? exclude)
         {
-            return Dependency(packageIdentity.Id, new VersionRange(packageIdentity.Version), targetFramework, include, exclude);
-        }
-
-        /// <summary>
-        /// Adds a dependency to the current package.
-        /// </summary>
-        /// <param name="id">The identifier of the dependency.</param>
-        /// <param name="version">The version of the dependency.</param>
-        /// <param name="targetFramework">An optional target framework for the dependency.</param>
-        /// <param name="include">An optional <see cref="LibraryIncludeFlags" /> representing the assets to include for the dependency.</param>
-        /// <param name="exclude">An optional <see cref="LibraryIncludeFlags" /> representing the assets to exclude from the dependency.</param>
-        /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Dependency(string id, string version, string targetFramework, LibraryIncludeFlags? include = null, LibraryIncludeFlags? exclude = null)
-        {
-            return Dependency(
-                id,
-                VersionRange.Parse(version),
-                targetFramework,
-                include,
-                exclude);
+            return Dependency(package.Id, package.Version, targetFramework, include, exclude);
         }
 
         /// <summary>
@@ -70,18 +43,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="id">The identifier of the dependency.</param>
         /// <param name="version">The <see cref="VersionRange" /> of the dependency.</param>
-        /// <param name="targetFramework">An optional target framework for the dependency.</param>
-        /// <param name="include">An optional <see cref="LibraryIncludeFlags" /> representing the assets to include for the dependency.</param>
-        /// <param name="exclude">An optional <see cref="LibraryIncludeFlags" /> representing the assets to exclude from the dependency.</param>
+        /// <param name="targetFramework">The target framework for the dependency.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Dependency(string id, VersionRange version, string targetFramework, LibraryIncludeFlags? include = null, LibraryIncludeFlags? exclude = null)
+        public PackageRepository Dependency(string id, string version, string targetFramework)
         {
-            return Dependency(
-                id,
-                version,
-                string.IsNullOrWhiteSpace(targetFramework) ? null : NuGetFramework.Parse(targetFramework),
-                include,
-                exclude);
+            return Dependency(id, version, targetFramework, null, null);
         }
 
         /// <summary>
@@ -89,23 +55,30 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="id">The identifier of the dependency.</param>
         /// <param name="version">The <see cref="VersionRange" /> of the dependency.</param>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> for the dependency.</param>
-        /// <param name="include">An optional <see cref="LibraryIncludeFlags" /> representing the assets to include for the dependency.</param>
-        /// <param name="exclude">An optional <see cref="LibraryIncludeFlags" /> representing the assets to exclude from the dependency.</param>
+        /// <param name="targetFramework">The target framework for the dependency.</param>
+        /// <param name="include">An optional array of strings representing the assets to include for the dependency.</param>
+        /// <param name="exclude">An optional array of strings representing the assets to exclude from the dependency.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository Dependency(string id, VersionRange version, NuGetFramework targetFramework, LibraryIncludeFlags? include = null, LibraryIncludeFlags? exclude = null)
+        public PackageRepository Dependency(string id, string version, string targetFramework, string[]? include, string[]? exclude)
         {
+            if (_packageManifest == null)
+            {
+                throw new InvalidOperationException(Strings.ErrorWhenAddingLibraryRequiresPackage);
+            }
+
+            NuGetFramework nuGetFramework = string.IsNullOrWhiteSpace(targetFramework) ? NuGetFramework.AnyFramework : NuGetFramework.Parse(targetFramework);
+
             _packageManifest.Metadata.DependencyGroups = _packageManifest.Metadata.DependencyGroups.Concat(new List<PackageDependencyGroup>
             {
                 new PackageDependencyGroup(
-                    targetFramework ?? NuGetFramework.AnyFramework,
+                    nuGetFramework,
                     new List<PackageDependency>
                     {
                         new PackageDependency(
                             id,
-                            version,
-                            include == null ? null : MSBuildStringUtility.Split(include.ToString(), ','),
-                            exclude == null ? null : MSBuildStringUtility.Split(exclude.ToString(), ',')),
+                            VersionRange.Parse(version),
+                            include,
+                            exclude),
                     }),
             });
 

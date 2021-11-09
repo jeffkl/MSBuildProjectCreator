@@ -15,29 +15,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
     public class FeedTests : TestBase
     {
         [Fact]
-        public void AddFeedPackageSource()
-        {
-            PackageSource packageSource = new PackageSource("https://custom.org/v3/index.json", "Custom")
-            {
-                IsEnabled = false,
-                ProtocolVersion = 7,
-            };
-
-            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Feed(packageSource);
-
-            packageRepository.NuGetConfigPath.ShouldBe(Path.Combine(TestRootPath, "NuGet.Config"));
-
-            PackageSource actualPackageSource = EnumeratePackageSources(packageRepository).ShouldHaveSingleItem();
-
-            actualPackageSource.IsEnabled.ShouldBe(packageSource.IsEnabled);
-            actualPackageSource.IsOfficial.ShouldBe(packageSource.IsOfficial);
-            actualPackageSource.Name.ShouldBe(packageSource.Name);
-            actualPackageSource.ProtocolVersion.ShouldBe(packageSource.ProtocolVersion);
-            actualPackageSource.SourceUri.ShouldBe(packageSource.SourceUri);
-        }
-
-        [Fact]
         public void AddFeedString()
         {
             const string uri = "https://custom.org/v3/index.json";

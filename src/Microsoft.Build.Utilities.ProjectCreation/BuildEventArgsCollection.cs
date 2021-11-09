@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores all build events.
         /// </summary>
-        private ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
+        private readonly ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildEventArgsCollection"/> class.
@@ -49,7 +49,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets all events that were logged.
         /// </summary>
-        public IReadOnlyCollection<BuildEventArgs> AllEvents => _allEvents;
+        public IReadOnlyCollection<BuildEventArgs> AllEvents => _allEvents!;
 
         /// <summary>
         /// Gets the error events that were logged.
@@ -87,7 +87,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             _errorEvents.Clear();
             _messageEvents.Clear();
             _warningEvents.Clear();
-            _allEvents = null;
         }
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             StringBuilder sb = new StringBuilder(AllEvents.Count * 300);
 
-            ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.Append(message), color => { }, () => { });
+            ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.Append(message), _ => { }, () => { });
 
             foreach (BuildEventArgs buildEventArgs in AllEvents)
             {

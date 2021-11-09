@@ -9,12 +9,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class ProjectCreator
     {
-        private ProjectChooseElement _lastChoose;
-        private ProjectItemGroupElement _lastOtherwiseItemGroup;
-        private ProjectPropertyGroupElement _lastOtherwisePropertyGroup;
-        private ProjectWhenElement _lastWhen;
-        private ProjectItemGroupElement _lastWhenItemGroup;
-        private ProjectPropertyGroupElement _lastWhenPropertyGroup;
+        private ProjectChooseElement? _lastChoose;
+        private ProjectItemGroupElement? _lastOtherwiseItemGroup;
+        private ProjectPropertyGroupElement? _lastOtherwisePropertyGroup;
+        private ProjectWhenElement? _lastWhen;
+        private ProjectItemGroupElement? _lastWhenItemGroup;
+        private ProjectPropertyGroupElement? _lastWhenPropertyGroup;
 
         /// <summary>
         /// Gets the last &lt;Choose /&gt; element that was added.
@@ -28,7 +28,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     Choose();
                 }
 
-                return _lastChoose;
+                return _lastChoose!;
             }
         }
 
@@ -37,7 +37,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="label">An optional label to add to the Choose.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator Choose(string label = null)
+        public ProjectCreator Choose(string? label = null)
         {
             _lastChoose = AddTopLevelElement(RootElement.CreateChooseElement());
             _lastChoose.Label = label;
@@ -59,14 +59,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added
         /// -or-
         /// An &lt;Otherwise /&gt; has already been added to the current &lt;Choose /&gt; element.</exception>
-        public ProjectCreator Otherwise(string label = null)
+        public ProjectCreator Otherwise(string? label = null)
         {
             if (_lastWhen == null)
             {
                 throw new ProjectCreatorException(Strings.ErrorOtherwiseRequiresWhen);
             }
 
-            if (_lastChoose.OtherwiseElement != null)
+            if (_lastChoose is not { OtherwiseElement: null })
             {
                 throw new ProjectCreatorException(Strings.ErrorOtherwiseCanOnlyBeSetOnce);
             }
@@ -85,19 +85,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
-        public ProjectCreator OtherwiseItemGroup(string condition = null, string label = null)
+        public ProjectCreator OtherwiseItemGroup(string? condition = null, string? label = null)
         {
             if (_lastWhen == null)
             {
                 throw new ProjectCreatorException(Strings.ErrorOtherwiseRequiresWhen);
             }
 
-            if (_lastChoose.OtherwiseElement == null)
+            if (_lastChoose?.OtherwiseElement == null)
             {
                 Otherwise();
             }
 
-            _lastOtherwiseItemGroup = ItemGroup(_lastChoose.OtherwiseElement, condition, label);
+            _lastOtherwiseItemGroup = ItemGroup(_lastChoose!.OtherwiseElement!, condition, label);
 
             return this;
         }
@@ -116,10 +116,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator OtherwiseItemInclude(
             string itemType,
             string include,
-            string exclude = null,
-            IDictionary<string, string> metadata = null,
-            string condition = null,
-            string label = null)
+            string? exclude = null,
+            IDictionary<string, string?>? metadata = null,
+            string? condition = null,
+            string? label = null)
         {
             if (_lastWhen == null)
             {
@@ -132,7 +132,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             return Item(
-                itemGroup: _lastOtherwiseItemGroup,
+                itemGroup: _lastOtherwiseItemGroup!,
                 itemType: itemType,
                 include: include,
                 exclude: exclude,
@@ -155,14 +155,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <remarks>
         /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
-        public ProjectCreator OtherwiseProperty(string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false, string label = null)
+        public ProjectCreator OtherwiseProperty(string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
             if (_lastOtherwisePropertyGroup == null)
             {
                 OtherwisePropertyGroup();
             }
 
-            Property(_lastOtherwisePropertyGroup, name, unevaluatedValue, condition, setIfEmpty, label);
+            Property(_lastOtherwisePropertyGroup!, name, unevaluatedValue, condition, setIfEmpty, label);
 
             return this;
         }
@@ -173,14 +173,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property group.</param>
         /// <param name="label">An optional label to add to the property group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator OtherwisePropertyGroup(string condition = null, string label = null)
+        public ProjectCreator OtherwisePropertyGroup(string? condition = null, string? label = null)
         {
             if (LastChoose.OtherwiseElement == null)
             {
                 Otherwise();
             }
 
-            _lastOtherwisePropertyGroup = PropertyGroup(LastChoose.OtherwiseElement, condition, label);
+            _lastOtherwisePropertyGroup = PropertyGroup(LastChoose.OtherwiseElement!, condition, label);
 
             return this;
         }
@@ -191,7 +191,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the &lt;When /&gt; element.</param>
         /// <param name="label">An optional label to add to the &lt;When /&gt; element.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator When(string condition = null, string label = null)
+        public ProjectCreator When(string? condition = null, string? label = null)
         {
             ProjectChooseElement lastChoose = LastChoose;
 
@@ -212,7 +212,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
-        public ProjectCreator WhenItemGroup(string condition = null, string label = null)
+        public ProjectCreator WhenItemGroup(string? condition = null, string? label = null)
         {
             if (_lastWhen == null)
             {
@@ -237,10 +237,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator WhenItemInclude(
             string itemType,
             string include,
-            string exclude = null,
-            IDictionary<string, string> metadata = null,
-            string condition = null,
-            string label = null)
+            string? exclude = null,
+            IDictionary<string, string?>? metadata = null,
+            string? condition = null,
+            string? label = null)
         {
             if (_lastWhenItemGroup == null)
             {
@@ -248,7 +248,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             return Item(
-                itemGroup: _lastWhenItemGroup,
+                itemGroup: _lastWhenItemGroup!,
                 itemType: itemType,
                 include: include,
                 exclude: exclude,
@@ -271,14 +271,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <remarks>
         /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
-        public ProjectCreator WhenProperty(string name, string unevaluatedValue, string condition = null, bool setIfEmpty = false, string label = null)
+        public ProjectCreator WhenProperty(string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
             if (_lastWhenPropertyGroup == null)
             {
                 WhenPropertyGroup();
             }
 
-            Property(_lastWhenPropertyGroup, name, unevaluatedValue, condition, setIfEmpty, label);
+            Property(_lastWhenPropertyGroup!, name, unevaluatedValue, condition, setIfEmpty, label);
 
             return this;
         }
@@ -290,7 +290,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="label">An optional label to add to the property group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
-        public ProjectCreator WhenPropertyGroup(string condition = null, string label = null)
+        public ProjectCreator WhenPropertyGroup(string? condition = null, string? label = null)
         {
             if (_lastWhen == null)
             {

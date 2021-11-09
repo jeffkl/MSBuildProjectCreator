@@ -5,7 +5,6 @@
 using Microsoft.Build.Evaluation;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -20,9 +19,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void BuildCanConsumePackage()
         {
             using (PackageRepository.Create(TestRootPath)
-                .Package("PackageB", "1.0", out PackageIdentity packageB)
+                .Package("PackageB", "1.0", out Package packageB)
                     .Library("netstandard2.0")
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
+                .Package("PackageA", "1.0.0", out Package packageA)
                     .Dependency(packageB, "netstandard2.0")
                     .Library("netstandard2.0"))
             {
@@ -40,12 +39,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void BasicPackage()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageD", "1.2.3-beta", out PackageIdentity package))
+                .Package("PackageD", "1.2.3-beta", out Package package))
             {
                 package.ShouldNotBeNull();
 
                 package.Id.ShouldBe("PackageD");
-                package.Version.ShouldBe(NuGetVersion.Parse("1.2.3-beta"));
+                package.Version.ShouldBe("1.2.3-beta");
 
                 FileInfo manifestFilePath = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
 
@@ -69,7 +68,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 .Package(
                     name: "PackageD",
                     version: "1.2.3",
-                    package: out PackageIdentity package,
+                    package: out Package package,
                     authors: "UserA;UserB",
                     description: "Custom description",
                     copyright: "Copyright 2000",
@@ -77,9 +76,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     icon: Path.Combine("some", "icon.jpg"),
                     iconUrl: "https://icon.url",
                     language: "Pig latin",
-                    licenseMetadata: new LicenseMetadata(LicenseType.Expression, "MIT", null, null, Version.Parse("1.0.0")),
+                    licenseExpression: "MIT",
+                    licenseVersion: "1.0.0",
                     owners: "Owner1;Owner2",
-                    packageTypes: new List<PackageType> { PackageType.Dependency, PackageType.DotnetCliTool },
+                    packageTypes: new List<string> { "Dependency", "DotnetCliTool" },
                     projectUrl: "https://project.url",
                     releaseNotes: "Release notes for PackageD",
                     repositoryType: "Git",
@@ -95,7 +95,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 package.ShouldNotBeNull();
 
                 package.Id.ShouldBe("PackageD");
-                package.Version.ShouldBe(NuGetVersion.Parse("1.2.3"));
+                package.Version.ShouldBe("1.2.3");
 
                 FileInfo manifestFilePath = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
 
@@ -141,7 +141,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 projectCollection.RegisterLogger(buildOutput);
 
                 using (PackageRepository.Create(TestRootPath)
-                    .Package("Foo.Bar", "1.2.3", out PackageIdentity package)
+                    .Package("Foo.Bar", "1.2.3", out Package package)
                     .FileText(Path.Combine("Sdk", "Sdk.props"), "<Project />")
                     .FileText(Path.Combine("Sdk", "Sdk.targets"), "<Project />"))
                 {

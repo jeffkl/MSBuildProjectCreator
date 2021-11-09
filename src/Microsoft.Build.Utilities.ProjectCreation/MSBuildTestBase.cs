@@ -4,6 +4,10 @@
 
 using System;
 using System.IO;
+#if NET5_0_OR_GREATER
+using System.Reflection;
+using System.Runtime.Loader;
+#endif
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -17,9 +21,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", MSBuildAssemblyResolver.MSBuildExePath);
             Environment.SetEnvironmentVariable("MSBuildExtensionsPath", MSBuildAssemblyResolver.DotNetSdksPath);
             Environment.SetEnvironmentVariable("MSBuildSDKsPath", string.IsNullOrWhiteSpace(MSBuildAssemblyResolver.DotNetSdksPath) ? null : Path.Combine(MSBuildAssemblyResolver.DotNetSdksPath, "Sdks"));
-            Environment.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "1");
 
+#if NET5_0_OR_GREATER
+            AssemblyLoadContext.Default.Resolving += MSBuildAssemblyResolver.AssemblyResolve;
+#else
             AppDomain.CurrentDomain.AssemblyResolve += MSBuildAssemblyResolver.AssemblyResolve;
+#endif
         }
     }
 }

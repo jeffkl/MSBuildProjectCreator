@@ -157,7 +157,7 @@
     <value>You must add a package before adding build logic.</value>
   </data>
   <data name="ErrorWhenAddingLibraryRequiresPackage" xml:space="preserve">
-    <value>You must add a package before adding a library.</value>
+    <value>You must add a package before adding a library, dependency, or file.</value>
   </data>
   <data name="ErrorWhenItemGroupRequiresWhen" xml:space="preserve">
     <value>You must add a When before adding a When ItemGroup.</value>

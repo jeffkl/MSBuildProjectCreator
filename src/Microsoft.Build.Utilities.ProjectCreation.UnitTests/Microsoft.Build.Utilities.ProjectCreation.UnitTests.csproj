@@ -1,14 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.0'">net472;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net472;netcoreapp3.1;net5.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <Import Project="..\Microsoft.Build.Utilities.ProjectCreation\build\MSBuild.ProjectCreation.props" Condition="'$(TargetFramework)' == 'net472'" />
   <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="NuGet.Frameworks" />
+    <PackageReference Include="NuGet.Packaging" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Update="NuGet.*" ExcludeAssets="Runtime" Condition="'$(TargetFramework)' == 'net472'" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.IO.Compression" Condition="'$(TargetFramework)' == 'net472'" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Build.Utilities.ProjectCreation\Microsoft.Build.Utilities.ProjectCreation.csproj" />

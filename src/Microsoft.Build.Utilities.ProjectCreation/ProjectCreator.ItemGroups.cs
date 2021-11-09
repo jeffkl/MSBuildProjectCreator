@@ -11,7 +11,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the last import group that was added.
         /// </summary>
-        private ProjectItemGroupElement _lastItemGroup;
+        private ProjectItemGroupElement? _lastItemGroup;
 
         /// <summary>
         /// Gets the last import group that was added if there is one, otherwise one is added.
@@ -25,7 +25,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     ItemGroup();
                 }
 
-                return _lastItemGroup;
+                return _lastItemGroup!;
             }
         }
 
@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        public ProjectCreator ItemGroup(string condition = null, string label = null)
+        public ProjectCreator ItemGroup(string? condition = null, string? label = null)
         {
             _lastItemGroup = AddTopLevelElement(RootElement.CreateItemGroupElement());
 
@@ -53,7 +53,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
         /// <returns>The current <see cref="ProjectCreator"/>.</returns>
-        protected ProjectItemGroupElement ItemGroup(ProjectElementContainer parent, string condition = null, string label = null)
+        protected ProjectItemGroupElement ItemGroup(ProjectElementContainer parent, string? condition = null, string? label = null)
         {
             ProjectItemGroupElement itemGroup = RootElement.CreateItemGroupElement();
 

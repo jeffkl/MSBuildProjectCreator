@@ -26,7 +26,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="creator">An <see cref="Action{ProjectCreator}" /> to generate the .props file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildMultiTargetingProps(Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildMultiTargetingProps(Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             return BuildMultiTargetingProps(creator, out _, projectFileOptions);
         }
@@ -49,7 +49,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="project">Receives the <see cref="ProjectCreator" /> of the created project file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildMultiTargetingProps(Action<ProjectCreator> creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildMultiTargetingProps(Action<ProjectCreator>? creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(".props", "buildMultiTargeting", creator, projectFileOptions, out project);
 
@@ -95,7 +95,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="project">Receives the <see cref="ProjectCreator" /> of the created project file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .targets file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildMultiTargetingTargets(Action<ProjectCreator> creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildMultiTargetingTargets(Action<ProjectCreator>? creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(".targets", "buildMultiTargeting", creator, projectFileOptions, out project);
 
@@ -141,7 +141,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="project">Receives the <see cref="ProjectCreator" /> of the created project file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildProps(Action<ProjectCreator> creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildProps(Action<ProjectCreator>? creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(".props", "build", creator, projectFileOptions, out project);
 
@@ -187,7 +187,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="project">Receives the <see cref="ProjectCreator" /> of the created project file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .targets file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildTargets(Action<ProjectCreator> creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildTargets(Action<ProjectCreator>? creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(".targets", "build", creator, projectFileOptions, out project);
 
@@ -233,7 +233,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="project">Receives the <see cref="ProjectCreator" /> of the created project file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .props file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildTransitiveProps(Action<ProjectCreator> creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildTransitiveProps(Action<ProjectCreator>? creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(".props", "buildTransitive", creator, projectFileOptions, out project);
 
@@ -279,14 +279,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="project">Receives the <see cref="ProjectCreator" /> of the created project file.</param>
         /// <param name="projectFileOptions">Optional <see cref="NewProjectFileOptions" /> for the .targets file.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository BuildTransitiveTargets(Action<ProjectCreator> creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
+        public PackageRepository BuildTransitiveTargets(Action<ProjectCreator>? creator, out ProjectCreator project, NewProjectFileOptions projectFileOptions = NewProjectFileOptions.IncludeAllOptions)
         {
             CreateBuildFile(".targets", "buildTransitive", creator, projectFileOptions, out project);
 
             return this;
         }
 
-        private void CreateBuildFile(string extension, string folderName, Action<ProjectCreator> creator, NewProjectFileOptions projectFileOptions, out ProjectCreator project)
+        private void CreateBuildFile(string extension, string folderName, Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions, out ProjectCreator project)
         {
             if (_packageManifest == null)
             {

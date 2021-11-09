@@ -2,8 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
-using NuGet.Packaging.Core;
 using Shouldly;
 using System;
 using System.IO;
@@ -18,10 +16,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void BasicLibrary()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .Library(FrameworkConstants.CommonFrameworks.Net45))
+                .Package("PackageA", "1.0.0", out Package packageA)
+                .Library("net45"))
             {
-                VerifyAssembly(packageRepository, packageA, FrameworkConstants.CommonFrameworks.Net45);
+                VerifyAssembly(packageRepository, packageA, "net45");
             }
         }
 
@@ -31,10 +29,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             const string assemblyVersion = "2.3.4.5";
 
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .Library(FrameworkConstants.CommonFrameworks.Net45, assemblyVersion: assemblyVersion))
+                .Package("PackageA", "1.0.0", out Package packageA)
+                .Library("net45", assemblyVersion: assemblyVersion))
             {
-                VerifyAssembly(packageRepository, packageA, FrameworkConstants.CommonFrameworks.Net45, version: "2.3.4.5");
+                VerifyAssembly(packageRepository, packageA, "net45", version: "2.3.4.5");
             }
         }
 
@@ -42,12 +40,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void MultipleLibrariesMultipleTargetFrameworks()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .Library(FrameworkConstants.CommonFrameworks.Net45)
-                .Library(FrameworkConstants.CommonFrameworks.NetStandard20))
+                .Package("PackageA", "1.0.0", out Package packageA)
+                .Library("net45")
+                .Library("netstandard2.0"))
             {
-                VerifyAssembly(packageRepository, packageA, FrameworkConstants.CommonFrameworks.Net45);
-                VerifyAssembly(packageRepository, packageA, FrameworkConstants.CommonFrameworks.NetStandard20);
+                VerifyAssembly(packageRepository, packageA, "net45");
+                VerifyAssembly(packageRepository, packageA, "netstandard2.0");
             }
         }
 
@@ -55,24 +53,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         public void MultipleLibrariesSameTargetFramework()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageA", "1.0.0", out PackageIdentity packageA)
-                .Library(FrameworkConstants.CommonFrameworks.Net45, filename: null)
-                .Library(FrameworkConstants.CommonFrameworks.Net45, filename: "CustomAssembly.dll"))
+                .Package("PackageA", "1.0.0", out Package packageA)
+                .Library("net45", filename: null)
+                .Library("net45", filename: "CustomAssembly.dll"))
             {
-                VerifyAssembly(packageRepository, packageA, FrameworkConstants.CommonFrameworks.Net45);
-                VerifyAssembly(packageRepository, packageA, FrameworkConstants.CommonFrameworks.Net45, assemblyFileName: "CustomAssembly.dll");
+                VerifyAssembly(packageRepository, packageA, "net45");
+                VerifyAssembly(packageRepository, packageA, "net45", assemblyFileName: "CustomAssembly.dll");
             }
         }
 
-        private void VerifyAssembly(PackageRepository packageRepository, PackageIdentity packageIdentity, NuGetFramework targetFramework, string assemblyFileName = null, string version = null)
+        private void VerifyAssembly(PackageRepository packageRepository, Package package, string targetFramework, string assemblyFileName = null, string version = null)
         {
-            DirectoryInfo packageDirectory = new DirectoryInfo(packageRepository.GetInstallPath(packageIdentity.Id, packageIdentity.Version))
+            DirectoryInfo packageDirectory = new DirectoryInfo(packageRepository.GetInstallPath(package.Id, package.Version))
                 .ShouldExist();
 
-            DirectoryInfo libDirectory = new DirectoryInfo(Path.Combine(packageDirectory.FullName, "lib", targetFramework.GetShortFolderName()))
+            DirectoryInfo libDirectory = new DirectoryInfo(Path.Combine(packageDirectory.FullName, "lib", targetFramework))
                 .ShouldExist();
 
-            FileInfo classLibrary = new FileInfo(Path.Combine(libDirectory.FullName, assemblyFileName ?? $"{packageIdentity.Id}.dll"))
+            FileInfo classLibrary = new FileInfo(Path.Combine(libDirectory.FullName, assemblyFileName ?? $"{package.Id}.dll"))
                 .ShouldExist();
 
             AssemblyName assemblyName = AssemblyName.GetAssemblyName(classLibrary.FullName);

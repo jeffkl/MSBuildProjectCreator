@@ -36,7 +36,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="author">The author of the package.</param>
         /// <param name="description">The description of the package.</param>
         /// <param name="developmentDependency">A value indicating whether or not the package is a development dependency.</param>
-        internal Package(string id, NuGetVersion version, string author, string description, bool developmentDependency)
+        internal Package(string id, string version, string author, string description, bool developmentDependency)
         {
             _packageBuilder = new PackageBuilder(deterministic: false)
             {
@@ -44,10 +44,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 Description = description,
                 DevelopmentDependency = developmentDependency,
                 Id = id,
-                Version = version,
+                Version = NuGetVersion.Parse(version),
             };
 
             FileName = $"{_packageBuilder.Id}.{_packageBuilder.Version.ToNormalizedString()}{NuGetConstants.PackageExtension}";
+
+            FullPath = string.Empty;
         }
 
         /// <summary>
@@ -83,7 +85,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the version of the package.
         /// </summary>
-        public NuGetVersion Version => _packageBuilder.Version;
+        public string Version => _packageBuilder.Version.ToNormalizedString();
 
         /// <summary>
         /// Gets a value indicating whether or not the package is saved.
@@ -91,7 +93,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         internal bool Saved { get; private set; }
 
         /// <inheritdoc />
-        public int Compare(Package x, Package y)
+        public int Compare(Package? x, Package? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -119,7 +121,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <inheritdoc />
-        public int CompareTo(Package other)
+        public int CompareTo(Package? other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -142,7 +144,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <inheritdoc />
-        public bool Equals(Package x, Package y)
+        public bool Equals(Package? x, Package? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -172,7 +174,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             unchecked
             {
-                return ((obj.Id != null ? obj.Id.GetHashCode() : 0) * 397) ^ (obj.Version != null ? obj.Version.GetHashCode() : 0);
+                return (obj.Id.GetHashCode() * 397) ^ obj.Version.GetHashCode();
             }
         }
 
@@ -198,7 +200,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             _targetFrameworks.Add(targetFramework);
 
-            if (!_dependencies.TryGetValue(targetFramework, out HashSet<PackageDependency> packageDependencies))
+            if (!_dependencies.TryGetValue(targetFramework, out HashSet<PackageDependency>? packageDependencies))
             {
                 packageDependencies = new HashSet<PackageDependency>();
 
@@ -306,7 +308,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 foreach (NuGetFramework targetFramework in _targetFrameworks)
                 {
-                    if (!_dependencies.TryGetValue(targetFramework, out HashSet<PackageDependency> packageDependencies))
+                    if (!_dependencies.TryGetValue(targetFramework, out HashSet<PackageDependency>? packageDependencies))
                     {
                         packageDependencies = new HashSet<PackageDependency>();
                     }
@@ -329,22 +331,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="packageFile">An <see cref="IPackageFile" /> that represents a file to add to the package.</param>
         private void AddFile(string relativePath, IPackageFile packageFile)
         {
-#if NETCOREAPP3_1
-            if (packageFile.TargetFramework != null)
-            {
-                NuGetFramework nuGetFramework = NuGetFramework.ParseFrameworkName(packageFile.TargetFramework.FullName, DefaultFrameworkNameProvider.Instance);
-
-                if (nuGetFramework != null)
-                {
-                    AddTargetFramework(nuGetFramework);
-                }
-            }
-#else
             if (packageFile.NuGetFramework != null)
             {
                 AddTargetFramework(packageFile.NuGetFramework);
             }
-#endif
 
             _files[relativePath] = packageFile;
 

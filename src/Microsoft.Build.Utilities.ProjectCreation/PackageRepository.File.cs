@@ -39,6 +39,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ErrorFilePathMustBeRelative, relativePath));
             }
 
+            if (_packageManifest == null)
+            {
+                throw new InvalidOperationException(Strings.ErrorWhenAddingLibraryRequiresPackage);
+            }
+
             FileInfo destinationFileInfo = new FileInfo(Path.Combine(_packageManifest.Directory, relativePath));
 
             if (destinationFileInfo.Exists)
@@ -60,6 +65,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private PackageRepository File(string relativePath, Action<FileInfo> writeAction)
         {
+            if (_packageManifest == null)
+            {
+                throw new InvalidOperationException(Strings.ErrorWhenAddingLibraryRequiresPackage);
+            }
+
             FileInfo fileInfo = new FileInfo(Path.Combine(_packageManifest.Directory, relativePath));
 
             if (fileInfo.Exists)

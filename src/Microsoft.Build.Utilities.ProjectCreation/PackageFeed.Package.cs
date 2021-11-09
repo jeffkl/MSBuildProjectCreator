@@ -12,7 +12,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     {
         private readonly HashSet<Package> _packages = new HashSet<Package>();
 
-        private Package _lastPackage;
+        private Package? _lastPackage;
 
         /// <summary>
         /// Gets the packages in the feed.
@@ -65,7 +65,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             package = new Package(
                 id ?? throw new ArgumentNullException(nameof(id)),
-                new NuGetVersion(version ?? throw new ArgumentNullException(nameof(version))),
+                version ?? throw new ArgumentNullException(nameof(version)),
                 author ?? throw new ArgumentNullException(nameof(author)),
                 description ?? throw new ArgumentNullException(nameof(description)),
                 developmentDependency);

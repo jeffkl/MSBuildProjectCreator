@@ -1,9 +1,9 @@
 {
-  "version": "6.3",
+  "version": "7.0-preview",
   "assemblyVersion": "1.0",
   "buildNumberOffset": -1,
   "nugetPackageVersion": {
-    "semVer": 1
+    "semVer": 2
   },
   "publicReleaseRefSpec": [
     "^refs/tags/v\\d+\\.\\d+"

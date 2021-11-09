@@ -53,17 +53,17 @@ jobs:
     - name: Build Solution
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
 
+    - name: Run Unit Tests (.NET Framework)
+      run: dotnet test --logger trx --no-restore --no-build --framework net472 /noautorsp
+
     - name: Run Unit Tests (.NET Core 3.1)
-      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp
       
     - name: Run Unit Tests (.NET 5)
-      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /noautorsp
 
     - name: Run Unit Tests (.NET 6)
-      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /restore:false
-
-    - name: Run Unit Tests (.NET Framework)
-      run: dotnet test --logger trx --no-restore --no-build --framework net472 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
@@ -114,13 +114,13 @@ jobs:
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
 
     - name: Run Unit Tests (.NET Core 3.1)
-      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp
 
     - name: Run Unit Tests (.NET 5)
-      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /noautorsp
 
     - name: Run Unit Tests (.NET 6)
-      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
@@ -167,13 +167,13 @@ jobs:
       run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
 
     - name: Run Unit Tests (.NET Core 3.1)
-      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp
 
     - name: Run Unit Tests (.NET 5)
-      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net5.0 /noautorsp
 
     - name: Run Unit Tests (.NET 6)
-      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /restore:false
+      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
