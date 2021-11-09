@@ -24,20 +24,17 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <MonoCecilAssemblyRoot Condition="'$(PkgMono_Cecil)' != '' And '$(TargetFramework)' == 'net472'">$(PkgMono_Cecil)\lib\net40</MonoCecilAssemblyRoot>
-    <MonoCecilAssemblyRoot Condition="'$(PkgMono_Cecil)' != '' And '$(TargetFramework)' != 'net472'">$(PkgMono_Cecil)\lib\netstandard2.0</MonoCecilAssemblyRoot>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Condition="'$(TargetFramework)' == 'net472'" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
-    <PackageReference Include="Mono.Cecil" VersionOverride="0.11.4" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
-    <PackageReference Include="NuGet.Frameworks" PrivateAssets="All" />
-    <PackageReference Include="NuGet.Packaging" PrivateAssets="All" />
-    <PackageReference Include="NuGet.ProjectModel" PrivateAssets="All" />
+    <PackageReference Include="NuGet.Frameworks" />
+    <PackageReference Include="NuGet.Packaging" />
+    <PackageReference Include="NuGet.ProjectModel" />
     <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
   </ItemGroup>
   <ItemGroup>
