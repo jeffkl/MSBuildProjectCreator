@@ -9,7 +9,7 @@ using System.Collections;
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     /// <summary>
-    /// Represents an implementation of <see cref="IBuildEngine"/> that allows for capturing logged events in tasks.
+    /// Represents an implementation of <see cref="IBuildEngine" /> that allows for capturing logged events in tasks.
     /// </summary>
     public sealed class BuildEngine : BuildEventArgsCollection, IBuildEngine
     {
@@ -17,43 +17,43 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
         }
 
-        /// <inheritdoc cref="IBuildEngine.ColumnNumberOfTaskNode"/>
+        /// <inheritdoc cref="IBuildEngine.ColumnNumberOfTaskNode" />
         public int ColumnNumberOfTaskNode => 0;
 
-        /// <inheritdoc cref="IBuildEngine.ContinueOnError"/>
+        /// <inheritdoc cref="IBuildEngine.ContinueOnError" />
         public bool ContinueOnError => false;
 
-        /// <inheritdoc cref="IBuildEngine.LineNumberOfTaskNode"/>
+        /// <inheritdoc cref="IBuildEngine.LineNumberOfTaskNode" />
         public int LineNumberOfTaskNode => 0;
 
-        /// <inheritdoc cref="IBuildEngine.ProjectFileOfTaskNode"/>
+        /// <inheritdoc cref="IBuildEngine.ProjectFileOfTaskNode" />
         public string? ProjectFileOfTaskNode => null;
 
         /// <summary>
-        /// Creates an instance of the <see cref="BuildEngine"/> class.
+        /// Creates an instance of the <see cref="BuildEngine" /> class.
         /// </summary>
-        /// <returns>A <see cref="BuildEngine"/> instance.</returns>
+        /// <returns>A <see cref="BuildEngine" /> instance.</returns>
         public static BuildEngine Create()
         {
             return new BuildEngine();
         }
 
-        /// <inheritdoc cref="IBuildEngine.BuildProjectFile"/>
+        /// <inheritdoc cref="IBuildEngine.BuildProjectFile" />
         public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
         {
             throw new NotSupportedException();
         }
 
-        /// <inheritdoc cref="IBuildEngine.LogCustomEvent"/>
+        /// <inheritdoc cref="IBuildEngine.LogCustomEvent" />
         public void LogCustomEvent(CustomBuildEventArgs e) => Add(e);
 
-        /// <inheritdoc cref="IBuildEngine.LogErrorEvent"/>
+        /// <inheritdoc cref="IBuildEngine.LogErrorEvent" />
         public void LogErrorEvent(BuildErrorEventArgs e) => Add(e);
 
-        /// <inheritdoc cref="IBuildEngine.LogMessageEvent"/>
+        /// <inheritdoc cref="IBuildEngine.LogMessageEvent" />
         public void LogMessageEvent(BuildMessageEventArgs e) => Add(e);
 
-        /// <inheritdoc cref="IBuildEngine.LogWarningEvent"/>
+        /// <inheritdoc cref="IBuildEngine.LogWarningEvent" />
         public void LogWarningEvent(BuildWarningEventArgs e) => Add(e);
     }
 }

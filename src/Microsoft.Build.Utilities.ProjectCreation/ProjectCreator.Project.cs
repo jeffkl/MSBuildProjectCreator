@@ -18,7 +18,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private readonly IDictionary<string, string>? _globalProperties;
 
         /// <summary>
-        /// Stores the <see cref="Lazy{Project}"/> instance used to create a <see cref="Project"/> object lazily.
+        /// Stores the <see cref="Lazy{Project}" /> instance used to create a <see cref="Project" /> object lazily.
         /// </summary>
         private Project? _project;
 
@@ -28,7 +28,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private ProjectInstance? _projectInstance;
 
         /// <summary>
-        /// Gets the <see cref="Project"/> instance for the current project.  The project is re-evaluated if necessary every time this property is accessed.
+        /// Gets the <see cref="Project" /> instance for the current project.  The project is re-evaluated if necessary every time this property is accessed.
         /// </summary>
         public Project Project
         {
@@ -51,14 +51,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectInstance ProjectInstance => _projectInstance ??= Project.CreateProjectInstance();
 
         /// <summary>
-        /// Gets a <see cref="Project"/> instance from the current project.
+        /// Gets a <see cref="Project" /> instance from the current project.
         /// </summary>
-        /// <param name="project">Receives the <see cref="Project"/> instance.</param>
-        /// <param name="globalProperties">Optional <see cref="IDictionary{String, String}"/> containing global properties.</param>
+        /// <param name="project">Receives the <see cref="Project" /> instance.</param>
+        /// <param name="globalProperties">Optional <see cref="IDictionary{String, String}" /> containing global properties.</param>
         /// <param name="toolsVersion">Optional tools version.</param>
-        /// <param name="projectCollection">Optional <see cref="ProjectCollection"/> to use.  Defaults to <code>ProjectCollection.GlobalProjectCollection</code>.</param>
-        /// <param name="projectLoadSettings">Optional <see cref="ProjectLoadSettings"/> to use.  Defaults to <see cref="ProjectLoadSettings.Default"/>.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <param name="projectCollection">Optional <see cref="ProjectCollection" /> to use.  Defaults to <code>ProjectCollection.GlobalProjectCollection</code>.</param>
+        /// <param name="projectLoadSettings">Optional <see cref="ProjectLoadSettings" /> to use.  Defaults to <see cref="ProjectLoadSettings.Default" />.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryGetProject(
             out Project project,
             IDictionary<string, string>? globalProperties = null,
@@ -77,15 +77,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Gets a <see cref="Project"/> instance from the current project.
+        /// Gets a <see cref="Project" /> instance from the current project.
         /// </summary>
-        /// <param name="project">Receives the <see cref="Project"/> instance.</param>
-        /// <param name="buildOutput">Receives <see cref="BuildOutput"/> instance.</param>
-        /// <param name="globalProperties">Optional <see cref="IDictionary{String, String}"/> containing global properties.</param>
+        /// <param name="project">Receives the <see cref="Project" /> instance.</param>
+        /// <param name="buildOutput">Receives <see cref="BuildOutput" /> instance.</param>
+        /// <param name="globalProperties">Optional <see cref="IDictionary{String, String}" /> containing global properties.</param>
         /// <param name="toolsVersion">Optional tools version.</param>
-        /// <param name="projectCollection">Optional <see cref="ProjectCollection"/> to use.  Defaults to <code>ProjectCollection.GlobalProjectCollection</code>.</param>
-        /// <param name="projectLoadSettings">Optional <see cref="ProjectLoadSettings"/> to use.  Defaults to <see cref="ProjectLoadSettings.Default"/>.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <param name="projectCollection">Optional <see cref="ProjectCollection" /> to use.  Defaults to <code>ProjectCollection.GlobalProjectCollection</code>.</param>
+        /// <param name="projectLoadSettings">Optional <see cref="ProjectLoadSettings" /> to use.  Defaults to <see cref="ProjectLoadSettings.Default" />.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryGetProject(
             out Project project,
             out BuildOutput buildOutput,
@@ -116,7 +116,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="projectInstance">Receives the <see cref="ProjectInstance" />.</param>
         /// <param name="projectInstanceSettings">Optional <see cref="ProjectInstanceSettings" /> to use when creating the project instance.</param>
         /// <param name="evaluationContext">Optional <see cref="EvaluationContext" /> to use when creating the project instance.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryGetProjectInstance(
             out ProjectInstance projectInstance,
             ProjectInstanceSettings projectInstanceSettings = ProjectInstanceSettings.None,

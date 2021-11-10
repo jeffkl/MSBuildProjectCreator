@@ -13,14 +13,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// <summary>
     /// Provides extension methods.
     /// </summary>
-    internal static class ExtensionMethods
+    public static class ExtensionMethods
     {
         /// <summary>
-        /// Gets the current object as an <see cref="IEnumerable{T}"/>.
+        /// Gets the current object as an <see cref="IEnumerable{T}" />.
         /// </summary>
         /// <typeparam name="T">The type of the object.</typeparam>
-        /// <param name="item">The item to make into an <see cref="IEnumerable{T}"/>.</param>
-        /// <returns>The current object as an <see cref="IEnumerable{T}"/>.</returns>
+        /// <param name="item">The item to make into an <see cref="IEnumerable{T}" />.</param>
+        /// <returns>The current object as an <see cref="IEnumerable{T}" />.</returns>
         [DebuggerStepThrough]
         public static IEnumerable<T> AsEnumerable<T>(this T? item)
             where T : class
@@ -42,7 +42,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="first">The first dictionary and all of its values to start with.</param>
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
-        /// <returns>A merged <see cref="IDictionary{String,String}"/> with the values of the first dictionary overridden by the second.</returns>
+        /// <returns>A merged <see cref="IDictionary{String,String}" /> with the values of the first dictionary overridden by the second.</returns>
         [DebuggerStepThrough]
         public static IDictionary<string, string?> Merge(this IDictionary<string, string?>? first, IDictionary<string, string?> second)
         {
@@ -54,8 +54,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="first">The first dictionary and all of its values to start with.</param>
         /// <param name="second">The second dictionary to merge with the first and override its values.</param>
-        /// <param name="comparer">The <see cref="IEqualityComparer{String}"/> implementation to use when comparing keys, or null to use the default <see cref="IEqualityComparer{String}"/> for the type of the key. </param>
-        /// <returns>A merged <see cref="IDictionary{String,String}"/> with the values of the first dictionary overridden by the second.</returns>
+        /// <param name="comparer">The <see cref="IEqualityComparer{String}" /> implementation to use when comparing keys, or null to use the default <see cref="IEqualityComparer{String}" /> for the type of the key. </param>
+        /// <returns>A merged <see cref="IDictionary{String,String}" /> with the values of the first dictionary overridden by the second.</returns>
         [DebuggerStepThrough]
         public static IDictionary<string, string?> Merge(this IDictionary<string, string?>? first, IDictionary<string, string?> second, IEqualityComparer<string> comparer)
         {
@@ -93,7 +93,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="packageTypes">An <see cref="IEnumerable{String}" /> containing package types.</param>
         /// <returns>An <see cref="IEnumerable{PackageType}" /> containing the package types.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Any package types are invalid.</exception>
-        public static IEnumerable<PackageType> ToPackageTypes(this IEnumerable<string>? packageTypes)
+        [DebuggerStepThrough]
+        internal static IEnumerable<PackageType> ToPackageTypes(this IEnumerable<string>? packageTypes)
         {
             if (packageTypes == null)
             {

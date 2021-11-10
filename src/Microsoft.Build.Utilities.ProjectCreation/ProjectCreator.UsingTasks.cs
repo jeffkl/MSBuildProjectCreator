@@ -23,7 +23,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="architecture">An optional architecture for the task.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator UsingTaskAssemblyFile(string taskName, string assemblyFile, string? taskFactory = null, string? runtime = null, string? architecture = null, string? condition = null, string? label = null)
         {
             _lastUsingTask = AddTopLevelElement(RootElement.CreateUsingTaskElement(taskName, assemblyFile, null, runtime, architecture));
@@ -45,7 +45,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="architecture">An optional architecture for the task.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator UsingTaskAssemblyName(string taskName, string assemblyName, string taskFactory, string? runtime = null, string? architecture = null, string? condition = null, string? label = null)
         {
             _lastUsingTask = AddTopLevelElement(RootElement.CreateUsingTaskElement(taskName, null, assemblyName, runtime, architecture));
@@ -62,7 +62,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="body">The data that is passed to the TaskFactory to generate an instance of the task.</param>
         /// <param name="evaluate">An optional value indicating if the body should be evaluated.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator UsingTaskBody(string body, bool? evaluate = null)
         {
             if (_lastUsingTask == null)
@@ -87,7 +87,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="parameterType">An optional .NET type of the parameter, for example, "System.String".</param>
         /// <param name="output">An optional value indicating whether or not the property is an output.</param>
         /// <param name="required">An optional value indicating whether or not the property is required.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator UsingTaskParameter(string name, string? parameterType = null, bool? output = null, bool? required = null)
         {
             if (_lastUsingTask == null)

@@ -14,7 +14,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     public static partial class MSBuildAssemblyResolver
     {
         /// <summary>
-        /// A <see cref="ResolveEventHandler"/> for MSBuild related assemblies.
+        /// A <see cref="ResolveEventHandler" /> for MSBuild related assemblies.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="args">The event data.</param>

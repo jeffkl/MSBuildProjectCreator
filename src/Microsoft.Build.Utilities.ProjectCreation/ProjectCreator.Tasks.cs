@@ -21,7 +21,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="name">The name of the task.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
-        /// <param name="parameters">An optional <see cref="IDictionary{String,String}"/> that contains the parameters to pass to the task.</param>
+        /// <param name="parameters">An optional <see cref="IDictionary{String,String}" /> that contains the parameters to pass to the task.</param>
         /// <param name="continueOnError">An optional value indicating if the build should continue in the case of an error.  The valid values are:
         /// <list type="Bullet">
         ///   <item>
@@ -38,7 +38,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="architecture">an optional architecture for the task.</param>
         /// <param name="runtime">An optional runtime for the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator Task(string name, string? condition = null, IDictionary<string, string?>? parameters = null, string? continueOnError = null, string? architecture = null, string? runtime = null, string? label = null)
         {
             _lastTask = LastTarget.AddTask(name);
@@ -69,7 +69,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="helpKeyword">An optional help keyword.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TaskError(string text, string? code = null, string? file = null, string? helpKeyword = null, string? condition = null, string? label = null)
         {
             return Task(
@@ -89,10 +89,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Adds a &lt;Message /&gt; task to the current target.
         /// </summary>
         /// <param name="text">The message to display.</param>
-        /// <param name="importance">An optional <see cref="MessageImportance"/> to use.</param>
+        /// <param name="importance">An optional <see cref="MessageImportance" /> to use.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TaskMessage(string text, MessageImportance? importance = null, string? condition = null, string? label = null)
         {
             return Task(
@@ -107,13 +107,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Adds an &lt;Output /&gt; element to the current task that receives an item from task.  To add an output property, use <see cref="TaskOutputProperty"/>.
+        /// Adds an &lt;Output /&gt; element to the current task that receives an item from task.  To add an output property, use <see cref="TaskOutputProperty" />.
         /// </summary>
         /// <param name="taskParameter">The name of the task's output parameter.</param>
         /// <param name="itemType">The item that receives the task's output parameter value.</param>
         /// <param name="condition">An optional condition to add to the output element.</param>
         /// <param name="label">An optional label to add to the output element.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TaskOutputItem(string taskParameter, string itemType, string? condition = null, string? label = null)
         {
             if (_lastTask == null)
@@ -128,13 +128,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Adds an &lt;Output /&gt; element to the current task that receives a property from task.  To add an output Item, use <see cref="TaskOutputItem"/>.
+        /// Adds an &lt;Output /&gt; element to the current task that receives a property from task.  To add an output Item, use <see cref="TaskOutputItem" />.
         /// </summary>
         /// <param name="taskParameter">The name of the task's output parameter.</param>
         /// <param name="propertyName">The property that receives the task's output parameter value.</param>
         /// <param name="condition">An optional condition to add to the output element.</param>
         /// <param name="label">An optional label to add to the output element.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TaskOutputProperty(string taskParameter, string propertyName, string? condition = null, string? label = null)
         {
             if (_lastTask == null)
@@ -157,7 +157,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="helpKeyword">An optional help keyword.</param>
         /// <param name="condition">An optional condition to add to the task.</param>
         /// <param name="label">An optional label to add to the task.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TaskWarning(string text, string? code = null, string? file = null, string? helpKeyword = null, string? condition = null, string? label = null)
         {
             return Task(

@@ -5,7 +5,7 @@
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     /// <summary>
-    /// Represents constants used by the <see cref="ProjectCreator"/> class.
+    /// Represents constants used by the <see cref="ProjectCreator" /> class.
     /// </summary>
     public static class ProjectCreatorConstants
     {

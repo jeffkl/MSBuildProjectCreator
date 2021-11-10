@@ -36,7 +36,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Adds a &lt;Choose /&gt; element to the current project.
         /// </summary>
         /// <param name="label">An optional label to add to the Choose.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator Choose(string? label = null)
         {
             _lastChoose = AddTopLevelElement(RootElement.CreateChooseElement());
@@ -55,7 +55,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Adds an &lt;Otherwise /&gt; element to the current project.
         /// </summary>
         /// <param name="label">An optional label to add to the Otherwise.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added
         /// -or-
         /// An &lt;Otherwise /&gt; has already been added to the current &lt;Choose /&gt; element.</exception>
@@ -83,7 +83,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
         public ProjectCreator OtherwiseItemGroup(string? condition = null, string? label = null)
         {
@@ -108,10 +108,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="itemType">The type of the item to add.</param>
         /// <param name="include">The file or wildcard to include in the list of items.</param>
         /// <param name="exclude">An optional file or wildcard to exclude from the list of items.</param>
-        /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
+        /// <param name="metadata">An optional <see cref="IDictionary{String,String}" /> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
         /// <param name="label">An option label to add to the item.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
         public ProjectCreator OtherwiseItemInclude(
             string itemType,
@@ -151,9 +151,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property.</param>
         /// <param name="setIfEmpty">An optional value indicating whether or not a condition should be added that checks if the property has already been set.</param>
         /// <param name="label">An optional label to add to the property.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <remarks>
-        /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
+        /// The <paramref name="setIfEmpty" /> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
         public ProjectCreator OtherwiseProperty(string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
@@ -172,7 +172,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="condition">An optional condition to add to the property group.</param>
         /// <param name="label">An optional label to add to the property group.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator OtherwisePropertyGroup(string? condition = null, string? label = null)
         {
             if (LastChoose.OtherwiseElement == null)
@@ -190,7 +190,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="condition">An optional condition to add to the &lt;When /&gt; element.</param>
         /// <param name="label">An optional label to add to the &lt;When /&gt; element.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator When(string? condition = null, string? label = null)
         {
             ProjectChooseElement lastChoose = LastChoose;
@@ -210,7 +210,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
         public ProjectCreator WhenItemGroup(string? condition = null, string? label = null)
         {
@@ -230,10 +230,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="itemType">The type of the item to add.</param>
         /// <param name="include">The file or wildcard to include in the list of items.</param>
         /// <param name="exclude">An optional file or wildcard to exclude from the list of items.</param>
-        /// <param name="metadata">An optional <see cref="IDictionary{String,String}"/> containing metadata for the item.</param>
+        /// <param name="metadata">An optional <see cref="IDictionary{String,String}" /> containing metadata for the item.</param>
         /// <param name="condition">An optional condition to add to the item.</param>
         /// <param name="label">An option label to add to the item.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator WhenItemInclude(
             string itemType,
             string include,
@@ -267,9 +267,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property.</param>
         /// <param name="setIfEmpty">An optional value indicating whether or not a condition should be added that checks if the property has already been set.</param>
         /// <param name="label">An optional label to add to the property.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <remarks>
-        /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
+        /// The <paramref name="setIfEmpty" /> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
         public ProjectCreator WhenProperty(string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
@@ -288,7 +288,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="condition">An optional condition to add to the property group.</param>
         /// <param name="label">An optional label to add to the property group.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <exception cref="ProjectCreatorException">A &lt;When /&gt; element has not been added.</exception>
         public ProjectCreator WhenPropertyGroup(string? condition = null, string? label = null)
         {
