@@ -144,32 +144,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             lock (LockObject)
             {
-                MuxLogger muxLogger = new MuxLogger
-                {
-                    Verbosity = LoggerVerbosity.Diagnostic,
-                };
-
                 BuildParameters buildParameters = new BuildParameters
                 {
                     EnableNodeReuse = false,
                     MaxNodeCount = Environment.ProcessorCount,
                     ResetCaches = true,
-                };
-
-                LoggerDescription forwardingLoggerDescription = new LoggerDescription(
-                    loggerClassName: typeof(ConfigurableForwardingLogger).FullName,
-                    loggerAssemblyName: typeof(ConfigurableForwardingLogger).Assembly.GetName().FullName,
-                    loggerAssemblyFile: null,
-                    loggerSwitchParameters: string.Empty,
-                    verbosity: muxLogger.Verbosity);
-
-                ForwardingLoggerRecord forwardingLoggerRecord = new ForwardingLoggerRecord(
-                    muxLogger,
-                    forwardingLoggerDescription);
-
-                buildParameters.ForwardingLoggers = new[]
-                {
-                    forwardingLoggerRecord,
+                    Loggers = loggers,
                 };
 
                 BuildManager.DefaultBuildManager.BeginBuild(buildParameters);
@@ -178,28 +158,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
 
-                    foreach (ILogger logger in loggers)
+                    SetCurrentHost(BuildManager.DefaultBuildManager);
+
+                    BuildResult buildResult = buildSubmission.Execute();
+
+                    if (buildResult.Exception != null)
                     {
-                        muxLogger.RegisterLogger(buildSubmission.SubmissionId, logger);
+                        throw buildResult.Exception;
                     }
 
-                    try
-                    {
-                        SetCurrentHost(BuildManager.DefaultBuildManager);
-
-                        BuildResult buildResult = buildSubmission.Execute();
-
-                        if (buildResult.Exception != null)
-                        {
-                            throw buildResult.Exception;
-                        }
-
-                        return buildResult;
-                    }
-                    finally
-                    {
-                        muxLogger.UnregisterLoggers(buildSubmission.SubmissionId);
-                    }
+                    return buildResult;
                 }
                 finally
                 {

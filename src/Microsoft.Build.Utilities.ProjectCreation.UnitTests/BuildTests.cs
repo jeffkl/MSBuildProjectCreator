@@ -81,6 +81,59 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void BuildOutputContainsOutOfProcMessages()
+        {
+            const int messageCount = 100;
+
+            List<ProjectCreator> projects = new List<ProjectCreator>(messageCount);
+
+            for (int i = 0; i < messageCount; i++)
+            {
+                FileInfo projectPath = new FileInfo(Path.Combine(TestRootPath, $"Project{i}", $"Project{i}.proj"));
+
+                projectPath.Directory!.Create();
+
+                projects.Add(
+                    ProjectCreator.Create()
+                        .Target("Build")
+                        .TaskMessage($"Message {i}", MessageImportance.High)
+                        .Save(projectPath.FullName));
+            }
+
+            ProjectCreator.Create(path: GetTempProjectPath())
+                .ForEach(projects, (project, creator) => creator.ItemProjectReference(project))
+                .Target("Build")
+                .Task("MSBuild", parameters: new Dictionary<string, string>
+                {
+                    ["Projects"] = "@(ProjectReference)",
+                    ["BuildInParallel"] = bool.TrueString,
+                })
+                .Save()
+                .TryBuild(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.IsShutdown.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.Count.ShouldBe(messageCount, buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void BuildOutputIsComplete()
+        {
+            ProjectCreator.Create()
+                .Target("Build")
+                    .For(100, (i, creator) => creator.TaskMessage($"Message {i}", MessageImportance.High))
+                .TryBuild(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.IsShutdown.ShouldBeTrue();
+
+            buildOutput.MessageEvents.High.Count.ShouldBe(100, buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
         public void CanBuildLotsOfProjects()
         {
             int maxBuilds = Environment.ProcessorCount * 2;

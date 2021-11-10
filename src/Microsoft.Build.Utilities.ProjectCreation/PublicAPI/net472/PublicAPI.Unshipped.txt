@@ -1,4 +1,5 @@
-﻿Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods
+﻿Microsoft.Build.Utilities.ProjectCreation.BuildOutput.IsShutdown.get -> bool
+Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods
 Microsoft.Build.Utilities.ProjectCreation.Package.Compare(Microsoft.Build.Utilities.ProjectCreation.Package? x, Microsoft.Build.Utilities.ProjectCreation.Package? y) -> int
 Microsoft.Build.Utilities.ProjectCreation.Package.CompareTo(Microsoft.Build.Utilities.ProjectCreation.Package? other) -> int
 Microsoft.Build.Utilities.ProjectCreation.Package.Equals(Microsoft.Build.Utilities.ProjectCreation.Package? x, Microsoft.Build.Utilities.ProjectCreation.Package? y) -> bool
@@ -73,7 +74,8 @@ Microsoft.Build.Utilities.ProjectCreation.PackageRepository.Package(string! name
 Microsoft.Build.Utilities.ProjectCreation.PackageRepository.Packages.get -> System.Collections.Generic.IReadOnlyCollection<Microsoft.Build.Utilities.ProjectCreation.Package!>!
 Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.Choose(string? label = null) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
 Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.CustomAction(System.Action<Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!>? projectCreator) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
-Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.ForEach<T>(System.Collections.Generic.IEnumerable<T>! source, System.Action<T, Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!>! action) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
+Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.For(int count, System.Action<int, Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!>! action) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
+Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.ForEach<T>(System.Collections.Generic.IEnumerable<T>? source, System.Action<T, Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!>! action) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
 Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.FullPath.get -> string!
 Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.Import(Microsoft.Build.Construction.ProjectRootElement! projectRootElement, string? condition = null, bool conditionOnExistence = false, string? label = null) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
 Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.Import(Microsoft.Build.Evaluation.Project! project, string? condition = null, bool conditionOnExistence = false, string? label = null) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
