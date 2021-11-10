@@ -135,6 +135,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void ProjectWithGlobalPropertiesUsedDuringBuild()
+        {
+            ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
+            {
+                ["Property1"] = "F6EBAC88A10E453B9AF8FA656A574737",
+            });
+
+            ProjectCreator creator = ProjectCreator.Create(projectCollection: projectCollection)
+                .TaskMessage("$(Property1)", MessageImportance.High)
+                .TryBuild(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.Messages.Last().ShouldBe("F6EBAC88A10E453B9AF8FA656A574737");
+        }
+
+        [Fact]
         public void ProjectCollectionLoggersWork()
         {
             string binLogPath = Path.Combine(TestRootPath, "test.binlog");
@@ -222,12 +239,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
-        public void ProjectWithNoPathBuildThrowsInvalidOperationException()
+        public void ProjectWithNoPathRestoreThrowsInvalidOperationException()
         {
             InvalidOperationException exception = Should.Throw<InvalidOperationException>(() =>
             {
                 ProjectCreator.Templates.LogsMessage("6E83EF78-959F-45A2-9FE3-08BAD99C0F92")
-                    .TryBuild(out bool _);
+                    .TryRestore(out bool _);
             });
 
             exception.Message.ShouldBe("Project has not been given a path to save to.");

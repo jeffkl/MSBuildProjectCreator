@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using System;
 using System.Collections.Generic;
@@ -491,8 +492,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             targetOutputs = null;
 
-            Save();
-
             if (restore)
             {
                 Restore(globalProperties, buildOutput, out result, out targetOutputs);
@@ -503,8 +502,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
             }
 
+            ProjectInstance projectInstance;
+
+            if (globalProperties != null)
+            {
+                TryGetProject(out Project project, globalProperties);
+
+                projectInstance = project.CreateProjectInstance();
+            }
+            else
+            {
+                projectInstance = ProjectInstance;
+            }
+
             BuildResult buildResult = BuildManagerHost.Build(
-                FullPath,
+                projectInstance,
                 targets!,
                 globalProperties!,
                 new List<Framework.ILogger>(ProjectCollection.Loggers.Concat(buildOutput.AsEnumerable())),
