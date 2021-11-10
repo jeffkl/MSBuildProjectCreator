@@ -29,6 +29,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Parameters = string.Empty;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether or not the build output is shut down.
+        /// </summary>
+        public bool IsShutdown { get; private set; }
+
         /// <inheritdoc cref="ILogger.Parameters" />
         public string Parameters { get; set; }
 
@@ -73,6 +78,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <inheritdoc cref="ILogger.Shutdown" />
         public void Shutdown()
         {
+            IsShutdown = true;
         }
 
         private void OnAnyEventRaised(object sender, BuildEventArgs e)
