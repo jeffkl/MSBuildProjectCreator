@@ -36,7 +36,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 if (_project == null)
                 {
-                    TryGetProject(out _project, _globalProperties, string.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion, ProjectCollection);
+                    TryGetProject(out _project, _globalProperties);
                 }
 
                 _project.ReevaluateIfNecessary();
@@ -69,8 +69,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             project = new Project(
                 RootElement,
                 globalProperties,
-                toolsVersion,
-                projectCollection ?? ProjectCollection.GlobalProjectCollection,
+                toolsVersion ?? (string.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion),
+                projectCollection ?? ProjectCollection,
                 projectLoadSettings);
 
             return this;
