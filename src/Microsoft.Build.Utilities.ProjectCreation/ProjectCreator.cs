@@ -25,9 +25,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private ProjectElement? _lastTopLevelElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProjectCreator"/> class.
+        /// Initializes a new instance of the <see cref="ProjectCreator" /> class.
         /// </summary>
-        /// <param name="rootElement">The <see cref="ProjectRootElement"/> of the backing MSBuild project.</param>
+        /// <param name="rootElement">The <see cref="ProjectRootElement" /> of the backing MSBuild project.</param>
         /// <param name="globalProperties">An <see cref="IDictionary{String,String}" /> containing global properties to use when creating the project.</param>
         private ProjectCreator(ProjectRootElement rootElement, IDictionary<string, string>? globalProperties)
         {
@@ -44,12 +44,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public string FullPath => RootElement.FullPath;
 
         /// <summary>
-        /// Gets the <see cref="ProjectCollection"/> for the current project.
+        /// Gets the <see cref="ProjectCollection" /> for the current project.
         /// </summary>
         public ProjectCollection ProjectCollection { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="ProjectRootElement"/> instance for the current project.
+        /// Gets the <see cref="ProjectRootElement" /> instance for the current project.
         /// </summary>
         public ProjectRootElement RootElement { get; }
 
@@ -59,7 +59,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public string Xml => RootElement.RawXml;
 
         /// <summary>
-        /// Creates a new <see cref="ProjectCreator"/> instance.
+        /// Creates a new <see cref="ProjectCreator" /> instance.
         /// </summary>
         /// <param name="path">An optional relative or full path for the project.</param>
         /// <param name="defaultTargets">An optional list of default targets for the project.</param>
@@ -67,10 +67,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="sdk">An optional SDK for the project.</param>
         /// <param name="toolsVersion">An optional tools version for the project.</param>
         /// <param name="treatAsLocalProperty">An optional list of properties to treat as local properties.</param>
-        /// <param name="projectCollection">An optional <see cref="ProjectCollection"/> to use when loading the project.</param>
-        /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions"/> specifying options when creating a new file.</param>
+        /// <param name="projectCollection">An optional <see cref="ProjectCollection" /> to use when loading the project.</param>
+        /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions" /> specifying options when creating a new file.</param>
         /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
-        /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
+        /// <returns>A <see cref="ProjectCreator" /> object that is used to construct an MSBuild project.</returns>
         public static ProjectCreator Create(
             string? path = null,
             string? defaultTargets = null,
@@ -120,10 +120,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Executes custom actions against the current <see cref="ProjectCreator"/>.
+        /// Executes custom actions against the current <see cref="ProjectCreator" />.
         /// </summary>
-        /// <param name="projectCreator">An <see cref="Action{ProjectCreator}"/> delegate to execute against the current <see cref="ProjectCreator"/>.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <param name="projectCreator">An <see cref="Action{ProjectCreator}" /> delegate to execute against the current <see cref="ProjectCreator" />.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator CustomAction(Action<ProjectCreator>? projectCreator)
         {
             projectCreator?.Invoke(this);
@@ -134,7 +134,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Saves the project to disk.
         /// </summary>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator Save()
         {
             RootElement.Save();
@@ -147,7 +147,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="path">The path to save the file to.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <c>null</c>.</exception>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator Save(string path)
         {
             if (path == null)

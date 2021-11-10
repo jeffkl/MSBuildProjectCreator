@@ -16,9 +16,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="condition">An optional condition to add to the property.</param>
         /// <param name="setIfEmpty">An optional value indicating whether or not a condition should be added that checks if the property has already been set.</param>
         /// <param name="label">An optional label to add to the property.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <remarks>
-        /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
+        /// The <paramref name="setIfEmpty" /> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
         public ProjectCreator Property(string name, string? unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {
@@ -44,17 +44,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Adds a property element to the current &lt;PropertyGroup /&gt;.  A property group is automatically added if necessary.  if <paramref name="unevaluatedValue"/> is <code>null</code>, the property is not added.
+        /// Adds a property element to the current &lt;PropertyGroup /&gt;.  A property group is automatically added if necessary.  if <paramref name="unevaluatedValue" /> is <code>null</code>, the property is not added.
         /// </summary>
-        /// <param name="propertyGroup">The <see cref="ProjectPropertyGroupElement"/> to add the property to.</param>
+        /// <param name="propertyGroup">The <see cref="ProjectPropertyGroupElement" /> to add the property to.</param>
         /// <param name="name">The name of the property.</param>
         /// <param name="unevaluatedValue">The unevaluated value of the property.</param>
         /// <param name="condition">An optional condition to add to the property.</param>
         /// <param name="setIfEmpty">An optional value indicating whether or not a condition should be added that checks if the property has already been set.</param>
         /// <param name="label">An option label to add to the property.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         /// <remarks>
-        /// The <paramref name="setIfEmpty"/> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
+        /// The <paramref name="setIfEmpty" /> parameter will add a condition such as " '$(Property)' == '' " which will only set the property if it has not already been set.
         /// </remarks>
         private ProjectCreator Property(ProjectPropertyGroupElement propertyGroup, string name, string unevaluatedValue, string? condition = null, bool setIfEmpty = false, string? label = null)
         {

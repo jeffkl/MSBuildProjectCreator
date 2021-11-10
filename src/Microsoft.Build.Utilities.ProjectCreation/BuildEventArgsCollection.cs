@@ -13,7 +13,7 @@ using System.Text;
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     /// <summary>
-    /// Represents a collection of <see cref="BuildEventArgs"/> objects.
+    /// Represents a collection of <see cref="BuildEventArgs" /> objects.
     /// </summary>
     public abstract class BuildEventArgsCollection : IDisposable
     {
@@ -38,7 +38,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private readonly ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuildEventArgsCollection"/> class.
+        /// Initializes a new instance of the <see cref="BuildEventArgsCollection" /> class.
         /// </summary>
         protected BuildEventArgsCollection()
         {
@@ -67,7 +67,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public BuildMessageEventArgsCollection MessageEvents { get; }
 
         /// <summary>
-        /// Gets a <see cref="BuildMessageCollection"/> object that gets the messages from the build.
+        /// Gets a <see cref="BuildMessageCollection" /> object that gets the messages from the build.
         /// </summary>
         public BuildMessageCollection Messages { get; }
 
@@ -81,7 +81,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         public IReadOnlyCollection<string> Warnings => _warningEvents.Select(i => i.Message).ToList();
 
-        /// <inheritdoc cref="IDisposable.Dispose"/>
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public virtual void Dispose()
         {
             _errorEvents.Clear();
@@ -160,7 +160,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Adds a build event.
         /// </summary>
-        /// <param name="buildEventArgs">A <see cref="BuildEventArgs"/> object to add.</param>
+        /// <param name="buildEventArgs">A <see cref="BuildEventArgs" /> object to add.</param>
         protected void Add(BuildEventArgs buildEventArgs)
         {
             _allEvents.Enqueue(buildEventArgs);

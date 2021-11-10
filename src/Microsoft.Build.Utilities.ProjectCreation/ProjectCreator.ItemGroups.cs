@@ -34,7 +34,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator ItemGroup(string? condition = null, string? label = null)
         {
             _lastItemGroup = AddTopLevelElement(RootElement.CreateItemGroupElement());
@@ -49,10 +49,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Adds an &lt;ItemGroup /&gt; element to the specifed parent.
         /// </summary>
-        /// <param name="parent">A parent <see cref="ProjectElementContainer"/> to add the item group to.</param>
+        /// <param name="parent">A parent <see cref="ProjectElementContainer" /> to add the item group to.</param>
         /// <param name="condition">An optional condition to add to the item group.</param>
         /// <param name="label">An optional label to add to the item group.</param>
-        /// <returns>The current <see cref="ProjectCreator"/>.</returns>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
         protected ProjectItemGroupElement ItemGroup(ProjectElementContainer parent, string? condition = null, string? label = null)
         {
             ProjectItemGroupElement itemGroup = RootElement.CreateItemGroupElement();

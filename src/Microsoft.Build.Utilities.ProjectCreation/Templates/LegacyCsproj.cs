@@ -27,15 +27,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="defaultPlatform">An optional default value for the Platform property.</param>
         /// <param name="projectGuid">An optional GUID for the project.  If none is specified, one is generated.</param>
         /// <param name="fileAlignment">An optional file alignment for the project.</param>
-        /// <param name="projectCreator">An optional <see cref="Action{ProjectCreator}"/> delegate to call in the body of the project.</param>
+        /// <param name="projectCreator">An optional <see cref="Action{ProjectCreator}" /> delegate to call in the body of the project.</param>
         /// <param name="defaultTargets">An optional list of default targets for the project.</param>
         /// <param name="initialTargets">An optional list of initial targets for the project.</param>
         /// <param name="toolsVersion">An optional tools version for the project.</param>
         /// <param name="treatAsLocalProperty">An optional list of properties to treat as local properties.</param>
-        /// <param name="projectCollection">An optional <see cref="ProjectCollection"/> to use when loading the project.</param>
-        /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions"/> specifying options when creating a new file.</param>
+        /// <param name="projectCollection">An optional <see cref="ProjectCollection" /> to use when loading the project.</param>
+        /// <param name="projectFileOptions">An optional <see cref="NewProjectFileOptions" /> specifying options when creating a new file.</param>
         /// <param name="globalProperties">An optional <see cref="IDictionary{String,String}" /> containing global properties for the project.</param>
-        /// <returns>A <see cref="ProjectCreator"/> object that is used to construct an MSBuild project.</returns>
+        /// <returns>A <see cref="ProjectCreator" /> object that is used to construct an MSBuild project.</returns>
         public ProjectCreator LegacyCsproj(
             string? path = null,
             string outputType = "Library",

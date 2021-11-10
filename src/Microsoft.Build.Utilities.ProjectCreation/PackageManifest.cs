@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     internal class PackageManifest : Manifest
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PackageManifest"/> class.
+        /// Initializes a new instance of the <see cref="PackageManifest" /> class.
         /// </summary>
         /// <param name="fullPath">The full path to the manifest file.</param>
         /// <param name="name">The name or ID of the package.</param>
@@ -171,7 +171,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Gets the <see cref="ManifestMetadata" /> for a package.
         /// </summary>
         /// <summary>
-        /// Initializes a new instance of the <see cref="PackageManifest"/> class.
+        /// Initializes a new instance of the <see cref="PackageManifest" /> class.
         /// </summary>
         /// <param name="name">The name or ID of the package.</param>
         /// <param name="version">The semantic version of the package.</param>

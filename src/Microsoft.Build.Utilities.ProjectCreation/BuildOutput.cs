@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private readonly ConcurrentDictionary<string, bool> _resultsByProject = new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Stores the <see cref="BuildFinishedEventArgs"/> that were logged when the build finished.
+        /// Stores the <see cref="BuildFinishedEventArgs" /> that were logged when the build finished.
         /// </summary>
         private BuildFinishedEventArgs? _buildFinished;
 
@@ -29,7 +29,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Parameters = string.Empty;
         }
 
-        /// <inheritdoc cref="ILogger.Parameters"/>
+        /// <inheritdoc cref="ILogger.Parameters" />
         public string Parameters { get; set; }
 
         /// <summary>
@@ -42,19 +42,19 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         public bool? Succeeded => _buildFinished?.Succeeded;
 
-        /// <inheritdoc cref="ILogger.Verbosity"/>
+        /// <inheritdoc cref="ILogger.Verbosity" />
         public LoggerVerbosity Verbosity { get; set; }
 
         /// <summary>
-        /// Creates an instance of the <see cref="BuildOutput"/> class.
+        /// Creates an instance of the <see cref="BuildOutput" /> class.
         /// </summary>
-        /// <returns>A <see cref="BuildOutput"/> instance.</returns>
+        /// <returns>A <see cref="BuildOutput" /> instance.</returns>
         public static BuildOutput Create()
         {
             return new BuildOutput();
         }
 
-        /// <inheritdoc cref="IDisposable.Dispose"/>
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public override void Dispose()
         {
             _buildFinished = null;
@@ -62,7 +62,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             base.Dispose();
         }
 
-        /// <inheritdoc cref="ILogger.Initialize"/>
+        /// <inheritdoc cref="ILogger.Initialize" />
         public void Initialize(IEventSource eventSource)
         {
             eventSource.BuildFinished += OnBuildFinished;
@@ -70,7 +70,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             eventSource.AnyEventRaised += OnAnyEventRaised;
         }
 
-        /// <inheritdoc cref="ILogger.Shutdown"/>
+        /// <inheritdoc cref="ILogger.Shutdown" />
         public void Shutdown()
         {
         }
