@@ -15,6 +15,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 {
     public class RepositoryTests : TestBase
     {
+#if !NET6_0
         [Fact]
         public void BuildCanConsumePackage()
         {
@@ -34,6 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 result.ShouldBeTrue(buildOutput.GetConsoleLog());
             }
         }
+#endif
 
         [Fact]
         public void BasicPackage()

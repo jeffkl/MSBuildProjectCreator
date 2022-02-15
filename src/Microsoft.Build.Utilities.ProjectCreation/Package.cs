@@ -331,10 +331,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="packageFile">An <see cref="IPackageFile" /> that represents a file to add to the package.</param>
         private void AddFile(string relativePath, IPackageFile packageFile)
         {
+#if NETCOREAPP3_1
+            if (packageFile.TargetFramework != null)
+            {
+                AddTargetFramework(NuGetFramework.ParseFrameworkName(packageFile.TargetFramework.FullName, DefaultFrameworkNameProvider.Instance));
+            }
+#else
             if (packageFile.NuGetFramework != null)
             {
                 AddTargetFramework(packageFile.NuGetFramework);
             }
+#endif
 
             _files[relativePath] = packageFile;
 
