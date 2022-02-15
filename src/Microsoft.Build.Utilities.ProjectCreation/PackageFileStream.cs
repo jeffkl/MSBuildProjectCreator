@@ -27,8 +27,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             _path = string.Empty;
             EffectivePath = string.Empty;
+#if !NETCOREAPP3_1
             NuGetFramework = NuGetFramework.AnyFramework;
-            TargetFramework = new FrameworkName(NuGetFramework.DotNetFrameworkName);
+#endif
+            TargetFramework = new FrameworkName("Any, Version=1.0");
 
             Path = targetPath;
             _streamFunc = streamFunc ?? throw new ArgumentNullException(nameof(streamFunc));
@@ -53,8 +55,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <inheritdoc />
         public DateTimeOffset LastWriteTime { get; }
 
+#if !NETCOREAPP3_1
         /// <inheritdoc />
         public NuGetFramework NuGetFramework { get; private set; }
+#endif
 
         /// <inheritdoc />
         public string Path
@@ -69,14 +73,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
 
                 _path = value;
-
+#if NETCOREAPP3_1
+                TargetFramework = FrameworkNameUtility.ParseFrameworkNameFromFilePath(_path, out string effectivePath);
+#else
                 NuGetFramework = FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(_path, out string effectivePath);
-
                 if (NuGetFramework != null && NuGetFramework.Version.Major < 5)
                 {
                     TargetFramework = new FrameworkName(NuGetFramework.DotNetFrameworkName);
                 }
-
+#endif
                 EffectivePath = effectivePath;
             }
         }
