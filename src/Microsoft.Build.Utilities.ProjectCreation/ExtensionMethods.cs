@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Packaging.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -85,49 +84,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 item,
             };
-        }
-
-        /// <summary>
-        /// Gets the current list of strings as <see cref="PackageType" /> objects instead.
-        /// </summary>
-        /// <param name="packageTypes">An <see cref="IEnumerable{String}" /> containing package types.</param>
-        /// <returns>An <see cref="IEnumerable{PackageType}" /> containing the package types.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Any package types are invalid.</exception>
-        [DebuggerStepThrough]
-        internal static IEnumerable<PackageType> ToPackageTypes(this IEnumerable<string>? packageTypes)
-        {
-            if (packageTypes == null)
-            {
-                yield break;
-            }
-
-            foreach (string packageType in packageTypes)
-            {
-                if (string.Equals(PackageType.Dependency.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.Dependency;
-                }
-                else if (string.Equals(PackageType.DotnetCliTool.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.DotnetCliTool;
-                }
-                else if (string.Equals(PackageType.DotnetPlatform.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.DotnetPlatform;
-                }
-                else if (string.Equals(PackageType.DotnetTool.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.DotnetTool;
-                }
-                else if (string.Equals(PackageType.Legacy.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.Legacy;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException($"Unknown package type '{packageType}'");
-                }
-            }
         }
     }
 }

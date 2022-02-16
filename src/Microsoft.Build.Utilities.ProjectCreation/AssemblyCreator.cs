@@ -5,7 +5,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,9 +24,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="namespace">The namespace of the class in the assembly.</param>
         /// <param name="className">The name of the class in the library.</param>
         /// <param name="assemblyVersion">The version of the assembly.</param>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> of the assembly.</param>
+        /// <param name="targetFramework">The target framework of the assembly.</param>
         /// <returns>A <see cref="MemoryStream" /> that represents the assembly.</returns>
-        public static MemoryStream Create(string name, string @namespace, string className, string assemblyVersion, NuGetFramework targetFramework)
+        public static MemoryStream Create(string name, string @namespace, string className, string assemblyVersion, string targetFramework)
         {
             MemoryStream stream = new MemoryStream();
 
@@ -44,8 +43,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="namespace">The namespace of the class in the assembly.</param>
         /// <param name="className">The name of the class in the library.</param>
         /// <param name="assemblyVersion">The version of the assembly.</param>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> of the assembly.</param>
-        public static void Create(Stream stream, string name, string @namespace, string className, string assemblyVersion, NuGetFramework targetFramework)
+        /// <param name="targetFramework">The target framework of the assembly.</param>
+        public static void Create(Stream stream, string name, string @namespace, string className, string assemblyVersion, string targetFramework)
         {
             if (stream == null)
             {
@@ -57,7 +56,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 name,
                 $@"
 [assembly: System.Reflection.AssemblyVersion(""{assemblyVersion}"")]
-[assembly: System.Runtime.Versioning.TargetFramework(""{targetFramework.GetDotNetFrameworkName(DefaultFrameworkNameProvider.Instance)}"")]
+[assembly: System.Runtime.Versioning.TargetFramework(""{targetFramework}"")]
 namespace {@namespace}
 {{
     public class {className}
