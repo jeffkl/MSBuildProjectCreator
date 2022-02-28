@@ -2,14 +2,12 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Packaging;
 using Shouldly;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 {
@@ -27,9 +25,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
         protected byte[] GetFileBytes(string packageFullPath, string filePath)
         {
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageFullPath);
+            using ZipArchive nupkg = GetPackageArchive(packageFullPath);
 
-            return ReadFile(packageArchiveReader, filePath, (stream, archiveEntry) =>
+            return ReadFile(nupkg, filePath, (stream, archiveEntry) =>
             {
                 using BinaryReader binaryReader = new BinaryReader(stream);
 
@@ -39,9 +37,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
         protected string GetFileContents(string packageFullPath, string filePath)
         {
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageFullPath);
+            using ZipArchive nupkg = GetPackageArchive(packageFullPath);
 
-            return ReadFile(packageArchiveReader, filePath, (stream, _) =>
+            return ReadFile(nupkg, filePath, (stream, _) =>
             {
                 using TextReader reader = new StreamReader(stream);
 
@@ -51,9 +49,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
         protected string GetFileContents(string packageFullPath, Func<string, bool> fileFunc)
         {
-            using PackageArchiveReader packageArchiveReader = GetPackageArchiveReader(packageFullPath);
+            using ZipArchive nupkg = GetPackageArchive(packageFullPath);
 
-            return ReadFile(packageArchiveReader, fileFunc, (stream, _) =>
+            return ReadFile(nupkg, fileFunc, (stream, _) =>
             {
                 using TextReader reader = new StreamReader(stream);
 
@@ -61,9 +59,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        protected NuspecReader GetNuspecReader(Package package)
+        protected NuspecReader GetNuspec(Package package)
         {
-            return new NuspecReader(XDocument.Parse(GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase))));
+            return new NuspecReader(GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase)));
         }
 
         protected Assembly LoadAssembly(string packageFullPath, string filePath)
@@ -80,35 +78,34 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             exception.Message.ShouldBe(Strings.ErrorWhenAddingAnythingBeforePackage);
         }
 
-        private T ReadFile<T>(PackageArchiveReader packageArchiveReader, string filePath, Func<Stream, ZipArchiveEntry, T> streamFunc)
+        private T ReadFile<T>(ZipArchive nupkg, string filePath, Func<Stream, ZipArchiveEntry, T> streamFunc)
         {
-            packageArchiveReader.GetFiles().ShouldContain(filePath);
+            ZipArchiveEntry archiveEntry = nupkg.GetEntry(filePath);
 
-            ZipArchiveEntry archiveEntry = packageArchiveReader.GetEntry(filePath);
+            if (archiveEntry == null)
+            {
+                return default;
+            }
 
             using Stream fileStream = archiveEntry.Open();
 
             return streamFunc(fileStream, archiveEntry);
         }
 
-        private T ReadFile<T>(PackageArchiveReader packageArchiveReader, Func<string, bool> fileFunc, Func<Stream, ZipArchiveEntry, T> streamFunc)
+        private T ReadFile<T>(ZipArchive nupkg, Func<string, bool> fileFunc, Func<Stream, ZipArchiveEntry, T> streamFunc)
         {
-            string filePath = packageArchiveReader.GetFiles().FirstOrDefault(fileFunc);
+            ZipArchiveEntry archiveEntry = nupkg.Entries.FirstOrDefault(i => fileFunc(i.FullName));
 
-            filePath.ShouldNotBeNull();
-
-            ZipArchiveEntry archiveEntry = packageArchiveReader.GetEntry(filePath);
+            archiveEntry.ShouldNotBeNull();
 
             using Stream fileStream = archiveEntry.Open();
 
             return streamFunc(fileStream, archiveEntry);
         }
 
-        private PackageArchiveReader GetPackageArchiveReader(string fullPath)
+        private ZipArchive GetPackageArchive(string fullPath)
         {
-            return new PackageArchiveReader(
-                new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096),
-                leaveStreamOpen: false);
+            return new ZipArchive(File.OpenRead(fullPath), ZipArchiveMode.Read, leaveOpen: false);
         }
     }
 }

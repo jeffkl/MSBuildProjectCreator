@@ -7,7 +7,7 @@ using System.IO;
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     /// <summary>
-    /// Re
+    /// Represents templates for package feeds.
     /// </summary>
     public class PackageFeedTemplates
     {

@@ -2,10 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using Shouldly;
 using System.Collections.Generic;
 using System.IO;
@@ -28,25 +24,25 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 ValidatePackageDependencies(
                     packageRepository,
                     package,
-                    new List<PackageDependencyGroup>
+                    new List<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)>
                     {
-                        new PackageDependencyGroup(
-                            FrameworkConstants.CommonFrameworks.Net45,
+                        (
+                            "net45",
                             new List<PackageDependency>
                             {
-                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                                new PackageDependency("PackageB", "1.0.0", "Build, Analyzers"),
                             }),
-                        new PackageDependencyGroup(
-                            FrameworkConstants.CommonFrameworks.Net46,
+                        (
+                            "net46",
                             new List<PackageDependency>
                             {
-                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                                new PackageDependency("PackageB", "1.0.0", "Build, Analyzers"),
                             }),
-                        new PackageDependencyGroup(
-                            FrameworkConstants.CommonFrameworks.NetStandard20,
+                        (
+                            "netstandard2.0",
                             new List<PackageDependency>
                             {
-                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
+                                new PackageDependency("PackageB", "1.0.0", "Build, Analyzers"),
                             }),
                     });
             }
@@ -64,33 +60,39 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 ValidatePackageDependencies(
                     packageRepository,
                     package,
-                    new List<PackageDependencyGroup>
+                    new List<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)>
                     {
-                        new PackageDependencyGroup(
-                            FrameworkConstants.CommonFrameworks.Net45,
+                        (
+                            "net45",
                             new List<PackageDependency>
                             {
-                                new PackageDependency("PackageB", VersionRange.Parse("1.0.0")),
-                                new PackageDependency("PackageC", VersionRange.Parse("1.1.0")),
-                                new PackageDependency("PackageD", VersionRange.Parse("1.2.0")),
+                                new PackageDependency("PackageB", "1.0.0", "Build, Analyzers"),
+                                new PackageDependency("PackageC", "1.1.0", "Build, Analyzers"),
+                                new PackageDependency("PackageD", "1.2.0", "Build, Analyzers"),
                             }),
                     });
             }
         }
 
-        private void ValidatePackageDependencies(PackageRepository packageRepository, Package package, IEnumerable<PackageDependencyGroup> expectedDependencyGroups)
+        private void ValidatePackageDependencies(PackageRepository packageRepository, Package package, IEnumerable<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)> expectedDependencyGroups)
         {
             FileInfo nuspecFile = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version));
 
             nuspecFile.ShouldExist();
 
-            using (FileStream stream = File.OpenRead(nuspecFile.FullName))
+            NuspecReader nuspec = new NuspecReader(nuspecFile);
+
+            foreach ((string targetFramework, IEnumerable<PackageDependency> dependencies) in expectedDependencyGroups)
             {
-                Manifest manifest = Manifest.ReadFrom(stream, validateSchema: false);
+                List<PackageDependency> actualDependencies = nuspec.DependencyGroups.First(i => i.TargetFramework == targetFramework).Dependencies.ToList();
+                List<PackageDependency> expectedDependencies = dependencies.ToList();
 
-                List<PackageDependencyGroup> dependencyGroups = manifest.Metadata.DependencyGroups.ToList();
+                actualDependencies.Count.ShouldBe(expectedDependencies.Count);
 
-                dependencyGroups.ShouldBe(expectedDependencyGroups);
+                for (int i = 0; i < actualDependencies.Count; i++)
+                {
+                    actualDependencies[i].ShouldBe(expectedDependencies[i]);
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Configuration;
+/*
 using System;
 using System.IO;
 
@@ -68,3 +68,4 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
     }
 }
+*/

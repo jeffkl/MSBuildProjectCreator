@@ -2,9 +2,8 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Packaging;
 using Shouldly;
-using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
@@ -27,42 +26,53 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             packageA.Id.ShouldBe("PackageA");
             packageA.Version.ShouldBe("1.0.0");
 
-            NuspecReader nuspecReader = GetNuspecReader(packageA);
+            NuspecReader nuspec = GetNuspec(packageA);
 
-            nuspecReader.GetAuthors().ShouldBe("John Smith");
-            nuspecReader.GetDescription().ShouldBe("Custom Description");
-            nuspecReader.GetId().ShouldBe("PackageA");
-            nuspecReader.GetVersion().OriginalVersion.ShouldBe("1.0.0");
+            nuspec.Authors.ShouldBe("John Smith");
+            nuspec.Description.ShouldBe("Custom Description");
+            nuspec.Id.ShouldBe("PackageA");
+            nuspec.Version.ShouldBe("1.0.0");
+
+            (string targetFramework, System.Collections.Generic.IEnumerable<PackageDependency> dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
+
+            targetFramework.ShouldBe("net45");
+
+            dependencies.ShouldBeEmpty();
         }
 
         [Fact]
-        public void Test1()
+        public void BasicPackageWithDependency()
         {
-            string[] targetFrameworks = new[]
-            {
-                "net45",
-                "net46",
-                "net5.0",
-                "netstandard2.0",
-                "netcoreapp3.1",
-            };
-
             using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
-                .Package("PackageA", "1.0.0", out Package packageA)
-                    .FileText("README.md", "This is a test")
-                    .ForEach(targetFrameworks, (targetFramework, feed) => feed.Library(targetFramework))
-                    .BuildProps(creator => creator.Property("Hello", "World"))
-                    .BuildTargets()
-                    .BuildMultiTargetingProps()
-                    .BuildMultiTargetingTargets()
-                    .BuildTransitiveProps()
-                    .BuildTransitiveTargets()
-                    .ContentFileText("test.txt", "Hello World", "net45")
-                    .Dependency("net46", "Newtonsoft.Json", "1.0.0", "All", exclude: "runtime")
+                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", true)
+                    .Library("net45")
+                    .Dependency("net45", "PackageB", "2.0.0")
                 .Save();
 
-            using Stream stream = new FileStream(packageA.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096);
-            using PackageArchiveReader reader = new PackageArchiveReader(stream);
+            Package packageA = packageFeed.Packages.ShouldHaveSingleItem();
+
+            packageA.Author.ShouldBe("John Smith");
+            packageA.Description.ShouldBe("Custom Description");
+            packageA.DevelopmentDependency.ShouldBeTrue();
+            packageA.Id.ShouldBe("PackageA");
+            packageA.Version.ShouldBe("1.0.0");
+
+            NuspecReader nuspec = GetNuspec(packageA);
+
+            nuspec.Authors.ShouldBe("John Smith");
+            nuspec.Description.ShouldBe("Custom Description");
+            nuspec.Id.ShouldBe("PackageA");
+            nuspec.Version.ShouldBe("1.0.0");
+
+            (string targetFramework, System.Collections.Generic.IEnumerable<PackageDependency> dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
+
+            targetFramework.ShouldBe("net45");
+
+            PackageDependency dependency = dependencies.ShouldHaveSingleItem();
+
+            dependency.Id.ShouldBe("PackageB");
+            dependency.Version.ShouldBe("2.0.0");
+            dependency.ExcludeAssets.ShouldBe("Build, Analyzers");
         }
     }
 }

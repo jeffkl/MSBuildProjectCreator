@@ -2,11 +2,13 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Packaging.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Xml;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -88,45 +90,39 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Gets the current list of strings as <see cref="PackageType" /> objects instead.
+        /// Creates an entry in the current <see cref="ZipArchive" /> based on the specified <see cref="Stream" />.
         /// </summary>
-        /// <param name="packageTypes">An <see cref="IEnumerable{String}" /> containing package types.</param>
-        /// <returns>An <see cref="IEnumerable{PackageType}" /> containing the package types.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Any package types are invalid.</exception>
-        [DebuggerStepThrough]
-        internal static IEnumerable<PackageType> ToPackageTypes(this IEnumerable<string>? packageTypes)
+        /// <param name="archive">The <see cref="ZipArchive" /> to create the entry in.</param>
+        /// <param name="relativePath">The relative path to the entry inside the archive.</param>
+        /// <param name="stream">The <see cref="Stream" /> to use when creating the entry.</param>
+        /// <returns>The <see cref="ZipArchiveEntry" /> that was created.</returns>
+        internal static ZipArchiveEntry CreateEntryFromStream(this ZipArchive archive, string relativePath, Stream stream)
         {
-            if (packageTypes == null)
+            ZipArchiveEntry? entry = archive.CreateEntry(relativePath);
+
+            using (Stream? destination = entry.Open())
             {
-                yield break;
+                stream.Position = 0;
+
+                stream.CopyTo(destination);
             }
 
-            foreach (string packageType in packageTypes)
+            return entry;
+        }
+
+        internal static void WriteAttributeStringIfNotNull(this XmlWriter writer, string localName, string? value)
+        {
+            if (!string.IsNullOrEmpty(value))
             {
-                if (string.Equals(PackageType.Dependency.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.Dependency;
-                }
-                else if (string.Equals(PackageType.DotnetCliTool.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.DotnetCliTool;
-                }
-                else if (string.Equals(PackageType.DotnetPlatform.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.DotnetPlatform;
-                }
-                else if (string.Equals(PackageType.DotnetTool.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.DotnetTool;
-                }
-                else if (string.Equals(PackageType.Legacy.Name, packageType, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield return PackageType.Legacy;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException($"Unknown package type '{packageType}'");
-                }
+                writer.WriteAttributeString(localName, value);
+            }
+        }
+
+        internal static void WriteElementStringIfNotNull(this XmlWriter writer, string localName, string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                writer.WriteElementString(localName, value);
             }
         }
     }

@@ -2,8 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
-using NuGet.Packaging;
 using System.IO;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
@@ -21,7 +19,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="PackageFeed" />.</returns>
         public PackageFeed Library(string targetFramework, string? filename = null, string? @namespace = null, string? className = null, string assemblyVersion = "1.0.0.0")
         {
-            return Assembly(PackagingConstants.Folders.Lib, NuGetFramework.Parse(targetFramework), filename, @namespace, className, assemblyVersion);
+            return Assembly("lib", targetFramework, filename, @namespace, className, assemblyVersion);
         }
 
         /// <summary>
@@ -35,13 +33,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="PackageFeed" />.</returns>
         public PackageFeed ReferenceAssembly(string targetFramework, string? filename = null, string? @namespace = null, string? className = null, string assemblyVersion = "1.0.0.0")
         {
-            return Assembly(PackagingConstants.Folders.Ref, NuGetFramework.Parse(targetFramework), filename, @namespace, className, assemblyVersion);
+            return Assembly("ref", targetFramework, filename, @namespace, className, assemblyVersion);
         }
 
-        private PackageFeed Assembly(string rootFolderName, NuGetFramework targetFramework, string? filename = null, string? @namespace = null, string? className = null, string assemblyVersion = "1.0.0.0")
+        private PackageFeed Assembly(string rootFolderName, string targetFramework, string? filename = null, string? @namespace = null, string? className = null, string assemblyVersion = "1.0.0.0")
         {
-            LastPackage.AddTargetFramework(targetFramework);
-
             filename ??= $"{LastPackage.Id}.dll";
 
             if (string.IsNullOrWhiteSpace(@namespace))
@@ -54,7 +50,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 className = $"{LastPackage.Id.Replace(".", "_")}_Class";
             }
 
-            string relativePath = Path.Combine(rootFolderName, targetFramework.GetShortFolderName(), filename);
+            string relativePath = Path.Combine(rootFolderName, targetFramework, filename);
 
             return File(
                 relativePath,

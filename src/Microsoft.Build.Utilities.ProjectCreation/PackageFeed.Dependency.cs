@@ -2,10 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
-using NuGet.LibraryModel;
-using NuGet.Versioning;
-
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class PackageFeed
@@ -21,7 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="PackageFeed" />.</returns>
         public PackageFeed Dependency(string targetFramework, string id, string version, string include = "All", string exclude = "None")
         {
-            LastPackage.AddDependency(NuGetFramework.Parse(targetFramework), id, VersionRange.Parse(version), LibraryIncludeFlagUtils.GetFlags(include, LibraryIncludeFlags.All), LibraryIncludeFlagUtils.GetFlags(exclude, LibraryIncludeFlags.None));
+            LastPackage.AddDependency(targetFramework, id, version, include, exclude);
 
             return this;
         }
