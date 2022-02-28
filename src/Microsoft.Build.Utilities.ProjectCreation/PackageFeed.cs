@@ -3,7 +3,9 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -67,7 +69,37 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             foreach (Package package in _packages)
             {
-                package.Save(_rootPath);
+                if (package.Saved)
+                {
+                    continue;
+                }
+
+                _rootPath.Create();
+
+                package.FullPath = Path.Combine(_rootPath.FullName, package.FileName);
+
+                using (FileStream fileStream = System.IO.File.OpenWrite(package.FullPath))
+                {
+                    using (ZipArchive nupkg = new ZipArchive(fileStream, ZipArchiveMode.Create))
+                    {
+                        foreach (KeyValuePair<string, Func<Stream>> file in package.Files)
+                        {
+                            using (Stream? stream = file.Value())
+                            {
+                                ZipArchiveEntry? entry = nupkg.CreateEntryFromStream(file.Key, stream);
+                            }
+                        }
+
+                        ZipArchiveEntry? nuspec = nupkg.CreateEntry($"{package.Id.ToLowerInvariant()}.nuspec");
+
+                        using (Stream nuspecStream = nuspec.Open())
+                        {
+                            package.WriteNuspec(nuspecStream);
+                        }
+                    }
+                }
+
+                package.Saved = true;
             }
 
             return this;

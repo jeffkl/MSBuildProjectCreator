@@ -5,7 +5,6 @@
 using Microsoft.Build.Evaluation;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 // ReSharper disable once CheckNamespace

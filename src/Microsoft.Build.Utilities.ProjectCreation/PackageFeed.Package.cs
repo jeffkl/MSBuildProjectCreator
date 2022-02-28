@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 
@@ -66,9 +65,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             package = new Package(
                 id ?? throw new ArgumentNullException(nameof(id)),
                 version ?? throw new ArgumentNullException(nameof(version)),
-                author ?? throw new ArgumentNullException(nameof(author)),
-                description ?? throw new ArgumentNullException(nameof(description)),
-                developmentDependency);
+                directory: _rootPath.FullName,
+                authors: author ?? throw new ArgumentNullException(nameof(author)),
+                description: description ?? throw new ArgumentNullException(nameof(description)),
+                developmentDependency: developmentDependency);
 
             if (!_packages.Add(package))
             {

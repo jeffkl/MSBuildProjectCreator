@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -15,16 +13,39 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 {
     public class RepositoryTests : TestBase
     {
-#if !NET6_0
+        [Fact]
+        public void BasicPackage()
+        {
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+                .Package("PackageD", "1.2.3-beta", out Package package)
+                    .Library("net45"))
+            {
+                package.ShouldNotBeNull();
+
+                package.Id.ShouldBe("PackageD");
+                package.Version.ShouldBe("1.2.3-beta");
+
+                FileInfo nuspecFileInfo = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
+
+                NuspecReader nuspec = new NuspecReader(nuspecFileInfo);
+
+                nuspec.Authors.ShouldBe("UserA");
+                nuspec.Description.ShouldBe("Description");
+                nuspec.DevelopmentDependency.ShouldBeFalse();
+                nuspec.Id.ShouldBe("PackageD");
+                nuspec.RequireLicenseAcceptance.ShouldBeFalse();
+            }
+        }
+
         [Fact]
         public void BuildCanConsumePackage()
         {
             using (PackageRepository.Create(TestRootPath)
                 .Package("PackageB", "1.0", out Package packageB)
-                    .Library("netstandard2.0")
+                    .Library(TargetFramework)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                    .Dependency(packageB, "netstandard2.0")
-                    .Library("netstandard2.0"))
+                    .Dependency(packageB, TargetFramework)
+                    .Library(TargetFramework))
             {
                 ProjectCreator.Templates.SdkCsproj(
                         path: Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"),
@@ -35,42 +56,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 result.ShouldBeTrue(buildOutput.GetConsoleLog());
             }
         }
-#endif
-
-        [Fact]
-        public void BasicPackage()
-        {
-            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
-                .Package("PackageD", "1.2.3-beta", out Package package))
-            {
-                package.ShouldNotBeNull();
-
-                package.Id.ShouldBe("PackageD");
-                package.Version.ShouldBe("1.2.3-beta");
-
-                FileInfo manifestFilePath = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
-
-                using (Stream stream = File.OpenRead(manifestFilePath.FullName))
-                {
-                    Manifest manifest = Manifest.ReadFrom(stream, validateSchema: true);
-
-                    manifest.Metadata.Authors.ShouldBe(new[] { "UserA" });
-                    manifest.Metadata.Description.ShouldBe("Description");
-                    manifest.Metadata.DevelopmentDependency.ShouldBeFalse();
-                    manifest.Metadata.Id.ShouldBe("PackageD");
-                    manifest.Metadata.RequireLicenseAcceptance.ShouldBeFalse();
-                }
-            }
-        }
 
         [Fact]
         public void CanSetAllPackageProperties()
         {
             using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package(
-                    name: "PackageD",
+                    id: "PackageD",
                     version: "1.2.3",
-                    package: out Package package,
+                    out Package package,
                     authors: "UserA;UserB",
                     description: "Custom description",
                     copyright: "Copyright 2000",
@@ -99,37 +93,34 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 package.Id.ShouldBe("PackageD");
                 package.Version.ShouldBe("1.2.3");
 
-                FileInfo manifestFilePath = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
+                FileInfo nuspecFileInfo = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
 
-                using (Stream stream = File.OpenRead(manifestFilePath.FullName))
-                {
-                    Manifest manifest = Manifest.ReadFrom(stream, validateSchema: true);
+                NuspecReader nuspec = new NuspecReader(nuspecFileInfo);
 
-                    manifest.Metadata.Authors.ShouldBe(new[] { "UserA", "UserB" });
-                    manifest.Metadata.Copyright.ShouldBe("Copyright 2000");
-                    manifest.Metadata.Description.ShouldBe("Custom description");
-                    manifest.Metadata.DevelopmentDependency.ShouldBeTrue();
-                    manifest.Metadata.Icon.ShouldBe(Path.Combine("some", "icon.jpg"));
-                    manifest.Metadata.IconUrl.ShouldBe(new Uri("https://icon.url"));
-                    manifest.Metadata.Id.ShouldBe("PackageD");
-                    manifest.Metadata.Language.ShouldBe("Pig latin");
-                    manifest.Metadata.LicenseMetadata.License.ShouldBe("MIT");
-                    manifest.Metadata.LicenseMetadata.Type.ShouldBe(LicenseType.Expression);
-                    manifest.Metadata.LicenseMetadata.Version.ShouldBe(Version.Parse("1.0.0"));
-                    manifest.Metadata.Owners.ShouldBe(new[] { "Owner1", "Owner2" });
-                    manifest.Metadata.PackageTypes.ShouldBe(new[] { PackageType.Dependency, PackageType.DotnetCliTool });
-                    manifest.Metadata.ProjectUrl.ShouldBe(new Uri("https://project.url"));
-                    manifest.Metadata.ReleaseNotes.ShouldBe("Release notes for PackageD");
-                    manifest.Metadata.Repository.Branch.ShouldBe("Branch1000");
-                    manifest.Metadata.Repository.Commit.ShouldBe("Commit14");
-                    manifest.Metadata.Repository.Type.ShouldBe("Git");
-                    manifest.Metadata.Repository.Url.ShouldBe("https://repository.url");
-                    manifest.Metadata.RequireLicenseAcceptance.ShouldBeTrue();
-                    manifest.Metadata.Serviceable.ShouldBeTrue();
-                    manifest.Metadata.Summary.ShouldBe("Summary of PackageD");
-                    manifest.Metadata.Tags.ShouldBe("Tag1 Tag2 Tag3");
-                    manifest.Metadata.Title.ShouldBe("Title of PackageD");
-                }
+                nuspec.Authors.ShouldBe("UserA;UserB");
+                nuspec.Copyright.ShouldBe("Copyright 2000");
+                nuspec.Description.ShouldBe("Custom description");
+                nuspec.DevelopmentDependency.ShouldBeTrue();
+                nuspec.Icon.ShouldBe(Path.Combine("some", "icon.jpg"));
+                nuspec.IconUrl.ShouldBe("https://icon.url");
+                nuspec.Id.ShouldBe("PackageD");
+                nuspec.Language.ShouldBe("Pig latin");
+                nuspec.License.ShouldBe("MIT");
+                nuspec.LicenseType.ShouldBe("expression");
+                nuspec.LicenseVersion.ShouldBe("1.0.0");
+                nuspec.Owners.ShouldBe("Owner1;Owner2");
+                nuspec.PackageTypes.ShouldBe(new[] { "Dependency", "DotnetCliTool" });
+                nuspec.ProjectUrl.ShouldBe("https://project.url");
+                nuspec.ReleaseNotes.ShouldBe("Release notes for PackageD");
+                nuspec.RepositoryBranch.ShouldBe("Branch1000");
+                nuspec.RepositoryCommit.ShouldBe("Commit14");
+                nuspec.RepositoryType.ShouldBe("Git");
+                nuspec.RepositoryUrl.ShouldBe("https://repository.url");
+                nuspec.RequireLicenseAcceptance.ShouldBeTrue();
+                nuspec.Serviceable.ShouldBeTrue();
+                nuspec.Summary.ShouldBe("Summary of PackageD");
+                nuspec.Tags.ShouldBe("Tag1 Tag2 Tag3");
+                nuspec.Title.ShouldBe("Title of PackageD");
             }
         }
 
@@ -144,8 +135,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 
                 using (PackageRepository.Create(TestRootPath)
                     .Package("Foo.Bar", "1.2.3", out Package package)
-                    .FileText(Path.Combine("Sdk", "Sdk.props"), "<Project />")
-                    .FileText(Path.Combine("Sdk", "Sdk.targets"), "<Project />"))
+                        .FileText(Path.Combine("Sdk", "Sdk.props"), "<Project />")
+                        .FileText(Path.Combine("Sdk", "Sdk.targets"), "<Project />"))
                 {
                     ProjectCreator projectCreator = ProjectCreator
                         .Create(

@@ -2,9 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
-using NuGet.Packaging;
-using NuGet.ProjectModel;
 using System;
 using System.IO;
 using System.Text;
@@ -32,23 +29,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="relativePath">The filename or relative path to the file.</param>
         /// <param name="contents">The contents of the file.</param>
         /// <param name="targetFramework">The target framework for the content file.</param>
-        /// <param name="buildAction">The <see cref="BuildAction" /> of the content file.</param>
+        /// <param name="buildAction">The build action of the content file.</param>
         /// <param name="copyToOutput"><c>true</c> to copy the content file to the build output folder, otherwise <c>false</c>.</param>
         /// <param name="flatten"><c>true</c> to flatten the file structure by disregarding subfolders, otherwise <c>false</c></param>
         /// <param name="language">An optional language for the content file.  The default value is "any".</param>
         /// <returns>The current <see cref="PackageFeed" />.</returns>
         public PackageFeed ContentFileText(string relativePath, string contents, string targetFramework, string buildAction, bool copyToOutput = false, bool flatten = false, string language = "any")
         {
-            NuGetFramework nugetFramework = NuGetFramework.Parse(targetFramework);
+            string contentFilePath = Path.Combine(language, targetFramework, relativePath);
 
-            string contentFilePath = Path.Combine(language, nugetFramework.GetShortFolderName(), relativePath);
-
-            LastPackage.AddContentFile(new ManifestContentFiles
+            LastPackage.AddContentFile(new PackageContentFileEntry
             {
                 BuildAction = buildAction,
-                CopyToOutput = copyToOutput.ToString(),
+                CopyToOutput = copyToOutput,
                 Include = contentFilePath,
-                Flatten = flatten.ToString(),
+                Flatten = flatten,
             });
 
             return FileText(Path.Combine("contentFiles", contentFilePath), contents);

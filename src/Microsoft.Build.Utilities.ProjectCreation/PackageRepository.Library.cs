@@ -2,7 +2,6 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
 using System;
 using System.IO;
 
@@ -21,39 +20,37 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="PackageRepository" />.</returns>
         public PackageRepository Library(string targetFramework, string? filename = null, string? @namespace = null, string? className = null, string assemblyVersion = "1.0.0.0")
         {
-            if (_packageManifest == null)
+            if (LastPackage == null)
             {
                 throw new InvalidOperationException(Strings.ErrorWhenAddingLibraryRequiresPackage);
             }
 
             if (string.IsNullOrWhiteSpace(filename))
             {
-                filename = $"{_packageManifest.Metadata.Id}.dll";
+                filename = $"{LastPackage.Id}.dll";
             }
 
             if (string.IsNullOrWhiteSpace(@namespace))
             {
-                @namespace = _packageManifest.Metadata.Id;
+                @namespace = LastPackage.Id;
             }
 
             if (string.IsNullOrWhiteSpace(className))
             {
-                className = $"{_packageManifest.Metadata.Id}_Class";
+                className = $"{LastPackage.Id}_Class";
             }
 
-            NuGetFramework nuGetFramework = NuGetFramework.Parse(targetFramework);
-
-            _packageManifest.AddDependencyGroup(nuGetFramework);
+            LastPackage.AddTargetFramework(targetFramework);
 
             return File(
-                Path.Combine("lib", nuGetFramework.GetShortFolderName(), filename!),
+                Path.Combine("lib", targetFramework, filename!),
                 fileInfo =>
                 {
                     fileInfo.Directory!.Create();
 
                     using (Stream stream = System.IO.File.Create(fileInfo.FullName))
                     {
-                        AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace!, className!, assemblyVersion, nuGetFramework);
+                        AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace!, className!, assemblyVersion, targetFramework);
                     }
                 });
         }

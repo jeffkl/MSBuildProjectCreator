@@ -2,9 +2,8 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Frameworks;
-using NuGet.Packaging;
 using Shouldly;
+using System.IO;
 using System.Reflection;
 using Xunit;
 
@@ -20,7 +19,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .Library("net45", "CustomFile.dll", "Custom.Namespace", "CustomClass", "2.3.4.5")
                 .Save();
 
-            ValidateAssembly(packageA, @"lib/net45/CustomFile.dll", "CustomFile, Version=2.3.4.5, Culture=neutral, PublicKeyToken=null", "Custom.Namespace.CustomClass");
+            ValidateAssembly(packageA, Path.Combine("lib", "net45", "CustomFile.dll"), "CustomFile, Version=2.3.4.5, Culture=neutral, PublicKeyToken=null", "Custom.Namespace.CustomClass");
         }
 
         [Theory]
@@ -30,10 +29,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             PackageFeed.Create(FeedRootPath)
                 .Package(packageName, "1.0.0", out Package packageA)
-                    .Library(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName())
+                    .Library("net45")
                 .Save();
 
-            ValidateAssembly(packageA, $@"lib/net45/{packageName}.dll", $"{packageName}, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", $"{packageName}.{packageName.Replace(".", "_")}_Class");
+            ValidateAssembly(packageA, Path.Combine("lib", "net45", $"{packageName}.dll"), $"{packageName}, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", $"{packageName}.{packageName.Replace(".", "_")}_Class");
         }
 
         [Fact]
@@ -42,7 +41,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             ShouldThrowExceptionIfNoPackageAdded(() =>
             {
                 PackageFeed.Create(FeedRootPath)
-                    .Library(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName());
+                    .Library("net45");
             });
         }
 
@@ -51,8 +50,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             string[] targetFrameworks =
             {
-                FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName(),
-                FrameworkConstants.CommonFrameworks.Net46.GetShortFolderName(),
+                "net45",
+                "net46",
             };
 
             PackageFeed.Create(FeedRootPath)
@@ -68,8 +67,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             foreach (string targetFramework in targetFrameworks)
             {
-                ValidateAssembly(packageA, $@"lib/{targetFramework}/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
-                ValidateAssembly(packageA, $@"ref/{targetFramework}/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
+                ValidateAssembly(packageA, Path.Combine("lib", targetFramework, "PackageA.dll"), "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
+                ValidateAssembly(packageA, Path.Combine("ref", targetFramework, "PackageA.dll"), "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
             }
         }
 
@@ -81,7 +80,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .ReferenceAssembly("net45", "CustomFile.dll", "Custom.Namespace", "CustomClass", "2.3.4.5")
                 .Save();
 
-            ValidateAssembly(packageA, @"ref/net45/CustomFile.dll", "CustomFile, Version=2.3.4.5, Culture=neutral, PublicKeyToken=null", "Custom.Namespace.CustomClass");
+            ValidateAssembly(packageA, Path.Combine("ref", "net45", "CustomFile.dll"), "CustomFile, Version=2.3.4.5, Culture=neutral, PublicKeyToken=null", "Custom.Namespace.CustomClass");
         }
 
         [Fact]
@@ -89,10 +88,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             PackageFeed.Create(FeedRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                    .ReferenceAssembly(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName())
+                    .ReferenceAssembly("net45")
                 .Save();
 
-            ValidateAssembly(packageA, @"ref/net45/PackageA.dll", "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
+            ValidateAssembly(packageA, Path.Combine("ref", "net45", "PackageA.dll"), "PackageA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "PackageA.PackageA_Class");
         }
 
         [Fact]
@@ -101,7 +100,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             ShouldThrowExceptionIfNoPackageAdded(() =>
             {
                 PackageFeed.Create(FeedRootPath)
-                    .ReferenceAssembly(FrameworkConstants.CommonFrameworks.Net45.GetShortFolderName());
+                    .ReferenceAssembly("net45");
             });
         }
 

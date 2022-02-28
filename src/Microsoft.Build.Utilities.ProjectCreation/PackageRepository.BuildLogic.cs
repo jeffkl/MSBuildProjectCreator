@@ -288,7 +288,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private void CreateBuildFile(string extension, string folderName, Action<ProjectCreator>? creator, NewProjectFileOptions projectFileOptions, out ProjectCreator project)
         {
-            if (_packageManifest == null)
+            if (LastPackage == null)
             {
                 throw new InvalidOperationException(Strings.ErrorWhenAddingBuildLogicRequiresPackage);
             }
@@ -304,7 +304,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
 
             project = ProjectCreator.Create(
-                path: Path.Combine(_packageManifest.Directory, folderName, $"{_packageManifest.Metadata.Id}{extension}"),
+                path: Path.Combine(LastPackage.Directory!, folderName, $"{LastPackage.Id}{extension}"),
                 projectFileOptions: projectFileOptions);
 
             creator?.Invoke(project);

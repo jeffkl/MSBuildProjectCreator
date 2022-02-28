@@ -2,12 +2,9 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -20,22 +17,37 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         public IReadOnlyCollection<Package> Packages => _packages;
 
-        /// <inheritdoc cref="NuGet.Packaging.VersionFolderPathResolver" />
+        /// <summary>
+        /// Gets or sets the most recent <see cref="ProjectCreation.Package" /> added to the repository.
+        /// </summary>
+        internal Package? LastPackage { get; set; }
+
+        /// <summary>
+        /// Gets the full path to the specified package in the current <see cref="PackageRepository" />.
+        /// </summary>
+        /// <param name="packageId">The ID of the package.</param>
+        /// <param name="version">The version of the package.</param>
+        /// <returns>The full path to the package in the repository.</returns>
         public string GetInstallPath(string packageId, string version)
         {
-            return VersionFolderPathResolver.GetInstallPath(packageId, NuGetVersion.Parse(version));
+            return Path.Combine(GlobalPackagesFolder, packageId.ToLowerInvariant(), version.ToLowerInvariant());
         }
 
-        /// <inheritdoc cref="NuGet.Packaging.VersionFolderPathResolver.GetManifestFilePath" />
+        /// <summary>
+        /// Gets the full path to the specified package' <c>.nupsec</c> in the current <see cref="PackageRepository" />.
+        /// </summary>
+        /// <param name="packageId">The ID of the package.</param>
+        /// <param name="version">The version of the package.</param>
+        /// <returns>The full path to the package's <c>.nuspec</c> in the repository.</returns>
         public string GetManifestFilePath(string packageId, string version)
         {
-            return VersionFolderPathResolver.GetManifestFilePath(packageId, NuGetVersion.Parse(version));
+            return Path.Combine(GetInstallPath(packageId, version), $"{packageId.ToLowerInvariant()}.nuspec");
         }
 
         /// <summary>
         /// Creates a new package.
         /// </summary>
-        /// <param name="name">The name or ID of the package.</param>
+        /// <param name="id">The name or ID of the package.</param>
         /// <param name="version">The semantic version of the package.</param>
         /// <param name="authors">An optional semicolon delimited list of authors of the package.  The default value is &quot;UserA&quot;</param>
         /// <param name="description">An optional description of the package.  The default value is &quot;Description&quot;</param>
@@ -62,7 +74,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="title">An optional title of the package.</param>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
         public PackageRepository Package(
-            string name,
+            string id,
             string version,
             string? authors = null,
             string? description = null,
@@ -89,7 +101,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string? title = null)
         {
             return Package(
-                name,
+                id,
                 version,
                 out Package _,
                 authors,
@@ -120,9 +132,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Creates a new package.
         /// </summary>
-        /// <param name="name">The name or ID of the package.</param>
+        /// <param name="id">The name or ID of the package.</param>
         /// <param name="version">The semantic version of the package.</param>
-        /// <param name="package">Receives the <see cref="PackageIdentity" /> of the package.</param>
+        /// <param name="package">Receives a <see cref="ProjectCreation.Package" /> object representing the package.</param>
         /// <param name="authors">An optional semicolon delimited list of authors of the package.  The default value is &quot;UserA&quot;</param>
         /// <param name="description">An optional description of the package.  The default value is &quot;Description&quot;</param>
         /// <param name="copyright">An optional copyright of the package.</param>
@@ -146,13 +158,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="summary">An optional summary of the package.</param>
         /// <param name="tags">An optional set of tags of the package.</param>
         /// <param name="title">An optional title of the package.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="id" /> or <paramref name="version" /> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException">A package with the same name and version has already been added to the repository.</exception>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
         public PackageRepository Package(
-            string name,
+            string id,
             string version,
             out Package package,
-            string? authors = null,
-            string? description = null,
+            string? authors = "UserA",
+            string? description = "Description",
             string? copyright = null,
             bool developmentDependency = false,
             string? icon = null,
@@ -175,9 +189,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             string? tags = null,
             string? title = null)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(id));
             }
 
             if (string.IsNullOrWhiteSpace(version))
@@ -185,54 +199,42 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw new ArgumentNullException(nameof(version));
             }
 
-            PackageIdentity packageIdentity = new PackageIdentity(name, NuGetVersion.Parse(version));
+            string semVersion = SemVersion.Parse(version).ToString();
 
-            package = new Package(packageIdentity.Id, packageIdentity.Version.ToNormalizedString(), authors!, description!, developmentDependency);
+            DirectoryInfo directory = Directory.CreateDirectory(GetInstallPath(id, semVersion));
 
-            string manifestFilePath = VersionFolderPathResolver.GetManifestFilePath(package.Id, packageIdentity.Version);
+            package = new Package(id, semVersion, directory.FullName, authors, description!, copyright, developmentDependency, icon, iconUrl, language, licenseUrl, licenseExpression, licenseVersion, owners, packageTypes, projectUrl, releaseNotes, repositoryType, repositoryUrl, repositoryBranch, repositoryCommit, requireLicenseAcceptance, serviceable, summary, tags, title);
 
-            if (System.IO.File.Exists(manifestFilePath))
+            if (!_packages.Add(package))
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ErrorPackageAlreadyCreated, name, version));
+                throw new InvalidOperationException($"A package with the ID '{id}' and version '{version}' has already been added to the repository");
             }
 
-            LicenseMetadata? licenseMetadata = null;
+            LastPackage = package;
 
-            if (licenseExpression != null)
+            SavePackageManifest();
+
+            using (TextWriter? writer = System.IO.File.CreateText(Path.Combine(directory.FullName, ".nupkg.metadata")))
             {
-                licenseMetadata = new LicenseMetadata(LicenseType.Expression, licenseExpression, null, null, licenseVersion == null ? new Version("1.0.0") : Version.Parse(licenseVersion));
+                writer.WriteLine(
+@"{ 
+  ""version"": 2,
+  ""contentHash"": """"
+}");
             }
-
-            _packageManifest = new PackageManifest(
-                manifestFilePath,
-                name,
-                version,
-                authors,
-                description,
-                copyright,
-                developmentDependency,
-                icon,
-                iconUrl,
-                language,
-                licenseUrl,
-                licenseMetadata,
-                owners,
-                packageTypes!.ToPackageTypes(),
-                projectUrl,
-                releaseNotes,
-                repositoryType,
-                repositoryUrl,
-                repositoryBranch,
-                repositoryCommit,
-                requireLicenseAcceptance,
-                serviceable,
-                summary,
-                tags,
-                title);
-
-            _packages.Add(package);
 
             return this;
+        }
+
+        private void SavePackageManifest()
+        {
+            if (LastPackage != null)
+            {
+                using (Stream? stream = System.IO.File.OpenWrite(GetManifestFilePath(LastPackage.Id, LastPackage.Version)))
+                {
+                    LastPackage.WriteNuspec(stream);
+                }
+            }
         }
     }
 }

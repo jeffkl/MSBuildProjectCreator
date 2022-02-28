@@ -2,12 +2,11 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Configuration;
-using NuGet.Packaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -18,44 +17,51 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     {
         private readonly string? _nugetPackagesGlobalFolderBackup = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
 
-        private readonly PackageSourceProvider _packageSourceProvider;
-
-        private readonly ISettings _settings;
-
-        private PackageManifest? _packageManifest;
-
         private PackageRepository(string rootPath, IEnumerable<Uri>? feeds = null)
         {
-            GlobalPackagesFolder = Path.Combine(rootPath, ".nuget", SettingsUtility.DefaultGlobalPackagesFolderPath);
+            GlobalPackagesFolder = Path.Combine(rootPath, ".nuget", "packages");
 
-            VersionFolderPathResolver = new VersionFolderPathResolver(GlobalPackagesFolder);
+            _nugetPackagesGlobalFolderBackup = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
 
             Environment.SetEnvironmentVariable("NUGET_PACKAGES", null);
 
-            _settings = new Settings(rootPath, Settings.DefaultSettingsFileName);
+            NuGetConfigPath = Path.Combine(rootPath, "NuGet.config");
 
-            NuGetConfigPath = _settings.GetConfigFilePaths().First();
-
-            _packageSourceProvider = new PackageSourceProvider(_settings);
-
-            foreach (string packageSourceName in _packageSourceProvider.LoadPackageSources().Select(i => i.Name))
+            XmlWriterSettings settings = new XmlWriterSettings
             {
-                _packageSourceProvider.RemovePackageSource(packageSourceName);
-            }
+                Indent = true,
+                OmitXmlDeclaration = true,
+            };
 
-            SettingsUtility.SetConfigValue(_settings, ConfigurationConstants.GlobalPackagesFolder, GlobalPackagesFolder);
-
-            _settings.AddOrUpdate(ConfigurationConstants.PackageSources, new ClearItem());
-
-            if (feeds != null)
+            using (XmlWriter? writer = XmlWriter.Create(NuGetConfigPath, settings))
             {
-                foreach (Uri feed in feeds)
+                writer.WriteStartElement("configuration");
+
+                writer.WriteStartElement("config");
+                writer.WriteStartElement("add");
+                writer.WriteAttributeString("key", "globalPackagesFolder");
+                writer.WriteAttributeString("value", GlobalPackagesFolder);
+                writer.WriteEndElement(); // </add>
+                writer.WriteEndElement(); // </config>
+
+                writer.WriteStartElement("packageSources");
+                writer.WriteElementString("clear", string.Empty);
+
+                if (feeds != null)
                 {
-                    _packageSourceProvider.AddPackageSource(new PackageSource(feed.Host, feed.ToString()));
+                    foreach (Uri? feed in feeds.Where(i => i != null))
+                    {
+                        writer.WriteStartElement("add");
+                        writer.WriteAttributeString("key", feed.Host);
+                        writer.WriteAttributeString("value", feed.ToString());
+                        writer.WriteEndElement();
+                    }
                 }
-            }
 
-            _settings.SaveToDisk();
+                writer.WriteEndElement(); // </packageSources>
+
+                writer.WriteEndElement(); // </configuration>
+            }
         }
 
         /// <summary>
@@ -67,11 +73,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Gets the full path to the current NuGet.config.
         /// </summary>
         public string NuGetConfigPath { get; }
-
-        /// <summary>
-        /// Gets a <see cref="VersionFolderPathResolver" /> for the current package repository.
-        /// </summary>
-        private VersionFolderPathResolver VersionFolderPathResolver { get; }
 
         /// <summary>
         /// Creates a new <see cref="PackageRepository" /> instance.

@@ -2,16 +2,11 @@
 //
 // Licensed under the MIT license.
 
-using NuGet.Configuration;
-using NuGet.Frameworks;
-using NuGet.LibraryModel;
-using NuGet.Packaging;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -20,52 +15,130 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public class Package : IComparer<Package>, IEqualityComparer<Package>, IComparable<Package>
     {
-        private readonly HashSet<ManifestContentFiles> _contentFiles = new HashSet<ManifestContentFiles>();
-        private readonly Dictionary<NuGetFramework, HashSet<PackageDependency>> _dependencies = new Dictionary<NuGetFramework, HashSet<PackageDependency>>();
+        private readonly HashSet<PackageContentFileEntry> _contentFiles = new HashSet<PackageContentFileEntry>();
 
-        private readonly Dictionary<string, IPackageFile> _files = new Dictionary<string, IPackageFile>(StringComparer.OrdinalIgnoreCase);
-        private readonly PackageBuilder _packageBuilder;
+        private readonly Dictionary<string, HashSet<PackageDependency>> _dependencies = new Dictionary<string, HashSet<PackageDependency>>();
 
-        private readonly HashSet<NuGetFramework> _targetFrameworks = new HashSet<NuGetFramework>();
+        private readonly Dictionary<string, Func<Stream>> _files = new Dictionary<string, Func<Stream>>(StringComparer.OrdinalIgnoreCase);
+
+        private readonly HashSet<string> _targetFrameworks = new HashSet<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Package" /> class.
         /// </summary>
         /// <param name="id">The name or ID of the package.</param>
-        /// <param name="version">The version of the package.</param>
-        /// <param name="author">The author of the package.</param>
-        /// <param name="description">The description of the package.</param>
-        /// <param name="developmentDependency">A value indicating whether or not the package is a development dependency.</param>
-        internal Package(string id, string version, string author, string description, bool developmentDependency)
+        /// <param name="version">The semantic version of the package.</param>
+        /// <param name="directory">The directory of the package.</param>
+        /// <param name="authors">An optional semicolon delimited list of authors of the package.  The default value is &quot;UserA&quot;</param>
+        /// <param name="description">An optional description of the package.  The default value is &quot;Description&quot;</param>
+        /// <param name="copyright">An optional copyright of the package.</param>
+        /// <param name="developmentDependency">An optional value indicating whether or not the package is a development dependency.  The default value is <code>false</code>.</param>
+        /// <param name="icon">An optional path in the package that should be used for the icon of the package.</param>
+        /// <param name="iconUrl">An optional URL to the icon of the package.</param>
+        /// <param name="language">An optional language of the package.</param>
+        /// <param name="licenseUrl">An optional URL to the license of the package.</param>
+        /// <param name="licenseExpression">An optional license expression.</param>
+        /// <param name="licenseVersion">An optional license version.</param>
+        /// <param name="owners">An optional semicolon delimited list of owners of the package.</param>
+        /// <param name="packageTypes">An optional <see cref="IEnumerable{PackageType}" /> containing the package types of the package.</param>
+        /// <param name="projectUrl">An optional URL to the project of the package.</param>
+        /// <param name="releaseNotes">An optional value specifying release notes of the package.</param>
+        /// <param name="repositoryType">An optional value specifying the type of source code repository of the package.</param>
+        /// <param name="repositoryUrl">An optional value specifying the URL of the source code repository of the package.</param>
+        /// <param name="repositoryBranch">An optional value specifying the branch of the source code repository of the package.</param>
+        /// <param name="repositoryCommit">An optional value specifying the commit of the source code repository of the package.</param>
+        /// <param name="requireLicenseAcceptance">An optional value indicating whether or not the package requires license acceptance  The default value is <code>false</code>.</param>
+        /// <param name="serviceable">An option value indicating whether or not the package is serviceable.  The default value is <code>false</code>.</param>
+        /// <param name="summary">An optional summary of the package.</param>
+        /// <param name="tags">An optional set of tags of the package.</param>
+        /// <param name="title">An optional title of the package.</param>
+        internal Package(
+            string id,
+            SemVersion version,
+            string directory,
+            string? authors = null,
+            string? description = null,
+            string? copyright = null,
+            bool developmentDependency = false,
+            string? icon = null,
+            string? iconUrl = null,
+            string? language = null,
+            string? licenseUrl = null,
+            string? licenseExpression = null,
+            string? licenseVersion = null,
+            string? owners = null,
+            IEnumerable<string>? packageTypes = null,
+            string? projectUrl = null,
+            string? releaseNotes = null,
+            string? repositoryType = null,
+            string? repositoryUrl = null,
+            string? repositoryBranch = null,
+            string? repositoryCommit = null,
+            bool requireLicenseAcceptance = false,
+            bool serviceable = false,
+            string? summary = null,
+            string? tags = null,
+            string? title = null)
         {
-            _packageBuilder = new PackageBuilder(deterministic: false)
-            {
-                Authors = { author },
-                Description = description,
-                DevelopmentDependency = developmentDependency,
-                Id = id,
-                Version = NuGetVersion.Parse(version),
-            };
+            Id = id;
 
-            FileName = $"{_packageBuilder.Id}.{_packageBuilder.Version.ToNormalizedString()}{NuGetConstants.PackageExtension}";
+            Version = version.ToString();
 
-            FullPath = string.Empty;
+            Author = authors!;
+            Description = description!;
+            Copyright = copyright;
+            DevelopmentDependency = developmentDependency;
+            Icon = icon;
+            IconUrl = iconUrl;
+            Language = language;
+            LicenseUrl = licenseUrl;
+            LicenseExpression = licenseExpression;
+            LicenseVersion = licenseVersion;
+            Owners = owners;
+            PackageTypes = packageTypes == null ? null : new List<string>(packageTypes);
+            ProjectUrl = projectUrl;
+            ReleaseNotes = releaseNotes;
+            RepositoryType = repositoryType;
+            RepositoryUrl = repositoryUrl;
+            RepositoryBranch = repositoryBranch;
+            RepositoryCommit = repositoryCommit;
+            RequireLicenseAcceptance = requireLicenseAcceptance;
+            Serviceable = serviceable;
+            Summary = summary;
+            Tags = tags;
+            Title = title;
+
+            Directory = directory;
+
+            FileName = $"{Id.ToLowerInvariant()}.{Version.ToLowerInvariant()}.nupkg";
+
+            FullPath = Path.Combine(directory, FileName);
         }
 
         /// <summary>
         /// Gets the author of the package.
         /// </summary>
-        public string Author => _packageBuilder.Authors.First();
+        public string Author { get; }
+
+        /// <summary>
+        /// Gets the copyright of the package.
+        /// </summary>
+        public string? Copyright { get; }
 
         /// <summary>
         /// Gets the description of the package.
         /// </summary>
-        public string Description => _packageBuilder.Description;
+        public string Description { get; }
 
         /// <summary>
         /// Gets a value indicating whether or not the package is a development dependency.
         /// </summary>
-        public bool DevelopmentDependency => _packageBuilder.DevelopmentDependency;
+        public bool DevelopmentDependency { get; }
+
+        /// <summary>
+        /// Gets the directory of the package if its been saved, otherwise <c>null</c>.
+        /// </summary>
+        public string? Directory { get; }
 
         /// <summary>
         /// Gets the file name of the package.
@@ -75,22 +148,122 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the full path to the package if it has been saved, otherwise <c>null</c>.
         /// </summary>
-        public string FullPath { get; private set; }
+        public string? FullPath { get; internal set; }
+
+        /// <summary>
+        /// Gets the icon of the package.
+        /// </summary>
+        public string? Icon { get; }
+
+        /// <summary>
+        /// Gets the icon URL of the package.
+        /// </summary>
+        public string? IconUrl { get; }
 
         /// <summary>
         /// Gets the name of the package.
         /// </summary>
-        public string Id => _packageBuilder.Id;
+        public string Id { get; }
+
+        /// <summary>
+        /// Gets the language of the package.
+        /// </summary>
+        public string? Language { get; }
+
+        /// <summary>
+        /// Gets the license expression of the package.
+        /// </summary>
+        public string? LicenseExpression { get; }
+
+        /// <summary>
+        /// Gets the license URL of the package.
+        /// </summary>
+        public string? LicenseUrl { get; }
+
+        /// <summary>
+        /// Gets the license version of the package.
+        /// </summary>
+        public string? LicenseVersion { get; }
+
+        /// <summary>
+        /// Gets the owners of the package.
+        /// </summary>
+        public string? Owners { get; }
+
+        /// <summary>
+        /// Gets the package types of the package.
+        /// </summary>
+        public IReadOnlyCollection<string>? PackageTypes { get; }
+
+        /// <summary>
+        /// Gets the project URL of the package.
+        /// </summary>
+        public string? ProjectUrl { get; }
+
+        /// <summary>
+        /// Gets the release notes of the package.
+        /// </summary>
+        public string? ReleaseNotes { get; }
+
+        /// <summary>
+        /// Gets the repository branch of the package.
+        /// </summary>
+        public string? RepositoryBranch { get; }
+
+        /// <summary>
+        /// Gets the repository commit of the package.
+        /// </summary>
+        public string? RepositoryCommit { get; }
+
+        /// <summary>
+        /// Gets the repository type of the package.
+        /// </summary>
+        public string? RepositoryType { get; }
+
+        /// <summary>
+        /// Gets the repository URL of the package.
+        /// </summary>
+        public string? RepositoryUrl { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not license acceptance is required.
+        /// </summary>
+        public bool RequireLicenseAcceptance { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the package is serviceable.
+        /// </summary>
+        public bool Serviceable { get; }
+
+        /// <summary>
+        /// Gets the summary of the package.
+        /// </summary>
+        public string? Summary { get; }
+
+        /// <summary>
+        /// Gets the tags of the package.
+        /// </summary>
+        public string? Tags { get; }
+
+        /// <summary>
+        /// Gets the title of the package.
+        /// </summary>
+        public string? Title { get; }
 
         /// <summary>
         /// Gets the version of the package.
         /// </summary>
-        public string Version => _packageBuilder.Version.ToNormalizedString();
+        public string Version { get; }
 
         /// <summary>
-        /// Gets a value indicating whether or not the package is saved.
+        /// Gets the files currently assocated with the package.
         /// </summary>
-        internal bool Saved { get; private set; }
+        internal IReadOnlyDictionary<string, Func<Stream>> Files => _files;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the package is saved.
+        /// </summary>
+        internal bool Saved { get; set; }
 
         /// <inheritdoc />
         public int Compare(Package? x, Package? y)
@@ -181,22 +354,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Adds a content file to the package.
         /// </summary>
-        /// <param name="manifestContentFiles">A <see cref="ManifestContentFiles" /> object containing details about the content file.</param>
-        internal void AddContentFile(ManifestContentFiles manifestContentFiles)
+        /// <param name="packageContentFile">A <see cref="PackageContentFileEntry" /> object containing details about the content file.</param>
+        internal void AddContentFile(PackageContentFileEntry packageContentFile)
         {
-            _contentFiles.Add(manifestContentFiles);
+            _contentFiles.Add(packageContentFile);
         }
 
         /// <summary>
         /// Adds the specified dependency to the package.
         /// </summary>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> of the dependency.</param>
+        /// <param name="targetFramework">The target framework of the dependency.</param>
         /// <param name="id">The package ID of the dependency.</param>
-        /// <param name="versionRange">The <see cref="VersionRange" /> of the dependency.</param>
-        /// <param name="include">The <see cref="LibraryIncludeFlags" /> of the assets to include.</param>
-        /// <param name="exclude">The <see cref="LibraryIncludeFlags" /> of the assets to exclude.</param>
-        /// <param name="suppressParent">The <see cref="LibraryIncludeFlags" /> of the assets to suppress from dependents.  The default is <see cref="LibraryIncludeFlags.Analyzers" /> | <see cref="LibraryIncludeFlags.Build" /> | <see cref="LibraryIncludeFlags.ContentFiles" />.</param>
-        internal void AddDependency(NuGetFramework targetFramework, string id, VersionRange versionRange, LibraryIncludeFlags include = LibraryIncludeFlags.All, LibraryIncludeFlags exclude = LibraryIncludeFlags.None, LibraryIncludeFlags suppressParent = LibraryIncludeFlags.Analyzers | LibraryIncludeFlags.Build | LibraryIncludeFlags.ContentFiles)
+        /// <param name="version">The version of the dependency.</param>
+        /// <param name="includeAssets">The assets to include.</param>
+        /// <param name="excludeAssets">The assets to exclude.</param>
+        /// <param name="privateAssets">The assets to suppress from dependents.  The default is Analyzers, Build, and ContentFiles.</param>
+        internal void AddDependency(string targetFramework, string id, string version, string? includeAssets = "All", string? excludeAssets = "None", string privateAssets = PackageDependency.DefaultPrivateAssets)
         {
             _targetFrameworks.Add(targetFramework);
 
@@ -207,33 +380,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 _dependencies[targetFramework] = packageDependencies;
             }
 
-            List<string> includes = new List<string>();
-            List<string> excludes = new List<string>();
-
-            LibraryIncludeFlags effectiveInclude = include & ~exclude & ~suppressParent;
-
-            if (effectiveInclude == LibraryIncludeFlags.All)
-            {
-                includes.Add(LibraryIncludeFlags.All.ToString());
-            }
-            else if (effectiveInclude.HasFlag(LibraryIncludeFlags.ContentFiles))
-            {
-                includes.AddRange(effectiveInclude.ToString().Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries));
-            }
-            else
-            {
-                if ((LibraryIncludeFlagUtils.NoContent & ~effectiveInclude) != LibraryIncludeFlags.None)
-                {
-                    excludes.AddRange((LibraryIncludeFlagUtils.NoContent & ~effectiveInclude).ToString().Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries));
-                }
-            }
-
             packageDependencies.Add(
                 new PackageDependency(
                     id,
-                    versionRange,
-                    includes,
-                    excludes));
+                    version,
+                    includeAssets,
+                    excludeAssets,
+                    privateAssets));
 
             Saved = false;
         }
@@ -245,12 +398,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="streamFunc">A <see cref="Func{TResult}" /> that generates the file's content.</param>
         internal void AddFile(string relativePath, Func<Stream> streamFunc)
         {
-            AddFile(
-                relativePath,
-                new PackageFileStream(relativePath, streamFunc)
-                {
-                    Path = relativePath,
-                });
+            if (Path.IsPathRooted(relativePath))
+            {
+                throw new InvalidOperationException($"The specified path must be relative");
+            }
+
+            string[]? parts = relativePath.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, 3, StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length == 3)
+            {
+                AddTargetFramework(parts[1]);
+            }
+
+            _files[relativePath] = streamFunc;
+
+            Saved = false;
         }
 
         /// <summary>
@@ -262,90 +424,139 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             AddFile(
                 relativePath,
-                new PackageFileStream(relativePath, fileInfo)
-                {
-                    Path = relativePath,
-                });
+                () => File.OpenRead(fileInfo.FullName));
         }
 
         /// <summary>
         /// Adds the specified target framework to a package.
         /// </summary>
-        /// <param name="targetFramework">The <see cref="NuGetFramework" /> to add.</param>
-        internal void AddTargetFramework(NuGetFramework targetFramework)
+        /// <param name="targetFramework">The target framework to add.</param>
+        internal void AddTargetFramework(string targetFramework)
         {
-            _targetFrameworks.Add(targetFramework);
+            if (!string.IsNullOrWhiteSpace(targetFramework))
+            {
+                _targetFrameworks.Add(targetFramework);
 
-            Saved = false;
+                Saved = false;
+            }
         }
 
-        /// <summary>
-        /// Saves the package to the specified directory.
-        /// </summary>
-        /// <param name="rootPath">A <see cref="DirectoryInfo" /> representing the directory to save the package to.</param>
-        internal void Save(DirectoryInfo rootPath)
+        internal void WriteNuspec(Stream stream)
         {
-            if (Saved)
-            {
-                return;
-            }
-
-            rootPath.Create();
-
-            FullPath = Path.Combine(rootPath.FullName, FileName);
-
-            _packageBuilder.DependencyGroups.Clear();
-            _packageBuilder.Files.Clear();
-
-            // TODO: clean up streams?
-
-            using (Stream stream = File.Create(FullPath))
-            {
-                foreach (IPackageFile file in _files.Values)
+            using XmlWriter writer = XmlWriter.Create(
+                stream,
+                new XmlWriterSettings
                 {
-                    _packageBuilder.Files.Add(file);
+                    Indent = true,
+                    OmitXmlDeclaration = true,
+                });
+
+            writer.WriteStartElement("package", "http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd");
+            writer.WriteStartElement("metadata");
+            writer.WriteAttributeString("minClientVersion", "2.12");
+            writer.WriteElementString("id", Id);
+            writer.WriteElementString("version", Version);
+            writer.WriteElementStringIfNotNull("title", Title);
+            writer.WriteElementStringIfNotNull("authors", Author);
+            writer.WriteElementStringIfNotNull("description", Description);
+            writer.WriteElementStringIfNotNull("copyright", Copyright);
+            writer.WriteElementStringIfNotNull("tags", Tags);
+            writer.WriteElementStringIfNotNull("projectUrl", ProjectUrl);
+            writer.WriteElementStringIfNotNull("requireLicenseAcceptance", RequireLicenseAcceptance.ToString());
+            writer.WriteElementStringIfNotNull("licenseUrl", LicenseUrl);
+            writer.WriteElementStringIfNotNull("icon", Icon);
+            writer.WriteElementStringIfNotNull("iconUrl", IconUrl);
+            writer.WriteElementStringIfNotNull("developmentDependency", DevelopmentDependency.ToString());
+            writer.WriteElementStringIfNotNull("language", Language);
+            writer.WriteElementStringIfNotNull("title", Title);
+            writer.WriteElementStringIfNotNull("tags", Tags);
+            writer.WriteElementStringIfNotNull("summary", Summary);
+            writer.WriteElementStringIfNotNull("owners", Owners);
+            writer.WriteElementStringIfNotNull("releaseNotes", ReleaseNotes);
+            writer.WriteElementStringIfNotNull("serviceable", Serviceable.ToString());
+
+            if (PackageTypes != null && PackageTypes.Any())
+            {
+                writer.WriteStartElement("packageTypes");
+
+                foreach (string? packageType in PackageTypes)
+                {
+                    writer.WriteStartElement("packageType");
+                    writer.WriteAttributeString("name", packageType);
+                    writer.WriteEndElement(); // </packageType>
                 }
 
-                foreach (NuGetFramework targetFramework in _targetFrameworks)
+                writer.WriteEndElement(); // </packageTypes>
+            }
+
+            if (LicenseExpression != null)
+            {
+                writer.WriteStartElement("license");
+                writer.WriteAttributeString("type", "expression");
+                writer.WriteAttributeStringIfNotNull("version", LicenseVersion);
+                writer.WriteString(LicenseExpression);
+                writer.WriteEndElement(); // </license>
+            }
+
+            if (RepositoryType != null)
+            {
+                writer.WriteStartElement("repository");
+                writer.WriteAttributeString("type", RepositoryType);
+                writer.WriteAttributeStringIfNotNull("url", RepositoryUrl);
+                writer.WriteAttributeStringIfNotNull("commit", RepositoryCommit);
+                writer.WriteAttributeStringIfNotNull("branch", RepositoryBranch);
+                writer.WriteEndElement(); // </repository>
+            }
+
+            if (_targetFrameworks.Any())
+            {
+                writer.WriteStartElement("dependencies");
+
+                foreach (string? targetFramework in _targetFrameworks)
                 {
-                    if (!_dependencies.TryGetValue(targetFramework, out HashSet<PackageDependency>? packageDependencies))
+                    writer.WriteStartElement("group");
+                    writer.WriteAttributeString("targetFramework", targetFramework);
+
+                    if (_dependencies.TryGetValue(targetFramework, out HashSet<PackageDependency>? dependencies))
                     {
-                        packageDependencies = new HashSet<PackageDependency>();
+                        foreach (PackageDependency dependency in dependencies)
+                        {
+                            writer.WriteStartElement("dependency");
+                            writer.WriteAttributeString("id", dependency.Id);
+                            writer.WriteAttributeString("version", dependency.Version);
+                            writer.WriteAttributeString("exclude", dependency.ExcludeAssets);
+                            writer.WriteEndElement();
+                        }
                     }
 
-                    _packageBuilder.DependencyGroups.Add(new PackageDependencyGroup(targetFramework, packageDependencies));
+                    writer.WriteEndElement();
                 }
 
-                _packageBuilder.ContentFiles.AddRange(_contentFiles);
-
-                _packageBuilder.Save(stream);
+                writer.WriteEndElement(); // </dependencies>
             }
 
-            Saved = true;
-        }
-
-        /// <summary>
-        /// Adds a file to the package.
-        /// </summary>
-        /// <param name="relativePath">The relative path of the file to add.</param>
-        /// <param name="packageFile">An <see cref="IPackageFile" /> that represents a file to add to the package.</param>
-        private void AddFile(string relativePath, IPackageFile packageFile)
-        {
-#if NETCOREAPP3_1
-            if (packageFile.TargetFramework != null)
+            if (_contentFiles.Any())
             {
-                AddTargetFramework(NuGetFramework.ParseFrameworkName(packageFile.TargetFramework.FullName, DefaultFrameworkNameProvider.Instance));
-            }
-#else
-            if (packageFile.NuGetFramework != null)
-            {
-                AddTargetFramework(packageFile.NuGetFramework);
-            }
-#endif
+                writer.WriteStartElement("contentFiles");
 
-            _files[relativePath] = packageFile;
+                foreach (PackageContentFileEntry? contentFilesEntry in _contentFiles)
+                {
+                    writer.WriteStartElement("files");
+                    writer.WriteAttributeStringIfNotNull("include", contentFilesEntry.Include);
+                    writer.WriteAttributeStringIfNotNull("exclude", contentFilesEntry.Exclude);
+                    writer.WriteAttributeString("copyToOutput", contentFilesEntry.CopyToOutput.ToString());
+                    writer.WriteAttributeStringIfNotNull("flatten", contentFilesEntry.Flatten.ToString());
+                    writer.WriteAttributeStringIfNotNull("buildAction", contentFilesEntry.BuildAction);
+                    writer.WriteEndElement();
+                }
 
-            Saved = false;
+                writer.WriteEndElement(); // </contentFiles>
+            }
+
+            writer.WriteEndElement(); // </metadata>
+            writer.WriteEndElement(); // </package>
+
+            writer.Flush();
         }
     }
 }

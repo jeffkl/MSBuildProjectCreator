@@ -1,8 +1,7 @@
 ﻿// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
-
-using NuGet.Configuration;
+/*
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -78,3 +77,4 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         }
     }
 }
+*/
