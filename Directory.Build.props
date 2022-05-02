@@ -1,13 +1,14 @@
 <Project>
   <PropertyGroup>
-    <DefaultItemExcludes>*log</DefaultItemExcludes>
-    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
-    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
-    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
-    <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
-    <LangVersion>Latest</LangVersion>
-    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <DefaultItemExcludes>*log</DefaultItemExcludes>
     <Deterministic>true</Deterministic>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <LangVersion>Latest</LangVersion>
+    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
+    <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 </Project>
