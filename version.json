@@ -1,7 +1,7 @@
 {
-  "version": "8.0",
+  "version": "8.1",
   "assemblyVersion": "1.0",
-  "buildNumberOffset": -11,
+  "buildNumberOffset": 0,
   "nugetPackageVersion": {
     "semVer": 2
   },

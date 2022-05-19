@@ -44,17 +44,22 @@ jobs:
         dotnet-version: ${{ env.DotNet6Version }}
         include-prerelease: true
 
+    - name: Set BuildConfiguration to Release for tagged builds
+      if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      run: |
+        echo "BuildConfiguration=Release" >> $GITHUB_ENV
+
     - name: Build Solution
-      run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\msbuild.binlog"
+      run: dotnet build "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\build.binlog"
 
     - name: Run Unit Tests (.NET Framework)
-      run: dotnet test --logger trx --no-restore --no-build --framework net472 /noautorsp
+      run: dotnet test --logger trx --no-restore --no-build --framework net472 /noautorsp "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\test-net472.binlog"
 
     - name: Run Unit Tests (.NET Core 3.1)
-      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp
+      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\test-netcoreapp3.1.binlog"
 
     - name: Run Unit Tests (.NET 6)
-      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp
+      run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp "/p:Platform=${{ env.BuildPlatform }}" "/p:Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\test-net6.0.binlog"
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
@@ -78,6 +83,7 @@ jobs:
   LinuxBuild:
     name: Build and Test (Linux)
     runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
   
     steps:
     - name: Checkout
@@ -123,6 +129,7 @@ jobs:
   MacOSBuild:
     name: Build and Test (MacOS)
     runs-on: macos-latest
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
   
     steps:
     - name: Checkout
