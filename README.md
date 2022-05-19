@@ -1,5 +1,5 @@
 # Overview
-[![Build Status](https://github.com/jeffkl/MSBuildProjectCreator/actions/workflows/CI.yml/badge.svg)](https://github.com/jeffkl/MSBuildProjectCreator/actions/workflows/CI.yml)
+[![Official Build](https://github.com/jeffkl/MSBuildProjectCreator/actions/workflows/Official.yml/badge.svg)](https://github.com/jeffkl/MSBuildProjectCreator/actions/workflows/Official.yml)
 [![NuGet](https://img.shields.io/nuget/v/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 [![NuGet](https://img.shields.io/nuget/dt/MSBuild.ProjectCreation.svg)](https://www.nuget.org/packages/MSBuild.ProjectCreation)
 
