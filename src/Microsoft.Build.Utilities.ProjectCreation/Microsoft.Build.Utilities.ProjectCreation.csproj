@@ -32,9 +32,10 @@
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Condition="'$(TargetFramework)' == 'net472'" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
-    <PackageReference Include="NuGet.Frameworks" ExcludeAssets="Compile" />
+    <PackageReference Include="NuGet.Frameworks" ExcludeAssets="Compile;Runtime" />
     <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
     <PackageReference Include="System.IO.Compression" Condition="'$(TargetFramework)' == 'net472'" />
+    <PackageReference Include="System.Memory" ExcludeAssets="Runtime;Compile" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Strings.resx">

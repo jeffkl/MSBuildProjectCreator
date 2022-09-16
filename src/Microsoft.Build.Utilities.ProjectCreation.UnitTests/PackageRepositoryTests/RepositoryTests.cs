@@ -7,12 +7,22 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
 {
     public class RepositoryTests : TestBase
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public RepositoryTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void BasicPackage()
         {
@@ -40,20 +50,38 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         [Fact]
         public void BuildCanConsumePackage()
         {
-            using (PackageRepository.Create(TestRootPath)
-                .Package("PackageB", "1.0", out Package packageB)
-                    .Library(TargetFramework)
-                .Package("PackageA", "1.0.0", out Package packageA)
-                    .Dependency(packageB, TargetFramework)
-                    .Library(TargetFramework))
+            _testOutputHelper.WriteLine("Before:");
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(i => i.FullName.StartsWith("NuGet", StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.FullName))
             {
-                ProjectCreator.Templates.SdkCsproj(
-                        path: Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"),
-                        targetFramework: TargetFramework)
-                    .ItemPackageReference(packageA)
-                    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+                _testOutputHelper.WriteLine("{0} / {1}", assembly.FullName, assembly.Location);
+            }
 
-                result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            try
+            {
+                using (PackageRepository.Create(TestRootPath)
+                    .Package("PackageB", "1.0", out Package packageB)
+                        .Library(TargetFramework)
+                    .Package("PackageA", "1.0.0", out Package packageA)
+                        .Dependency(packageB, TargetFramework)
+                        .Library(TargetFramework))
+                {
+                    ProjectCreator.Templates.SdkCsproj(
+                            path: Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"),
+                            targetFramework: TargetFramework)
+                        .ItemPackageReference(packageA)
+                        .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
+
+                    result.ShouldBeTrue(buildOutput.GetConsoleLog());
+                }
+            }
+            finally
+            {
+                _testOutputHelper.WriteLine("After:");
+
+                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(i => i.FullName.StartsWith("NuGet", StringComparison.OrdinalIgnoreCase)).OrderBy(i => i.FullName))
+                {
+                    _testOutputHelper.WriteLine("{0} / {1}", assembly.FullName, assembly.Location);
+                }
             }
         }
 

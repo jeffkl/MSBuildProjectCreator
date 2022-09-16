@@ -4,7 +4,7 @@
     <MicrosoftBuildPackageVersion>17.2.0</MicrosoftBuildPackageVersion>
     <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">16.9.0</MicrosoftBuildPackageVersion>
     <NuGetPackageVersion>6.2.1</NuGetPackageVersion>
-    <NuGetPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">5.7.1</NuGetPackageVersion>
+    <NuGetPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">5.11.0</NuGetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.Build" Version="$(MicrosoftBuildPackageVersion)" />
@@ -17,6 +17,7 @@
     <PackageReference Update="NuGet.Frameworks" Version="$(NuGetPackageVersion)" />
     <PackageReference Update="Shouldly" Version="4.0.3" />
     <PackageReference Update="System.IO.Compression" Version="4.3.0" />
+    <PackageReference Update="System.Memory" Version="4.5.4" />
     <PackageReference Update="xunit" Version="2.4.1" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" />
   </ItemGroup>
