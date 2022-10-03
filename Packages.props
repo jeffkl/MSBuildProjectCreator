@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MicrosoftBuildPackageVersion>17.2.0</MicrosoftBuildPackageVersion>
     <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">16.9.0</MicrosoftBuildPackageVersion>
-    <NuGetPackageVersion>6.2.1</NuGetPackageVersion>
+    <NuGetPackageVersion>6.3.0</NuGetPackageVersion>
     <NuGetPackageVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1'">5.7.1</NuGetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -15,9 +15,9 @@
     <PackageReference Update="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="15.0.36" />
     <PackageReference Update="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.2.2146" />
     <PackageReference Update="NuGet.Frameworks" Version="$(NuGetPackageVersion)" />
-    <PackageReference Update="Shouldly" Version="4.0.3" />
+    <PackageReference Update="Shouldly" Version="4.1.0" />
     <PackageReference Update="System.IO.Compression" Version="4.3.0" />
-    <PackageReference Update="xunit" Version="2.4.1" />
+    <PackageReference Update="xunit" Version="2.4.2" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" />
   </ItemGroup>
   <ItemGroup>
