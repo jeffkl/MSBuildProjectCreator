@@ -110,7 +110,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             assembly.FullName.ShouldBe(expectedAssemblyFullName);
 
-            assembly.GetTypes().ShouldHaveSingleItem().FullName.ShouldBe(expectedTypeFullName);
+            assembly.GetTypes().ShouldContain(i => i.FullName.Equals(expectedTypeFullName));
         }
     }
 }

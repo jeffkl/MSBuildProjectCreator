@@ -19,12 +19,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             get =>
 #if NETCOREAPP3_1
             "netcoreapp3.1";
-#elif NET5_0
-            "net5.0";
 #elif NET6_0
             "net6.0";
-#else
+#elif NET7_0
+            "net7.0";
+#elif NETFRAMEWORK
             "net472";
+#else
+            Unknown target framework!
 #endif
         }
 

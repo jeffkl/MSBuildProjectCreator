@@ -59,7 +59,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the error messages that were logged.
         /// </summary>
-        public IReadOnlyCollection<string> Errors => _errorEvents.Select(i => i.Message).ToList();
+        public IReadOnlyCollection<string> Errors => _errorEvents.Select(i => i.Message).ToList()!;
 
         /// <summary>
         /// Gets the messages that were logged.
@@ -79,7 +79,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the warning messages that were logged.
         /// </summary>
-        public IReadOnlyCollection<string> Warnings => _warningEvents.Select(i => i.Message).ToList();
+        public IReadOnlyCollection<string> Warnings => _warningEvents.Select(i => i.Message).ToList()!;
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public virtual void Dispose()

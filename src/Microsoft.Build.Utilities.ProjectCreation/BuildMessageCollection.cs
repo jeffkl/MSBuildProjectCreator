@@ -32,17 +32,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Gets the messages that were logged with <see cref="MessageImportance.High" />.
         /// </summary>
-        public IReadOnlyCollection<string> High => _buildOutput.MessageEvents.High.Select(i => i.Message).ToList();
+        public IReadOnlyCollection<string> High => _buildOutput.MessageEvents.High.Select(i => i.Message).ToList()!;
 
         /// <summary>
         /// Gets the messages that were logged with <see cref="MessageImportance.Low" />.
         /// </summary>
-        public IReadOnlyCollection<string> Low => _buildOutput.MessageEvents.Low.Select(i => i.Message).ToList();
+        public IReadOnlyCollection<string> Low => _buildOutput.MessageEvents.Low.Select(i => i.Message).ToList()!;
 
         /// <summary>
         /// Gets the messages that were logged with <see cref="MessageImportance.Normal" />.
         /// </summary>
-        public IReadOnlyCollection<string> Normal => _buildOutput.MessageEvents.Normal.Select(i => i.Message).ToList();
+        public IReadOnlyCollection<string> Normal => _buildOutput.MessageEvents.Normal.Select(i => i.Message).ToList()!;
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<string> GetEnumerator()

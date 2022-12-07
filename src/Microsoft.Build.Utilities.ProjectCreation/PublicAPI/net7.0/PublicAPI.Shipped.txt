@@ -1,4 +1,5 @@
-﻿const Microsoft.Build.Utilities.ProjectCreation.PackageDependency.DefaultPrivateAssets = "Build,ContentFiles,Analyzers" -> string!
+﻿#nullable enable
+const Microsoft.Build.Utilities.ProjectCreation.PackageDependency.DefaultPrivateAssets = "Build,ContentFiles,Analyzers" -> string!
 const Microsoft.Build.Utilities.ProjectCreation.ProjectCreatorConstants.DefaultTargetName = "Build" -> string!
 const Microsoft.Build.Utilities.ProjectCreation.ProjectCreatorConstants.SdkCsprojDefaultSdk = "Microsoft.NET.Sdk" -> string!
 const Microsoft.Build.Utilities.ProjectCreation.ProjectCreatorConstants.SdkCsprojDefaultTargetFramework = "netstandard2.0" -> string!
