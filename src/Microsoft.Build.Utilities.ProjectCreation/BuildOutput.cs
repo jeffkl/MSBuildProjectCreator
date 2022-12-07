@@ -88,6 +88,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private void OnBuildFinished(object sender, BuildFinishedEventArgs args) => _buildFinished = args;
 
-        private void OnProjectFinished(object sender, ProjectFinishedEventArgs e) => _resultsByProject.AddOrUpdate(e.ProjectFile, e.Succeeded, (projectFile, succeeded) => succeeded && e.Succeeded);
+        private void OnProjectFinished(object sender, ProjectFinishedEventArgs e)
+        {
+            if (e.ProjectFile != null)
+            {
+                _resultsByProject.AddOrUpdate(e.ProjectFile, e.Succeeded, (projectFile, succeeded) => succeeded && e.Succeeded);
+            }
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                             }
 
                             AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
-
+#if !NET7_0_OR_GREATER
                             if (requestedAssemblyName.ProcessorArchitecture != System.Reflection.ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
                             {
                                 // The requested assembly has a processor architecture and the candidate assembly has a different value
@@ -67,6 +67,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                                 // Requested assembly has a public key but it doesn't match the candidate assembly public key
                                 return null;
                             }
+#endif
 
                             return assemblyLoader(candidateAssemblyFile.FullName);
                         });

@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Exceptions;
 using Shouldly;
@@ -10,7 +11,7 @@ using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
-    public class ProjectTests : MSBuildTestBase
+    public class ProjectTests : TestBase
     {
         [Fact]
         public void ProjectInstanceGetsCorrectObject()
@@ -77,10 +78,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void TryGetProjectBuildOutput()
         {
+            ProjectRootElement import = ProjectCreator.Create()
+                .Save(GetTempProjectPath());
+
             ProjectCreator.Create()
-                .Property("ImportDirectoryBuildTargets", "false")
-                .Import(@"$(MSBuildBinPath)\Microsoft.Common.targets")
-                .Import(@"$(MSBuildBinPath)\Microsoft.Common.targets")
+                .Import(import.FullPath)
+                .Import(import.FullPath)
                 .TryGetProject(out Project _, out BuildOutput buildOutput);
 
             buildOutput.WarningEvents.ShouldHaveSingleItem(buildOutput.GetConsoleLog()).Code.ShouldBe("MSB4011", buildOutput.GetConsoleLog());

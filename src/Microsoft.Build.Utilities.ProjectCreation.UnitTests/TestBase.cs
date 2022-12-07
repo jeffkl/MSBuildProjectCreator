@@ -12,6 +12,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         protected TestBase()
         {
             TestRootPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())).FullName;
+            WriteGlobalJson();
+        }
+
+        public string DotNetSdkVersion
+        {
+            get =>
+#if NETCOREAPP3_1
+            "3.1.100";
+#elif NET6_0
+            "6.0.100";
+#elif NET7_0 || NETFRAMEWORK
+            "7.0.100";
+#else
+            Unknown target framework!
+#endif
         }
 
         public string TargetFramework
@@ -19,12 +34,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             get =>
 #if NETCOREAPP3_1
             "netcoreapp3.1";
-#elif NET5_0
-            "net5.0";
 #elif NET6_0
             "net6.0";
-#else
+#elif NET7_0
+            "net7.0";
+#elif NETFRAMEWORK
             "net472";
+#else
+            Unknown target framework!
 #endif
         }
 
@@ -60,6 +77,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             DirectoryInfo tempDirectoryInfo = Directory.CreateDirectory(Path.Combine(TestRootPath, Path.GetRandomFileName()));
 
             return Path.Combine(tempDirectoryInfo.FullName, $"{Path.GetRandomFileName()}{extension ?? string.Empty}");
+        }
+
+        private void WriteGlobalJson()
+        {
+            File.WriteAllText(
+                Path.Combine(TestRootPath, "global.json"),
+                $@"{{
+  ""sdk"": {{
+    ""version"": ""{DotNetSdkVersion}"",
+    ""rollForward"": ""latestMinor""
+  }}
+}}");
         }
     }
 }

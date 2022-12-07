@@ -18,6 +18,7 @@ env:
   ContinuousIntegrationBuild: 'true'
   DotNet3Version: '3.x'
   DotNet6Version: '6.x'
+  DotNet7Version: '7.x'
 
 jobs:
   BuildAndTest:
@@ -31,6 +32,7 @@ jobs:
             name: Linux
           - os: macos-latest
             name: MacOS
+      fail-fast: false
 
     name: Build and Test (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
@@ -42,27 +44,37 @@ jobs:
         fetch-depth: 0
 
     - name: Install .NET ${{ env.DotNet3Version }}
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DotNet3Version }}
 
     - name: Install .NET ${{ env.DotNet6Version }}
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DotNet6Version }}
+
+    - name: Install .NET ${{ env.DotNet7Version }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DotNet7Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
 
     - name: Run Unit Tests (.NET Framework)
-      if: ${{ matrix.os == 'windows-latest' }}
+      if: ${{ matrix.name == 'Windows' }}
       run: dotnet test --logger trx --no-restore --no-build --framework net472 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
 
     - name: Run Unit Tests (.NET Core 3.1)
+      if: ${{ matrix.name != 'MacOS' }}
       run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-netcoreapp3.1.binlog"
 
     - name: Run Unit Tests (.NET 6)
+      if: ${{ matrix.name != 'MacOS' }}
       run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net6.0.binlog"
+
+    - name: Run Unit Tests (.NET 7)
+      run: dotnet test --logger trx --no-restore --no-build --framework net7.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net7.0.binlog"
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
