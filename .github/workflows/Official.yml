@@ -15,6 +15,7 @@ env:
   ContinuousIntegrationBuild: 'true'
   DotNet3Version: '3.x'
   DotNet6Version: '6.x'
+  DotNet7Version: '6.x'
 
 jobs:
   build:
@@ -27,15 +28,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core ${{ env.DotNet3Version }}
-      uses: actions/setup-dotnet@v1
+    - name: Install .NET Core ${{ env.DotNet3Version }}, .NET ${{ env.DotNet6Version }}, and .NET ${{ env.DotNet7Version }}
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ env.DotNet3Version }}
-
-    - name: Install .NET ${{ env.DotNet6Version }}
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DotNet6Version }}
+        dotnet-version: |
+          ${{ env.DotNet3Version }}
+          ${{ env.DotNet6Version }}
+          ${{ env.DotNet7Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\build.binlog"
