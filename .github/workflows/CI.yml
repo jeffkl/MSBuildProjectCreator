@@ -62,13 +62,15 @@ jobs:
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
 
     - name: Run Unit Tests (.NET Framework)
-      if: ${{ matrix.os == 'windows-latest' }}
+      if: ${{ matrix.name == 'Windows' }}
       run: dotnet test --logger trx --no-restore --no-build --framework net472 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
 
     - name: Run Unit Tests (.NET Core 3.1)
+      if: ${{ matrix.name != 'MacOS' }}
       run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-netcoreapp3.1.binlog"
 
     - name: Run Unit Tests (.NET 6)
+      if: ${{ matrix.name != 'MacOS' }}
       run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net6.0.binlog"
 
     - name: Run Unit Tests (.NET 7)
