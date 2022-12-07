@@ -43,20 +43,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet3Version }}
+    - name: Install .NET Core ${{ env.DotNet3Version }}, .NET ${{ env.DotNet6Version }}, and .NET ${{ env.DotNet7Version }}
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ env.DotNet3Version }}
-
-    - name: Install .NET ${{ env.DotNet6Version }}
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DotNet6Version }}
-
-    - name: Install .NET ${{ env.DotNet7Version }}
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DotNet7Version }}
+        dotnet-version: |
+          ${{ env.DotNet3Version }}
+          ${{ env.DotNet6Version }}
+          ${{ env.DotNet7Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
