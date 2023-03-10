@@ -426,7 +426,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryRestore(IDictionary<string, string>? globalProperties, out bool result)
         {
-            return TryRestore(globalProperties, out result, out BuildOutput _, out IDictionary<string, TargetResult> _);
+            return TryRestore(globalProperties, out result, out BuildOutput _, out IDictionary<string, TargetResult>? _);
         }
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryRestore(IDictionary<string, string>? globalProperties, out bool result, out BuildOutput buildOutput)
         {
-            return TryRestore(globalProperties, out result, out buildOutput, out IDictionary<string, TargetResult> _);
+            return TryRestore(globalProperties, out result, out buildOutput, out IDictionary<string, TargetResult>? _);
         }
 
         /// <summary>
