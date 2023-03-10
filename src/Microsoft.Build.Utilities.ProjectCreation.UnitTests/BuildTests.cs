@@ -149,7 +149,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                             "Exec",
                             parameters: new Dictionary<string, string>
                             {
-                                ["Command"] = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ping 127.0.0.1 -n 2 >NUL" : "sleep 2s",
+                                ["Command"] = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ping 127.0.0.1 -n 2 >NUL" : "sleep 2",
                             })
                         .Save());
             }
