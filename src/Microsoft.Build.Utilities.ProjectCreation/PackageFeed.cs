@@ -24,6 +24,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Converts the current <see cref="PackageFeed" /> to a <see cref="Uri" />.
+        /// </summary>
+        /// <param name="packageFeed">The <see cref="PackageFeed" /> to convert.</param>
+        public static implicit operator Uri(PackageFeed packageFeed) => new Uri(packageFeed._rootPath.FullName);
+
+        /// <summary>
         /// Creates a new <see cref="PackageFeed" /> instance at the specified path.
         /// </summary>
         /// <param name="rootPath">The root directory to create the feed at.</param>

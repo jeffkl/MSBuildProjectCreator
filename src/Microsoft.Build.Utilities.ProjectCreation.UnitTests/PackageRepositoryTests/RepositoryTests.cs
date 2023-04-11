@@ -7,6 +7,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryTests
@@ -54,6 +55,48 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
 
                 result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            }
+        }
+
+        [Fact]
+        public void LocalFeedsAreAddedCorrectly()
+        {
+            DirectoryInfo feed1 = Directory.CreateDirectory(Path.Combine(TestRootPath, "Feed1"));
+            DirectoryInfo feed2 = Directory.CreateDirectory(Path.Combine(TestRootPath, "Feed2"));
+
+            using (PackageRepository.Create(TestRootPath, new Uri(feed1.FullName), new Uri(feed2.FullName)))
+            {
+                FileInfo nuGetConfig = new FileInfo(Path.Combine(TestRootPath, "NuGet.config"));
+
+                nuGetConfig.ShouldExist();
+
+                XDocument xmlDocument = XDocument.Load(nuGetConfig.FullName);
+
+                XElement packageSourcesElement = xmlDocument
+                    .Element("configuration")
+                    .Element("packageSources");
+
+                packageSourcesElement.ShouldNotBeNull();
+
+                IEnumerator<XElement> enumerator = packageSourcesElement.Elements().GetEnumerator();
+
+                for (int i = 0; i < 3; i++)
+                {
+                    enumerator.MoveNext().ShouldBeTrue();
+
+                    XElement element = enumerator.Current;
+
+                    if (i == 0)
+                    {
+                        element.Name.ShouldBe("clear");
+                        continue;
+                    }
+
+                    element.Name.ShouldBe("add");
+                    element.Attribute("key").Value.ShouldBe($"Local{i}");
+
+                    element.Attribute("value").Value.ShouldBe(i == 1 ? feed1.FullName : feed2.FullName);
+                }
             }
         }
 
