@@ -85,7 +85,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .Library(TargetFramework)
                 .Save();
 
-            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath, new Uri[] { packageFeed });
+            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath, feeds: packageFeed);
 
             ProjectCreator.Templates.SdkCsproj(
                         path: Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"),
