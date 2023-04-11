@@ -49,11 +49,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 if (feeds != null)
                 {
+                    int i = 1;
+
                     foreach (Uri? feed in feeds.Where(i => i != null))
                     {
+                        string feedName = feed.IsFile ? $"Local{i++}" : feed.Host;
+
                         writer.WriteStartElement("add");
-                        writer.WriteAttributeString("key", feed.Host);
-                        writer.WriteAttributeString("value", feed.ToString());
+                        writer.WriteAttributeString("key", feedName);
+                        writer.WriteAttributeString("value", feed.IsFile ? feed.LocalPath : feed.ToString());
                         writer.WriteEndElement();
                     }
                 }
@@ -80,10 +84,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="rootPath">The root directory to create a package repository directory in.</param>
         /// <param name="feeds">Optional feeds to include in the configuration.</param>
         /// <returns>A <see cref="PackageRepository" /> object that is used to construct an NuGet package repository.</returns>
-        public static PackageRepository Create(string rootPath, IEnumerable<Uri>? feeds = null)
-        {
-            return new PackageRepository(rootPath, feeds);
-        }
+        public static PackageRepository Create(string rootPath, params Uri[] feeds) => new PackageRepository(rootPath, feeds);
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()

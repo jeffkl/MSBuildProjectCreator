@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 
 using Shouldly;
+using System;
+using System.IO;
 using System.Linq;
 using Xunit;
 
@@ -14,7 +16,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         public void BasicPackage()
         {
             using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
-                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", true)
+                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", developmentDependency: true)
                     .Library("net45")
                 .Save();
 
@@ -44,7 +46,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         public void BasicPackageWithDependency()
         {
             using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
-                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", true)
+                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", developmentDependency: true)
                     .Library("net45")
                     .Dependency("net45", "PackageB", "2.0.0")
                 .Save();
@@ -73,6 +75,25 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             dependency.Id.ShouldBe("PackageB");
             dependency.Version.ShouldBe("2.0.0");
             dependency.ExcludeAssets.ShouldBe("Build, Analyzers");
+        }
+
+        [Fact]
+        public void RestoreCanConsumePackage()
+        {
+            using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
+                .Package("PackageA", "1.0.0", out Package packageA)
+                    .Library(TargetFramework)
+                .Save();
+
+            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath, feeds: packageFeed);
+
+            ProjectCreator.Templates.SdkCsproj(
+                        path: Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"),
+                        targetFramework: TargetFramework)
+                    .ItemPackageReference(packageA)
+                    .TryRestore(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
         }
     }
 }

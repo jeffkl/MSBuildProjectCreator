@@ -212,7 +212,7 @@ NuGet and MSBuild are very tightly coupled and a lot of times you need packages 
 ## Package Repository
 Create a package repository if you want to generate packages as if they've already been installed.  If you want to create actual `.nupkg` packages, see [Package Feed]
 
-### Example
+### Examples
 
 Create a package repository with a package that supports two target frameworks:
 
@@ -246,21 +246,37 @@ By default, all package sources are disabled so that when running unit tests pac
 
 You can add feeds if needed with the following examples:
 
+#### Add nuget.org as a feed
 ```C#
-using(PackageRepository.Create(
-    rootPath,
-    feeds: new[] { new Uri("https://api.nuget.org/v3/index.json") })
+using(PackageRepository.Create(rootPath, feeds: new Uri("https://api.nuget.org/v3/index.json"))
 {
 }
 
 ```
 
+#### Add a local directory as a feed
 ```C#
-using(PackageRepository.Create(rootPath)
-    .Feed("https://api.nuget.org/v3/index.json")
+DirectoryInfo localFeed = new DirectoryInfo("<path to local feed>");
+
+using(PackageRepository.Create(rootPath, feeds: new Uri(localFeed.FullName))
 {
 }
 
+```
+
+#### Create a local feed on-the-fly
+```C#
+// Create a local feed with one package
+string TestRootPath = "<path to folder used for testing>";
+string FeedRootPath = Path.Combine(TestRootPath, "Feed");
+
+using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
+  .Package("PackageA", "1.0.0", out Package packageA)
+    .Library(TargetFramework)
+  .Save();
+
+// Create a package repository that points to the local feed
+using PackageRepository packageRepository = PackageRepository.Create(TestRootPath, feeds: packageFeed);
 ```
 
 ## Package Feed
