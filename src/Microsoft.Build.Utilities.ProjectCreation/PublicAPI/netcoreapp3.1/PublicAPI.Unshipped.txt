@@ -1,3 +1,1 @@
 ﻿#nullable enable
-static Microsoft.Build.Utilities.ProjectCreation.PackageFeed.implicit operator System.Uri!(Microsoft.Build.Utilities.ProjectCreation.PackageFeed! packageFeed) -> System.Uri!
-static Microsoft.Build.Utilities.ProjectCreation.PackageRepository.Create(string! rootPath, params System.Uri![]! feeds) -> Microsoft.Build.Utilities.ProjectCreation.PackageRepository!
