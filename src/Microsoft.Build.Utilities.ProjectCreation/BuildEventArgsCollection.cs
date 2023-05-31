@@ -17,6 +17,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public abstract class BuildEventArgsCollection : IDisposable
     {
+        internal event EventHandler<LoggerVerbosity>? ConsoleOutputCreated;
+
+        /// <summary>
+        /// Stores all build events.
+        /// </summary>
+        private readonly ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
+
         /// <summary>
         /// Stores the errors that were logged.
         /// </summary>
@@ -32,10 +39,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         private readonly List<BuildWarningEventArgs> _warningEvents = new List<BuildWarningEventArgs>();
 
-        /// <summary>
-        /// Stores all build events.
-        /// </summary>
-        private readonly ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
+        private string? _lastConsoleOutput = null;
+
+        private LoggerVerbosity _lastVerbosity = LoggerVerbosity.Normal;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildEventArgsCollection" /> class.
@@ -96,6 +102,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The build output in the format of a console log.</returns>
         public string GetConsoleLog(LoggerVerbosity verbosity = LoggerVerbosity.Normal)
         {
+            if (_lastConsoleOutput != null && verbosity == _lastVerbosity)
+            {
+                return _lastConsoleOutput;
+            }
+
+            _lastVerbosity = verbosity;
+
             StringBuilder sb = new StringBuilder(AllEvents.Count * 300);
 
             ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.Append(message), _ => { }, () => { });
@@ -154,7 +167,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
             }
 
-            return sb.ToString();
+            _lastConsoleOutput = sb.ToString();
+
+            ConsoleOutputCreated?.Invoke(this, verbosity);
+
+            return _lastConsoleOutput;
         }
 
         /// <summary>
@@ -163,6 +180,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="buildEventArgs">A <see cref="BuildEventArgs" /> object to add.</param>
         protected void Add(BuildEventArgs buildEventArgs)
         {
+            _lastConsoleOutput = null;
+
             _allEvents.Enqueue(buildEventArgs);
 
             switch (buildEventArgs)

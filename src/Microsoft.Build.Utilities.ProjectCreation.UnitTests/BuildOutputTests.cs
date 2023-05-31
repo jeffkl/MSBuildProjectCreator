@@ -37,6 +37,38 @@ FA7FCCBE43B741998BAB399E74F2997D
                     StringCompareShould.IgnoreLineEndings);
         }
 
+        [Fact]
+        public void ConsoleOutputCached()
+        {
+            BuildOutput buildOutput = GetProjectLoggerWithEvents(eventSource =>
+            {
+                eventSource.OnErrorRaised("FDC8FB4F8E084055974580DF7CD7531E", "6496288436BE4E7CAE014F163914063C", "7B07B020E38343A89B3FA844A40895E4", 1, 2, 0, 0);
+                eventSource.OnWarningRaised("E00BBDAEEFAB45949AFEE1BF792B1691", "56206897E63F44159603D22BB7C08145", "C455F26F4D4543E78F109BCB00F02BE2", 1, 2, 0, 0);
+                eventSource.OnMessageRaised("55B991507D52403295E92E4FFA8704F3", MessageImportance.High);
+                eventSource.OnMessageRaised("FA7FCCBE43B741998BAB399E74F2997D");
+                eventSource.OnMessageRaised("67C0E0E52F2A45A981F3143BAF00A4A3", MessageImportance.Low);
+            });
+
+            int callCount = 0;
+
+            buildOutput.ConsoleOutputCreated += (sender, args) => { callCount++; };
+
+            buildOutput.GetConsoleLog();
+            callCount.ShouldBe(1);
+            buildOutput.GetConsoleLog();
+            callCount.ShouldBe(1);
+
+            buildOutput.GetConsoleLog(LoggerVerbosity.Quiet);
+            callCount.ShouldBe(2);
+            buildOutput.GetConsoleLog(LoggerVerbosity.Quiet);
+            callCount.ShouldBe(2);
+
+            buildOutput.GetConsoleLog(LoggerVerbosity.Detailed);
+            callCount.ShouldBe(3);
+            buildOutput.GetConsoleLog(LoggerVerbosity.Detailed);
+            callCount.ShouldBe(3);
+        }
+
         [Theory]
         [InlineData("5F56E5B72FDE4405A021F166D0E4D7A8", "B586E6DA25314DA8B6700CF798A88892")]
         public void Errors(string expectedMessage, string expectedCode)
