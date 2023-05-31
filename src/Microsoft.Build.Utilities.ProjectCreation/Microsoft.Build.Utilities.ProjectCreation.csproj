@@ -52,9 +52,9 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' != ''">
+  
+  <ItemGroup>
     <None Include="PublicAPI\**" />
-    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
-    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.*.txt"  />
   </ItemGroup>
 </Project>
