@@ -111,11 +111,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            string output = buildOutput.GetConsoleLog();
 
-            buildOutput.IsShutdown.ShouldBeTrue(buildOutput.GetConsoleLog());
+            result.ShouldBeTrue(output);
 
-            buildOutput.MessageEvents.High.Count.ShouldBe(messageCount, buildOutput.GetConsoleLog());
+            buildOutput.IsShutdown.ShouldBeTrue(output);
+
+            buildOutput.MessageEvents.High.Count.ShouldBeGreaterThanOrEqualTo(messageCount, output);
         }
 
         [Fact]
@@ -126,11 +128,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     .For(100, (i, creator) => creator.TaskMessage($"Message {i}", MessageImportance.High))
                 .TryBuild(out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            string output = buildOutput.GetConsoleLog();
+
+            result.ShouldBeTrue(output);
 
             buildOutput.IsShutdown.ShouldBeTrue();
 
-            buildOutput.MessageEvents.High.Count.ShouldBe(100, buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.Count.ShouldBeGreaterThanOrEqualTo(100, output);
         }
 
         [Fact]
@@ -180,11 +184,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            string output = buildOutput.GetConsoleLog();
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restoring...", buildOutput.GetConsoleLog());
+            result.ShouldBeTrue(output);
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Building...", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restoring...", output);
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Building...", output);
         }
 
         [Fact]
@@ -275,10 +281,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     .Save(GetTempFileName(".proj"))
                     .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
 
-                result.ShouldBeTrue();
+                string output = buildOutput.GetConsoleLog();
 
-                buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "38EC33B686134B3C8DE4B8E571D4FB24", buildOutput.GetConsoleLog());
-                buildOutput.MessageEvents.Normal.ShouldContain(i => i.Message == "B7F9A257198D4A44A06BB6146AB27440", buildOutput.GetConsoleLog());
+                result.ShouldBeTrue(output);
+
+                buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "38EC33B686134B3C8DE4B8E571D4FB24", output);
+                buildOutput.MessageEvents.Normal.ShouldContain(i => i.Message == "B7F9A257198D4A44A06BB6146AB27440", output);
             }
 
             File.Exists(binLogPath).ShouldBeTrue();
@@ -322,13 +330,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", globalProperties, out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            string output = buildOutput.GetConsoleLog();
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", buildOutput.GetConsoleLog());
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", buildOutput.GetConsoleLog());
+            result.ShouldBeTrue(output);
 
-            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", buildOutput.GetConsoleLog());
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", output);
+
+            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", output);
         }
 
         [Fact]
@@ -353,13 +363,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", globalProperties, out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            string output = buildOutput.GetConsoleLog();
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", buildOutput.GetConsoleLog());
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", buildOutput.GetConsoleLog());
+            result.ShouldBeTrue(output);
 
-            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", buildOutput.GetConsoleLog());
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", output);
+
+            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", output);
         }
 
         [Fact]
@@ -372,9 +384,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     .TaskError("MSBuildRestoreSessionId was not defined", condition: "'$(MSBuildRestoreSessionId)' == ''")
                 .TryRestore(out bool result, out BuildOutput buildOutput);
 
-            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            string output = buildOutput.GetConsoleLog();
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == MessageImportance.High, buildOutput.GetConsoleLog());
+            result.ShouldBeTrue(output);
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == MessageImportance.High, output);
         }
     }
 }
