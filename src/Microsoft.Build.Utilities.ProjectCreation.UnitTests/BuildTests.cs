@@ -37,50 +37,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
-        public void BuildTargetOutputsTest()
-        {
-            ProjectCreator
-                .Create(Path.Combine(TestRootPath, "project1.proj"))
-                .Target("Build", returns: "@(MyItems)")
-                .TargetItemInclude("MyItems", "E32099C7AF4E481885B624E5600C718A")
-                .TargetItemInclude("MyItems", "7F38E64414104C6182F492B535926187")
-                .Save()
-                .TryBuild("Build", out bool result, out BuildOutput _, out IDictionary<string, TargetResult> targetOutputs);
-
-            result.ShouldBeTrue();
-
-            KeyValuePair<string, TargetResult> item = targetOutputs.ShouldHaveSingleItem();
-
-            item.Key.ShouldBe("Build");
-
-            item.Value.Items.Select(i => i.ItemSpec).ShouldBe(new[] { "E32099C7AF4E481885B624E5600C718A", "7F38E64414104C6182F492B535926187" });
-        }
-
-        [Fact]
-        public void BuildWithGlobalProperties()
-        {
-            Dictionary<string, string> globalProperties = new Dictionary<string, string>
-            {
-                ["Property1"] = "D7BBABDFB2D142D3A75E0C1A33E33780",
-            };
-
-            ProjectCreator
-                .Create(Path.Combine(TestRootPath, "project1.proj"))
-                .Target("Build")
-                .TaskMessage("Value = $(Property1)", MessageImportance.High)
-                .TryBuild("Build", out bool resultWithoutGlobalProperties, out BuildOutput buildOutputWithoutGlobalProperties)
-                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties, out IDictionary<string, TargetResult> targetOutputs);
-
-            resultWithoutGlobalProperties.ShouldBeTrue();
-
-            buildOutputWithoutGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithoutGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = ", buildOutputWithoutGlobalProperties.GetConsoleLog());
-
-            resultWithGlobalProperties.ShouldBeTrue();
-
-            buildOutputWithGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = D7BBABDFB2D142D3A75E0C1A33E33780", buildOutputWithGlobalProperties.GetConsoleLog());
-        }
-
-        [Fact]
         public void BuildOutputContainsOutOfProcMessages()
         {
             const int messageCount = 100;
@@ -111,13 +67,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(out bool result, out BuildOutput buildOutput);
 
-            string output = buildOutput.GetConsoleLog();
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            result.ShouldBeTrue(output);
+            buildOutput.IsShutdown.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            buildOutput.IsShutdown.ShouldBeTrue(output);
-
-            buildOutput.MessageEvents.High.Count.ShouldBeGreaterThanOrEqualTo(messageCount, output);
+            buildOutput.MessageEvents.High.Count.ShouldBeGreaterThanOrEqualTo(messageCount, buildOutput.GetConsoleLog());
         }
 
         [Fact]
@@ -128,13 +82,55 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     .For(100, (i, creator) => creator.TaskMessage($"Message {i}", MessageImportance.High))
                 .TryBuild(out bool result, out BuildOutput buildOutput);
 
-            string output = buildOutput.GetConsoleLog();
-
-            result.ShouldBeTrue(output);
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
             buildOutput.IsShutdown.ShouldBeTrue();
 
-            buildOutput.MessageEvents.High.Count.ShouldBeGreaterThanOrEqualTo(100, output);
+            buildOutput.MessageEvents.High.Count.ShouldBeGreaterThanOrEqualTo(100, buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void BuildTargetOutputsTest()
+        {
+            ProjectCreator
+                .Create(Path.Combine(TestRootPath, "project1.proj"))
+                .Target("Build", returns: "@(MyItems)")
+                .TargetItemInclude("MyItems", "E32099C7AF4E481885B624E5600C718A")
+                .TargetItemInclude("MyItems", "7F38E64414104C6182F492B535926187")
+                .Save()
+                .TryBuild("Build", out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            KeyValuePair<string, TargetResult> item = targetOutputs.ShouldHaveSingleItem(buildOutput.GetConsoleLog());
+
+            item.Key.ShouldBe("Build", buildOutput.GetConsoleLog());
+
+            item.Value.Items.Select(i => i.ItemSpec).ShouldBe(new[] { "E32099C7AF4E481885B624E5600C718A", "7F38E64414104C6182F492B535926187" }, buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
+        public void BuildWithGlobalProperties()
+        {
+            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            {
+                ["Property1"] = "D7BBABDFB2D142D3A75E0C1A33E33780",
+            };
+
+            ProjectCreator
+                .Create(Path.Combine(TestRootPath, "project1.proj"))
+                .Target("Build")
+                .TaskMessage("Value = $(Property1)", MessageImportance.High)
+                .TryBuild("Build", out bool resultWithoutGlobalProperties, out BuildOutput buildOutputWithoutGlobalProperties)
+                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties, out IDictionary<string, TargetResult> targetOutputs);
+
+            resultWithoutGlobalProperties.ShouldBeTrue(buildOutputWithoutGlobalProperties.GetConsoleLog());
+
+            buildOutputWithoutGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithoutGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = ", buildOutputWithoutGlobalProperties.GetConsoleLog());
+
+            resultWithGlobalProperties.ShouldBeTrue(buildOutputWithGlobalProperties.GetConsoleLog());
+
+            buildOutputWithGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = D7BBABDFB2D142D3A75E0C1A33E33780", buildOutputWithGlobalProperties.GetConsoleLog());
         }
 
         [Fact]
@@ -184,30 +180,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 
-            string output = buildOutput.GetConsoleLog();
-
-            result.ShouldBeTrue(output);
-
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restoring...", output);
-
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Building...", output);
-        }
-
-        [Fact]
-        public void ProjectWithGlobalPropertiesUsedDuringBuild()
-        {
-            ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
-            {
-                ["Property1"] = "F6EBAC88A10E453B9AF8FA656A574737",
-            });
-
-            ProjectCreator creator = ProjectCreator.Create(projectCollection: projectCollection)
-                .TaskMessage("$(Property1)", MessageImportance.High)
-                .TryBuild(out bool result, out BuildOutput buildOutput);
-
             result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            buildOutput.Messages.Last().ShouldBe("F6EBAC88A10E453B9AF8FA656A574737");
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restoring...", buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Building...", buildOutput.GetConsoleLog());
         }
 
         [Fact]
@@ -281,12 +258,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     .Save(GetTempFileName(".proj"))
                     .TryBuild(restore: true, out bool result, out BuildOutput buildOutput);
 
-                string output = buildOutput.GetConsoleLog();
+                result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-                result.ShouldBeTrue(output);
-
-                buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "38EC33B686134B3C8DE4B8E571D4FB24", output);
-                buildOutput.MessageEvents.Normal.ShouldContain(i => i.Message == "B7F9A257198D4A44A06BB6146AB27440", output);
+                buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "38EC33B686134B3C8DE4B8E571D4FB24", buildOutput.GetConsoleLog());
+                buildOutput.MessageEvents.Normal.ShouldContain(i => i.Message == "B7F9A257198D4A44A06BB6146AB27440", buildOutput.GetConsoleLog());
             }
 
             File.Exists(binLogPath).ShouldBeTrue();
@@ -297,6 +272,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             fileLogContents.ShouldContain("38EC33B686134B3C8DE4B8E571D4FB24", Case.Sensitive, fileLogContents);
             fileLogContents.ShouldContain("B7F9A257198D4A44A06BB6146AB27440", Case.Sensitive, fileLogContents);
+        }
+
+        [Fact]
+        public void ProjectWithGlobalPropertiesUsedDuringBuild()
+        {
+            ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
+            {
+                ["Property1"] = "F6EBAC88A10E453B9AF8FA656A574737",
+            });
+
+            ProjectCreator creator = ProjectCreator.Create(projectCollection: projectCollection)
+                .TaskMessage("$(Property1)", MessageImportance.High)
+                .TryBuild(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.Messages.Last().ShouldBe("F6EBAC88A10E453B9AF8FA656A574737");
         }
 
         [Fact]
@@ -330,15 +322,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", globalProperties, out bool result, out BuildOutput buildOutput);
 
-            string output = buildOutput.GetConsoleLog();
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            result.ShouldBeTrue(output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", buildOutput.GetConsoleLog());
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", output);
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", output);
-
-            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", output);
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", output);
+            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", buildOutput.GetConsoleLog());
         }
 
         [Fact]
@@ -363,15 +353,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Save()
                 .TryBuild(restore: true, "Build", globalProperties, out bool result, out BuildOutput buildOutput);
 
-            string output = buildOutput.GetConsoleLog();
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            result.ShouldBeTrue(output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", buildOutput.GetConsoleLog());
 
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore true", output);
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Restore Something True", output);
-
-            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", output);
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", output);
+            buildOutput.MessageEvents.High.ShouldNotContain(i => i.Message == "Build true", buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "Build Something True", buildOutput.GetConsoleLog());
         }
 
         [Fact]
@@ -384,11 +372,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     .TaskError("MSBuildRestoreSessionId was not defined", condition: "'$(MSBuildRestoreSessionId)' == ''")
                 .TryRestore(out bool result, out BuildOutput buildOutput);
 
-            string output = buildOutput.GetConsoleLog();
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
-            result.ShouldBeTrue(output);
-
-            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == MessageImportance.High, output);
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == MessageImportance.High, buildOutput.GetConsoleLog());
         }
     }
 }
