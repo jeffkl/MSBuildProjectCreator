@@ -17,8 +17,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public abstract class BuildEventArgsCollection : IDisposable
     {
-        internal event EventHandler<LoggerVerbosity>? ConsoleOutputCreated;
-
         /// <summary>
         /// Stores all build events.
         /// </summary>
@@ -39,8 +37,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         private readonly List<BuildWarningEventArgs> _warningEvents = new List<BuildWarningEventArgs>();
 
+        /// <summary>
+        /// Stores the last console output.
+        /// </summary>
         private string? _lastConsoleOutput = null;
 
+        /// <summary>
+        ///  Stores the <see cref="LoggerVerbosity" /> of the last console output.
+        /// </summary>
         private LoggerVerbosity _lastVerbosity = LoggerVerbosity.Normal;
 
         /// <summary>
@@ -51,6 +55,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             MessageEvents = new BuildMessageEventArgsCollection(_messageEvents);
             Messages = new BuildMessageCollection(this);
         }
+
+        /// <summary>
+        /// Occurs when console output is created and the cache is not used.
+        /// </summary>
+        internal event EventHandler<LoggerVerbosity>? ConsoleOutputCreated;
 
         /// <summary>
         /// Gets all events that were logged.
