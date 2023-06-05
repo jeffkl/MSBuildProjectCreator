@@ -10,5 +10,6 @@
     <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
     <SignAssembly>true</SignAssembly>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 </Project>
