@@ -66,6 +66,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .FileCustom(relativePath, sourceFileInfo)
                 .Save();
 
+            packageA.FullPath.ShouldNotBeNull();
+
             GetFileContents(packageA.FullPath, relativePath)
                 .ShouldBe("585B55DD5AC54A10B841B3D9A00129D8");
 
@@ -98,6 +100,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
                     .FileText(relativePath, "607779BADE3645F8A288543213BFE948")
                 .Save();
 
+            packageA.FullPath.ShouldNotBeNull();
+
             GetFileContents(packageA.FullPath, relativePath)
                 .ShouldBe("607779BADE3645F8A288543213BFE948");
 
@@ -116,8 +120,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        private void VerifyContentFile(Package package, string relativePath, string expectedContents, string expectedTargetFramework, string expectedExclude = null, string expectedBuildAction = null, bool expectedCopyToOutput = false, bool expectedFlatten = false, string expectedLanguage = "any")
+        private void VerifyContentFile(Package package, string relativePath, string expectedContents, string expectedTargetFramework, string? expectedExclude = null, string? expectedBuildAction = null, bool expectedCopyToOutput = false, bool expectedFlatten = false, string expectedLanguage = "any")
         {
+            package.FullPath.ShouldNotBeNull();
+
             GetFileContents(package.FullPath, Path.Combine("contentFiles", expectedLanguage, expectedTargetFramework, relativePath)).ShouldBe(expectedContents);
 
             NuspecReader nuspecReader = GetNuspec(package);

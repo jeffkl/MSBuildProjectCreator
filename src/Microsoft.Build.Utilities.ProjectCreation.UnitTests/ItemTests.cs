@@ -21,7 +21,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     dependentUpon: "BA2012419E7943F996968C103B0DE557",
                     link: "ADC2E3D8861743639BBF3E9313FEE962",
                     isVisible: false,
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "Custom", "37F6FB078E9C462FAF984DB5AFF38297" },
                     },
@@ -67,7 +67,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     link: "566C8C835EA34902B5B7D82DAF959617",
                     isVisible: false,
                     copyToOutputDirectory: "1C57073B00964567A77666363AE52845",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "Custom", "C791E7D345444C87B541211E0C60E344" },
                     },
@@ -95,7 +95,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemInclude(
                     itemType: "F5392360029A428CA7F3E0AEA48DB695",
                     include: "E4E5CD271D7849639D2EB47018CE596F",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "C2656BF5ABE24763B5D6789D20BE1086", "131E00C18D9F4704A5FC2865D7BF4DBA" },
                         { "D6B4D9F865B041AE9EEB7FBD0F09C058", "D02633A1BC4D4515A119D334CF87EAB9" },
@@ -140,7 +140,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemInclude(
                     itemType: "DB5003A476FA461EB0452DDDCCE7F802",
                     include: "303F33834A6843EDB44DB8D3186E97E0",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "CDBA5A760C9C45CFB2E9532D4B4AE2B7", "D6A68EA723C848E19D2E17C09F7F2532" },
                         { "FDD9C6C5582B404188CD8C938DB2CDD9", null },
@@ -166,7 +166,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     link: "C7631E32CE214C28BEAD5AB1D5477D6C",
                     isVisible: false,
                     copyToOutputDirectory: "C19852875EC14889A2B66A237AAB674A",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "A9106C7FC44641B0A6636D3559A3A8F4", "024B55145A22481BA5EFBADD4CA633A7" },
                     },
@@ -198,7 +198,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     includeAssets: "F647EECC49A349CFB0C161E8D38E8C71",
                     excludeAssets: "86D60FA951834BC4816C498549A6F236",
                     privateAssets: "4E5C92D014734A8B9CE23198715B6C63",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "E5E3AEA9BFB547BABCEEEAFEDEB70BDA", "2ECE306CA8C540FBABD7893948504F26" },
                     },
@@ -254,7 +254,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     name: "48E21478110940879DA354EA18C9D7A1",
                     projectGuid: "17BC6030262A402D911188CAF0968F51",
                     referenceOutputAssembly: true,
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "C533633B322444B8B41A8D964DF6013B", "2997CF6ABB7544A880F8D14BC3B26D5C" },
                     },
@@ -281,7 +281,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemRemove(
                     itemType: "F10988936B3B421BB4FD7E33B9C0DEC9",
                     remove: "52CE3EA8F90F44779EC543225D6F182A",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "CCBE2A083AF44A1A8DD0AB38F174D983", "7D228EF67CC648E98D7D46BFFEF935FE" },
                     },
@@ -318,8 +318,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void TryGetItemsDictionary()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .ItemInclude("MyItem", "A9AA54F5E51E4C0A966A5F5CDBD5EC9D", metadata: new Dictionary<string, string> { ["MyMetadata"] = "A3A33B3B55A841D883A05F6CA920AC1F" })
-                .ItemInclude("MyItem", "910E2DA9075043AA850D923E8E3EE398", metadata: new Dictionary<string, string> { ["MyMetadata"] = "EF8E0862B0A946D98DA7082E70AEC3E9" })
+                .ItemInclude("MyItem", "A9AA54F5E51E4C0A966A5F5CDBD5EC9D", metadata: new Dictionary<string, string?> { ["MyMetadata"] = "A3A33B3B55A841D883A05F6CA920AC1F" })
+                .ItemInclude("MyItem", "910E2DA9075043AA850D923E8E3EE398", metadata: new Dictionary<string, string?> { ["MyMetadata"] = "EF8E0862B0A946D98DA7082E70AEC3E9" })
                 .TryGetItems("MyItem", "MyMetadata", out IReadOnlyDictionary<string, string> items);
 
             items.ShouldBe(new Dictionary<string, string>
@@ -354,7 +354,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .ItemUpdate(
                     itemType: "E8517D605F70454BA7095F64B0EEB526",
                     update: "F58734B746BF4E76AB71E4151BB15A6F",
-                    metadata: new Dictionary<string, string>
+                    metadata: new Dictionary<string, string?>
                     {
                         { "EDD4A94F3C1241B4A6543E60C96FF51D", "10A8CF193EE54D679F25A8E1F83E0097" },
                     },

@@ -8,16 +8,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     internal static class TestOnlyExtensionMethods
     {
-        public static ProjectCreator ForTestingOnly(this ProjectCreator creator, string param1, string param2)
+        public static ProjectCreator ForTestingOnly(this ProjectCreator creator, string? param1, string? param2)
         {
             return creator
-                .Import(param1, param2);
+                .Import(param1!, param2);
         }
 
-        public static ProjectCreator TestingOnlyTemplate(this ProjectCreatorTemplates template, NewProjectFileOptions projectFileOptions, string param1 = null, string param2 = null)
+        public static ProjectCreator TestingOnlyTemplate(this ProjectCreatorTemplates template, NewProjectFileOptions projectFileOptions, string? param1 = null, string? param2 = null)
         {
             return ProjectCreator.Create(projectFileOptions: projectFileOptions)
-                .Import(param1, param2);
+                .Import(param1!, param2);
         }
     }
 }

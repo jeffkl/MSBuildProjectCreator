@@ -106,11 +106,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
         private void ValidateAssembly(Package package, string filePath, string expectedAssemblyFullName, string expectedTypeFullName)
         {
-            Assembly assembly = LoadAssembly(package.FullPath, filePath);
+            package.FullPath.ShouldNotBeNull();
+
+            Assembly? assembly = LoadAssembly(package.FullPath, filePath);
+
+            assembly.ShouldNotBeNull();
 
             assembly.FullName.ShouldBe(expectedAssemblyFullName);
 
-            assembly.GetTypes().ShouldContain(i => i.FullName.Equals(expectedTypeFullName));
+            assembly.GetTypes().ShouldContain(i => string.Equals(i.FullName, expectedTypeFullName));
         }
     }
 }

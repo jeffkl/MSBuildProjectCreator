@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0;net7.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
@@ -8,7 +8,6 @@
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>$(NoWarn);RS0026;SA1600</NoWarn>
-    <Nullable>Enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <PackageId>MSBuild.ProjectCreation</PackageId>

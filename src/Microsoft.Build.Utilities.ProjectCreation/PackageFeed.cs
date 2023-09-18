@@ -34,7 +34,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="rootPath">The root directory to create the feed at.</param>
         /// <returns>A <see cref="PackageFeed" /> object used to create a package feed.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <see langword="null" />.</exception>
         public static PackageFeed Create(DirectoryInfo rootPath)
         {
             if (rootPath == null)
@@ -50,7 +50,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="rootPath">The root directory to create the feed at.</param>
         /// <returns>A <see cref="PackageFeed" /> object used to create a package feed.</returns>
-        /// /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <c>null</c> or a string that is empty or consists only of whitespace.</exception>
+        /// /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <see langword="null" /> or a string that is empty or consists only of whitespace.</exception>
         public static PackageFeed Create(string rootPath)
         {
             if (string.IsNullOrEmpty(rootPath))

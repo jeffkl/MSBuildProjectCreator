@@ -4,6 +4,7 @@
 
 using Shouldly;
 using System.IO;
+using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {

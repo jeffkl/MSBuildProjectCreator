@@ -72,8 +72,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 
                 XDocument xmlDocument = XDocument.Load(nuGetConfig.FullName);
 
-                XElement packageSourcesElement = xmlDocument
-                    .Element("configuration")
+                XElement? packageSourcesElement = xmlDocument
+                    .Element("configuration")?
                     .Element("packageSources");
 
                 packageSourcesElement.ShouldNotBeNull();
@@ -93,9 +93,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     }
 
                     element.Name.ShouldBe("add");
-                    element.Attribute("key").Value.ShouldBe($"Local{i}");
+                    element.Attribute("key")?.Value.ShouldBe($"Local{i}");
 
-                    element.Attribute("value").Value.ShouldBe(i == 1 ? feed1.FullName : feed2.FullName);
+                    element.Attribute("value")?.Value.ShouldBe(i == 1 ? feed1.FullName : feed2.FullName);
                 }
             }
         }

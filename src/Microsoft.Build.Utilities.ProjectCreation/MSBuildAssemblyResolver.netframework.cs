@@ -71,7 +71,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="args">The event data.</param>
-        /// <returns>An MSBuild assembly if one could be located, otherwise <c>null</c>.</returns>
+        /// <returns>An MSBuild assembly if one could be located, otherwise <see langword="null" />.</returns>
         public static Assembly? AssemblyResolve(object? sender, ResolveEventArgs args)
         {
             return AssemblyResolve(new AssemblyName(args.Name!), Assembly.LoadFrom);

@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Task(
                     name: "B027CE82A5DD4CB4A9CBEE7E95ABE0B4",
                     condition: "4676E6EA62224812BA52836372BD1284",
-                    parameters: new Dictionary<string, string>
+                    parameters: new Dictionary<string, string?>
                     {
                         { "AE9DD9DCD68A457DBA58999FDC498FC4", "6BB6F118F11544D3BD14AF1546FD2EFA" },
                         { "F3D2E68EF8974F7DA6DA52A95A630F63", "94EC352D0BC343B29D605238AD1C926E" },

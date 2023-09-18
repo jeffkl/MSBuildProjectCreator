@@ -8,8 +8,8 @@
     <LangVersion>Latest</LangVersion>
     <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
     <NoWarn>$(NoWarn);SA1005;SA1512</NoWarn>
+    <Nullable>enable</Nullable>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
     <SignAssembly>true</SignAssembly>
-    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 </Project>

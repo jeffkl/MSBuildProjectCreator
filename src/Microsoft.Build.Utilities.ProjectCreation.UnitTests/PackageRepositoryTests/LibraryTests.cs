@@ -62,7 +62,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             }
         }
 
-        private void VerifyAssembly(PackageRepository packageRepository, Package package, string targetFramework, string assemblyFileName = null, string version = null)
+        private void VerifyAssembly(PackageRepository packageRepository, Package package, string targetFramework, string? assemblyFileName = null, string? version = null)
         {
             DirectoryInfo packageDirectory = new DirectoryInfo(packageRepository.GetInstallPath(package.Id, package.Version))
                 .ShouldExist();

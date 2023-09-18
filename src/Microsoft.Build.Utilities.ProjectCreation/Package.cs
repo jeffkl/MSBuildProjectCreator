@@ -136,7 +136,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public bool DevelopmentDependency { get; }
 
         /// <summary>
-        /// Gets the directory of the package if its been saved, otherwise <c>null</c>.
+        /// Gets the directory of the package if its been saved, otherwise <see langword="null" />.
         /// </summary>
         public string? Directory { get; }
 
@@ -146,7 +146,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public string FileName { get; }
 
         /// <summary>
-        /// Gets the full path to the package if it has been saved, otherwise <c>null</c>.
+        /// Gets the full path to the package if it has been saved, otherwise <see langword="null" />.
         /// </summary>
         public string? FullPath { get; internal set; }
 

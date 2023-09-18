@@ -24,7 +24,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                         .ItemGroup()
                         .ItemNone(
                             "App.config",
-                            metadata: new Dictionary<string, string>
+                            metadata: new Dictionary<string, string?>
                             {
                                 { "SubType", "Designer" },
                             });
