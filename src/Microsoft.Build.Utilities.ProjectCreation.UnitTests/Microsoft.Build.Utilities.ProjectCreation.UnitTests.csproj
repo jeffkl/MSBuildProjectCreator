@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.0'">net472;netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net472;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0;net7.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <Import Project="..\Microsoft.Build.Utilities.ProjectCreation\build\MSBuild.ProjectCreation.props" Condition="'$(TargetFramework)' == 'net472'" />

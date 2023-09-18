@@ -31,13 +31,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
         }
 
-        public string Authors => GetElement("authors");
+        public string? Authors => GetElement("authors");
 
         public IEnumerable<PackageContentFileEntry> ContentFiles => GetContentFiles();
 
-        public string Copyright => GetElement("copyright");
+        public string? Copyright => GetElement("copyright");
 
-        public IEnumerable<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)> DependencyGroups
+        public IEnumerable<(string? TargetFramework, IEnumerable<PackageDependency>? Dependencies)> DependencyGroups
         {
             get
             {
@@ -48,27 +48,27 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             }
         }
 
-        public string Description => GetElement("description");
+        public string? Description => GetElement("description");
 
         public bool DevelopmentDependency => string.Equals(bool.TrueString, GetElement("developmentDependency"), StringComparison.OrdinalIgnoreCase);
 
-        public string Icon => GetElement("icon");
+        public string? Icon => GetElement("icon");
 
-        public string IconUrl => GetElement("iconUrl");
+        public string? IconUrl => GetElement("iconUrl");
 
-        public string Id => GetElement("id");
+        public string? Id => GetElement("id");
 
-        public string Language => GetElement("language");
+        public string? Language => GetElement("language");
 
-        public string License => GetElement("license");
+        public string? License => GetElement("license");
 
-        public string LicenseType => GetAttribute("license", "type");
+        public string? LicenseType => GetAttribute("license", "type");
 
-        public string LicenseVersion => GetAttribute("license", "version");
+        public string? LicenseVersion => GetAttribute("license", "version");
 
-        public string Owners => GetElement("owners");
+        public string? Owners => GetElement("owners");
 
-        public IEnumerable<string> PackageTypes
+        public IEnumerable<string?> PackageTypes
         {
             get
             {
@@ -79,29 +79,29 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             }
         }
 
-        public string ProjectUrl => GetElement("projectUrl");
+        public string? ProjectUrl => GetElement("projectUrl");
 
-        public string ReleaseNotes => GetElement("releaseNotes");
+        public string? ReleaseNotes => GetElement("releaseNotes");
 
-        public string RepositoryBranch => GetAttribute("repository", "branch");
+        public string? RepositoryBranch => GetAttribute("repository", "branch");
 
-        public string RepositoryCommit => GetAttribute("repository", "commit");
+        public string? RepositoryCommit => GetAttribute("repository", "commit");
 
-        public string RepositoryType => GetAttribute("repository", "type");
+        public string? RepositoryType => GetAttribute("repository", "type");
 
-        public string RepositoryUrl => GetAttribute("repository", "url");
+        public string? RepositoryUrl => GetAttribute("repository", "url");
 
         public bool RequireLicenseAcceptance => string.Equals(bool.TrueString, GetElement("requireLicenseAcceptance"), StringComparison.OrdinalIgnoreCase);
 
         public bool Serviceable => string.Equals(bool.TrueString, GetElement("serviceable"), StringComparison.OrdinalIgnoreCase);
 
-        public string Summary => GetElement("summary");
+        public string? Summary => GetElement("summary");
 
-        public string Tags => GetElement("tags");
+        public string? Tags => GetElement("tags");
 
-        public string Title => GetElement("title");
+        public string? Title => GetElement("title");
 
-        public string Version => GetElement("version");
+        public string? Version => GetElement("version");
 
         private IEnumerable<PackageContentFileEntry> GetContentFiles()
         {
@@ -120,19 +120,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             foreach (XElement item in dependencies)
             {
-                yield return new PackageDependency(
-                    item.Attribute("id").Value,
-                    item.Attribute("version").Value,
-                    item.Attribute("exclude").Value);
+                string? id = (string?)item.Attribute("id");
+                string? version = (string?)item.Attribute("version");
+                string? exclude = (string?)item.Attribute("exclude");
+
+                if (id != null && version != null && exclude != null)
+                {
+                    yield return new PackageDependency(id, version, exclude);
+                }
             }
         }
 
-        private string GetElement(string name)
+        private string? GetElement(string name)
         {
             return _document.XPathSelectElement($"//ns:package/ns:metadata/ns:{name}", _namespaceManager)?.Value;
         }
 
-        private string GetAttribute(string elementName, string attributeName)
+        private string? GetAttribute(string elementName, string attributeName)
         {
             return _document.XPathSelectElement($"//ns:package/ns:metadata/ns:{elementName}", _namespaceManager)?.Attribute(attributeName)?.Value;
         }

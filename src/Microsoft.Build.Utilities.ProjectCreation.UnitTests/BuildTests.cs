@@ -59,7 +59,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             ProjectCreator.Create(path: GetTempProjectPath())
                 .ForEach(projects, (project, creator) => creator.ItemProjectReference(project))
                 .Target("Build")
-                .Task("MSBuild", parameters: new Dictionary<string, string>
+                .Task("MSBuild", parameters: new Dictionary<string, string?>
                 {
                     ["Projects"] = "@(ProjectReference)",
                     ["BuildInParallel"] = bool.TrueString,
@@ -98,7 +98,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .TargetItemInclude("MyItems", "E32099C7AF4E481885B624E5600C718A")
                 .TargetItemInclude("MyItems", "7F38E64414104C6182F492B535926187")
                 .Save()
-                .TryBuild("Build", out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult> targetOutputs);
+                .TryBuild("Build", out bool result, out BuildOutput buildOutput, out IDictionary<string, TargetResult>? targetOutputs);
 
             result.ShouldBeTrue(buildOutput.GetConsoleLog());
 
@@ -122,7 +122,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .Target("Build")
                 .TaskMessage("Value = $(Property1)", MessageImportance.High)
                 .TryBuild("Build", out bool resultWithoutGlobalProperties, out BuildOutput buildOutputWithoutGlobalProperties)
-                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties, out IDictionary<string, TargetResult> targetOutputs);
+                .TryBuild("Build", globalProperties, out bool resultWithGlobalProperties, out BuildOutput buildOutputWithGlobalProperties, out _);
 
             resultWithoutGlobalProperties.ShouldBeTrue(buildOutputWithoutGlobalProperties.GetConsoleLog());
 
@@ -147,7 +147,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                         .Target("Build")
                         .Task(
                             "Exec",
-                            parameters: new Dictionary<string, string>
+                            parameters: new Dictionary<string, string?>
                             {
                                 ["Command"] = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ping 127.0.0.1 -n 2 >NUL" : "sleep 2",
                             })
@@ -157,7 +157,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             ProjectCreator.Create(path: GetTempProjectPath())
                 .ForEach(projects, (project, creator) => creator.ItemProjectReference(project))
                 .Target("Build")
-                .Task("MSBuild", parameters: new Dictionary<string, string>
+                .Task("MSBuild", parameters: new Dictionary<string, string?>
                 {
                     ["Projects"] = "@(ProjectReference)",
                     ["BuildInParallel"] = bool.TrueString,

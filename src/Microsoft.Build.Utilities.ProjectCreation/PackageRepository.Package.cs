@@ -158,7 +158,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="summary">An optional summary of the package.</param>
         /// <param name="tags">An optional set of tags of the package.</param>
         /// <param name="title">An optional title of the package.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="id" /> or <paramref name="version" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="id" /> or <paramref name="version" /> is <see langword="null" />.</exception>
         /// <exception cref="InvalidOperationException">A package with the same name and version has already been added to the repository.</exception>
         /// <returns>The current <see cref="PackageRepository" />.</returns>
         public PackageRepository Package(

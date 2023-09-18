@@ -8,44 +8,44 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     internal sealed class MockEventSource : IEventSource2
     {
-        public event AnyEventHandler AnyEventRaised;
+        public event AnyEventHandler? AnyEventRaised;
 
-        public event BuildFinishedEventHandler BuildFinished;
+        public event BuildFinishedEventHandler? BuildFinished;
 
-        public event BuildStartedEventHandler BuildStarted;
+        public event BuildStartedEventHandler? BuildStarted;
 
-        public event CustomBuildEventHandler CustomEventRaised;
+        public event CustomBuildEventHandler? CustomEventRaised;
 
-        public event BuildErrorEventHandler ErrorRaised;
+        public event BuildErrorEventHandler? ErrorRaised;
 
-        public event BuildMessageEventHandler MessageRaised;
+        public event BuildMessageEventHandler? MessageRaised;
 
-        public event ProjectFinishedEventHandler ProjectFinished;
+        public event ProjectFinishedEventHandler? ProjectFinished;
 
-        public event ProjectStartedEventHandler ProjectStarted;
+        public event ProjectStartedEventHandler? ProjectStarted;
 
-        public event BuildStatusEventHandler StatusEventRaised;
+        public event BuildStatusEventHandler? StatusEventRaised;
 
-        public event TargetFinishedEventHandler TargetFinished;
+        public event TargetFinishedEventHandler? TargetFinished;
 
-        public event TargetStartedEventHandler TargetStarted;
+        public event TargetStartedEventHandler? TargetStarted;
 
-        public event TaskFinishedEventHandler TaskFinished;
+        public event TaskFinishedEventHandler? TaskFinished;
 
-        public event TaskStartedEventHandler TaskStarted;
+        public event TaskStartedEventHandler? TaskStarted;
 
-        public event TelemetryEventHandler TelemetryLogged;
+        public event TelemetryEventHandler? TelemetryLogged;
 
-        public event BuildWarningEventHandler WarningRaised;
+        public event BuildWarningEventHandler? WarningRaised;
 
-        public void OnBuildFinished(bool succeeded, string message = null, string helpKeyword = null)
+        public void OnBuildFinished(bool succeeded, string? message = null, string? helpKeyword = null)
         {
             BuildFinishedEventArgs args = new BuildFinishedEventArgs(message, helpKeyword, succeeded);
             BuildFinished?.Invoke(this, args);
             OnAnyEventRaised(args);
         }
 
-        public void OnErrorRaised(string message, string code = null, string file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string helpKeyword = null, string senderName = null)
+        public void OnErrorRaised(string message, string? code = null, string? file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string? helpKeyword = null, string? senderName = null)
         {
             BuildErrorEventArgs args = new BuildErrorEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName);
             ErrorRaised?.Invoke(this, args);
@@ -59,14 +59,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             OnAnyEventRaised(args);
         }
 
-        public void OnProjectFinished(string projectFile, bool succeeded, string message = null, string helpKeyword = null)
+        public void OnProjectFinished(string projectFile, bool succeeded, string? message = null, string? helpKeyword = null)
         {
             ProjectFinishedEventArgs args = new ProjectFinishedEventArgs(message, helpKeyword, projectFile, succeeded);
             ProjectFinished?.Invoke(this, args);
             OnAnyEventRaised(args);
         }
 
-        public void OnWarningRaised(string message, string code = null, string file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string helpKeyword = null, string senderName = null)
+        public void OnWarningRaised(string message, string? code = null, string? file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string? helpKeyword = null, string? senderName = null)
         {
             BuildWarningEventArgs args = new BuildWarningEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName);
             WarningRaised?.Invoke(this, args);

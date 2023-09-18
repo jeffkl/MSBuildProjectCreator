@@ -24,7 +24,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 ValidatePackageDependencies(
                     packageRepository,
                     package,
-                    new List<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)>
+                    new List<(string? TargetFramework, IEnumerable<PackageDependency>? Dependencies)>
                     {
                         (
                             "net45",
@@ -60,7 +60,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 ValidatePackageDependencies(
                     packageRepository,
                     package,
-                    new List<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)>
+                    new List<(string? TargetFramework, IEnumerable<PackageDependency>? Dependencies)>
                     {
                         (
                             "net45",
@@ -74,7 +74,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
             }
         }
 
-        private void ValidatePackageDependencies(PackageRepository packageRepository, Package package, IEnumerable<(string TargetFramework, IEnumerable<PackageDependency> Dependencies)> expectedDependencyGroups)
+        private void ValidatePackageDependencies(PackageRepository packageRepository, Package package, IEnumerable<(string? TargetFramework, IEnumerable<PackageDependency>? Dependencies)> expectedDependencyGroups)
         {
             FileInfo nuspecFile = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version));
 
@@ -82,10 +82,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
 
             NuspecReader nuspec = new NuspecReader(nuspecFile);
 
-            foreach ((string targetFramework, IEnumerable<PackageDependency> dependencies) in expectedDependencyGroups)
+            foreach ((string? targetFramework, IEnumerable<PackageDependency>? dependencies) in expectedDependencyGroups)
             {
-                List<PackageDependency> actualDependencies = nuspec.DependencyGroups.First(i => i.TargetFramework == targetFramework).Dependencies.ToList();
-                List<PackageDependency> expectedDependencies = dependencies.ToList();
+                (string? TargetFramework, IEnumerable<PackageDependency>? Dependencies)? foundDependencies = nuspec.DependencyGroups.FirstOrDefault(i => string.Equals(i.TargetFramework, targetFramework));
+
+                foundDependencies.ShouldNotBeNull();
+                foundDependencies.Value.Dependencies.ShouldNotBeNull();
+
+                List<PackageDependency> actualDependencies = foundDependencies.Value.Dependencies.ToList();
+                List<PackageDependency>? expectedDependencies = dependencies?.ToList();
+
+                expectedDependencies.ShouldNotBeNull();
 
                 actualDependencies.Count.ShouldBe(expectedDependencies.Count);
 

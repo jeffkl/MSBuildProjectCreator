@@ -146,7 +146,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Saves the project to the specified path.
         /// </summary>
         /// <param name="path">The path to save the file to.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="path" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator Save(string path)
         {

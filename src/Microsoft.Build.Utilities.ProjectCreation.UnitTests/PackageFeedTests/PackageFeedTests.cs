@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             nuspec.Id.ShouldBe("PackageA");
             nuspec.Version.ShouldBe("1.0.0");
 
-            (string targetFramework, System.Collections.Generic.IEnumerable<PackageDependency> dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
+            (string? targetFramework, System.Collections.Generic.IEnumerable<PackageDependency>? dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
 
             targetFramework.ShouldBe("net45");
 
@@ -66,7 +66,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             nuspec.Id.ShouldBe("PackageA");
             nuspec.Version.ShouldBe("1.0.0");
 
-            (string targetFramework, System.Collections.Generic.IEnumerable<PackageDependency> dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
+            (string? targetFramework, System.Collections.Generic.IEnumerable<PackageDependency>? dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
 
             targetFramework.ShouldBe("net45");
 

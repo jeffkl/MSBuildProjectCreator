@@ -23,7 +23,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         /// </summary>
         protected DirectoryInfo FeedRootPath { get; }
 
-        protected byte[] GetFileBytes(string packageFullPath, string filePath)
+        protected byte[]? GetFileBytes(string packageFullPath, string filePath)
         {
             using ZipArchive nupkg = GetPackageArchive(packageFullPath);
 
@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        protected string GetFileContents(string packageFullPath, string filePath)
+        protected string? GetFileContents(string packageFullPath, string filePath)
         {
             using ZipArchive nupkg = GetPackageArchive(packageFullPath);
 
@@ -61,14 +61,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
         protected NuspecReader GetNuspec(Package package)
         {
+            package.FullPath.ShouldNotBeNull();
+
             return new NuspecReader(GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase)));
         }
 
-        protected Assembly LoadAssembly(string packageFullPath, string filePath)
+        protected Assembly? LoadAssembly(string packageFullPath, string filePath)
         {
-            byte[] bytes = GetFileBytes(packageFullPath, filePath);
+            byte[]? bytes = GetFileBytes(packageFullPath, filePath);
 
-            return Assembly.Load(bytes);
+            return bytes == null ? null : Assembly.Load(bytes);
         }
 
         protected void ShouldThrowExceptionIfNoPackageAdded(Action action)
@@ -78,9 +80,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             exception.Message.ShouldBe(Strings.ErrorWhenAddingAnythingBeforePackage);
         }
 
-        private T ReadFile<T>(ZipArchive nupkg, string filePath, Func<Stream, ZipArchiveEntry, T> streamFunc)
+        private T? ReadFile<T>(ZipArchive nupkg, string filePath, Func<Stream, ZipArchiveEntry, T> streamFunc)
         {
-            ZipArchiveEntry archiveEntry = nupkg.GetEntry(filePath);
+            ZipArchiveEntry? archiveEntry = nupkg.GetEntry(filePath);
 
             if (archiveEntry == null)
             {
@@ -94,7 +96,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
         private T ReadFile<T>(ZipArchive nupkg, Func<string, bool> fileFunc, Func<Stream, ZipArchiveEntry, T> streamFunc)
         {
-            ZipArchiveEntry archiveEntry = nupkg.Entries.FirstOrDefault(i => fileFunc(i.FullName));
+            ZipArchiveEntry? archiveEntry = nupkg.Entries.FirstOrDefault(i => fileFunc(i.FullName));
 
             archiveEntry.ShouldNotBeNull();
 

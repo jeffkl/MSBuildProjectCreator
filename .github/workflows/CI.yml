@@ -16,7 +16,6 @@ env:
   BuildConfiguration: 'Debug'
   BuildPlatform: 'Any CPU'
   ContinuousIntegrationBuild: 'true'
-  DotNet3Version: '3.x'
   DotNet6Version: '6.x'
   DotNet7Version: '7.x'
 
@@ -43,11 +42,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core ${{ env.DotNet3Version }}, .NET ${{ env.DotNet6Version }}, and .NET ${{ env.DotNet7Version }}
+    - name: Install .NET Core .NET ${{ env.DotNet6Version }}, and .NET ${{ env.DotNet7Version }}
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
-          ${{ env.DotNet3Version }}
           ${{ env.DotNet6Version }}
           ${{ env.DotNet7Version }}
 
@@ -57,10 +55,6 @@ jobs:
     - name: Run Unit Tests (.NET Framework)
       if: ${{ matrix.name == 'Windows' }}
       run: dotnet test --logger trx --no-restore --no-build --framework net472 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
-
-    - name: Run Unit Tests (.NET Core 3.1)
-      if: ${{ matrix.name != 'MacOS' }}
-      run: dotnet test --logger trx --no-restore --no-build --framework netcoreapp3.1 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-netcoreapp3.1.binlog"
 
     - name: Run Unit Tests (.NET 6)
       if: ${{ matrix.name != 'MacOS' }}
