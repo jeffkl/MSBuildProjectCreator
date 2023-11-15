@@ -18,6 +18,7 @@ env:
   ContinuousIntegrationBuild: 'true'
   DotNet6Version: '6.x'
   DotNet7Version: '7.x'
+  DotNet8Version: '8.x'
 
 jobs:
   BuildAndTest:
@@ -42,12 +43,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET Core .NET ${{ env.DotNet6Version }}, and .NET ${{ env.DotNet7Version }}
+    - name: Install .NET ${{ env.DotNet6Version }}, .NET ${{ env.DotNet7Version }}, and .NET ${{ env.DotNet8Version }}
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
           ${{ env.DotNet6Version }}
           ${{ env.DotNet7Version }}
+          ${{ env.DotNet8Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
@@ -62,6 +64,9 @@ jobs:
 
     - name: Run Unit Tests (.NET 7)
       run: dotnet test --logger trx --no-restore --no-build --framework net7.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net7.0.binlog"
+
+    - name: Run Unit Tests (.NET 8)
+      run: dotnet test --logger trx --no-restore --no-build --framework net8.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net8.0.binlog"
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2

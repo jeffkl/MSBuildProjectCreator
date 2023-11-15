@@ -4,8 +4,7 @@
 
 using System;
 using System.IO;
-#if NET5_0_OR_GREATER
-using System.Reflection;
+#if NET6_0_OR_GREATER
 using System.Runtime.Loader;
 #endif
 
@@ -22,7 +21,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Environment.SetEnvironmentVariable("MSBuildExtensionsPath", MSBuildAssemblyResolver.DotNetSdksPath);
             Environment.SetEnvironmentVariable("MSBuildSDKsPath", string.IsNullOrWhiteSpace(MSBuildAssemblyResolver.DotNetSdksPath) ? null : Path.Combine(MSBuildAssemblyResolver.DotNetSdksPath, "Sdks"));
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
             AssemblyLoadContext.Default.Resolving += MSBuildAssemblyResolver.AssemblyResolve;
 #else
             AppDomain.CurrentDomain.AssemblyResolve += MSBuildAssemblyResolver.AssemblyResolve;

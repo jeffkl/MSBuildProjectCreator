@@ -6,6 +6,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
@@ -35,6 +37,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 return (null, null);
             });
+
+        /// <inheritdoc cref="AssemblyLoadContext.Resolving" />
+        public static Assembly? AssemblyResolve(AssemblyLoadContext assemblyLoadContext, AssemblyName requestedAssemblyName)
+        {
+            return AssemblyResolve(requestedAssemblyName, assemblyLoadContext.LoadFromAssemblyPath);
+        }
 
         private static string? GetDotNetBasePath()
         {
@@ -71,6 +79,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             process.WaitForExit();
 
+            DirectoryInfo? basePath = GetFirstMatchingSdk(process.StandardOutput.ReadToEnd());
+
+            return basePath?.FullName;
+
             // Gets the highest version SDK that is the same major version as the runtime
             // You cannot always evaluate MSBuild projects using a different version of MSBuild than your runtime.  This is because
             // if you're running as .NET 5.0, the .NET 6.0 MSBuild has dependencies that your app doesn't supply.
@@ -99,10 +111,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 return directoryInfo;
             }
-
-            DirectoryInfo? basePath = GetFirstMatchingSdk(process.StandardOutput.ReadToEnd());
-
-            return basePath?.FullName;
         }
     }
 }
