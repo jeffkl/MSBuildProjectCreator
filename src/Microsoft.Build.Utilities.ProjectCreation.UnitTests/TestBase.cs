@@ -18,12 +18,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public string DotNetSdkVersion
         {
             get =>
-#if NETCOREAPP3_1
-            "3.1.100";
-#elif NET6_0
+#if NET6_0
             "6.0.100";
-#elif NET7_0 || NETFRAMEWORK
+#elif NET7_0
             "7.0.100";
+#elif  NET8_0 || NETFRAMEWORK
+            "8.0.100";
 #else
             Unknown target framework!
 #endif
@@ -32,12 +32,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public string TargetFramework
         {
             get =>
-#if NETCOREAPP3_1
-            "netcoreapp3.1";
-#elif NET6_0
+#if NET6_0
             "net6.0";
 #elif NET7_0
             "net7.0";
+#elif NET8_0
+            "net8.0";
 #elif NETFRAMEWORK
             "net472";
 #else

@@ -39,7 +39,6 @@ using System.Globalization;
 using System.Text;
 #if !NETSTANDARD
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 #endif
 using System.Text.RegularExpressions;
 
