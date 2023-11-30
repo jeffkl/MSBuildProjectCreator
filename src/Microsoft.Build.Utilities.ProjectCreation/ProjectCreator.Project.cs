@@ -126,5 +126,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return this;
         }
+
+        internal void ResetProjectInstance()
+        {
+            _projectInstance = null;
+        }
     }
 }

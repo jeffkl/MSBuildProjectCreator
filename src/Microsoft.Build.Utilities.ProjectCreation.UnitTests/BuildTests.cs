@@ -188,6 +188,22 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void CanRestoreAndBuildMultipleTimes()
+        {
+            ProjectCreator projectCreator = ProjectCreator.Templates.SdkCsproj(
+                path: GetTempFileName(".csproj"),
+                targetFramework: TargetFramework)
+                .Save()
+                .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            projectCreator.TryBuild(out result, out buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+        }
+
+        [Fact]
         public void ProjectCollectionLoggersWork()
         {
             string binLogPath = Path.Combine(TestRootPath, "test.binlog");

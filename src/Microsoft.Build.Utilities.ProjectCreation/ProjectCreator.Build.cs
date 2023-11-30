@@ -535,6 +535,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 targetOutputs = buildResult.ResultsByTarget;
             }
+
+            ResetProjectInstance();
         }
 
         private void Restore(IDictionary<string, string>? globalProperties, BuildOutput buildOutput, out bool result, out IDictionary<string, TargetResult> targetOutputs)
