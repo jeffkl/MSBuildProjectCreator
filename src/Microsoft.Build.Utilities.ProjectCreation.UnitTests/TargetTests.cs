@@ -61,7 +61,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Theory]
         [InlineData(null)]
         [InlineData("85391B763FDB461C990A513E89813192")]
-        public void TargetItemGroupSimple(string condition)
+        public void TargetItemGroupSimple(string? condition)
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
                 .TargetItemGroup(condition)
