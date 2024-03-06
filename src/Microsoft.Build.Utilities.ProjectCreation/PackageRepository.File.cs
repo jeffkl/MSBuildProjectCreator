@@ -44,23 +44,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw new InvalidOperationException(Strings.ErrorWhenAddingLibraryRequiresPackage);
             }
 
-            FileInfo destinationFileInfo = new FileInfo(Path.Combine(LastPackage.Directory!, relativePath));
-
-            if (destinationFileInfo.Exists)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ErrorFileAlreadyCreated, relativePath));
-            }
-
-            if (destinationFileInfo.Directory == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ErrorFilePathMustBeInADirectory, relativePath));
-            }
-
-            destinationFileInfo.Directory.Create();
-
-            sourceFileInfo.CopyTo(destinationFileInfo.FullName);
-
-            return this;
+            return File(relativePath, destinationFileInfo => sourceFileInfo.CopyTo(destinationFileInfo.FullName));
         }
 
         private PackageRepository File(string relativePath, Action<FileInfo> writeAction)
