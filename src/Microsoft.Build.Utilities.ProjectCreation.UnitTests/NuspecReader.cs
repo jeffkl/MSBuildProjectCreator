@@ -68,13 +68,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public string? Owners => GetElement("owners");
 
-        public IEnumerable<string?> PackageTypes
+        public IEnumerable<string> PackageTypes
         {
             get
             {
                 foreach (XElement group in _document.XPathSelectElements("//ns:package/ns:metadata/ns:packageTypes/ns:packageType", _namespaceManager))
                 {
-                    yield return group.Attribute("name")?.Value;
+                    XAttribute? type = group.Attribute("name");
+
+                    if (type != null)
+                    {
+                        yield return type.Value;
+                    }
                 }
             }
         }
