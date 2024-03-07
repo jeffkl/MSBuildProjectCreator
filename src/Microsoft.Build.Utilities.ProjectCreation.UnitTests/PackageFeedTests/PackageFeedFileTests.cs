@@ -71,7 +71,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             GetFileContents(packageA.FullPath, relativePath)
                 .ShouldBe("585B55DD5AC54A10B841B3D9A00129D8");
 
-            GetNuspec(packageA)
+            GetNuspecReader(packageA)
                 .DependencyGroups.Select(i => i.TargetFramework).ToList()
                 .ShouldContain("net46");
         }
@@ -105,7 +105,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             GetFileContents(packageA.FullPath, relativePath)
                 .ShouldBe("607779BADE3645F8A288543213BFE948");
 
-            GetNuspec(packageA)
+            GetNuspecReader(packageA)
                 .DependencyGroups
                 .ShouldBeEmpty();
         }
@@ -126,7 +126,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             GetFileContents(package.FullPath, Path.Combine("contentFiles", expectedLanguage, expectedTargetFramework, relativePath)).ShouldBe(expectedContents);
 
-            NuspecReader nuspecReader = GetNuspec(package);
+            NuspecReader nuspecReader = GetNuspecReader(package);
 
             PackageContentFileEntry file = nuspecReader.ContentFiles.ShouldHaveSingleItem();
 
