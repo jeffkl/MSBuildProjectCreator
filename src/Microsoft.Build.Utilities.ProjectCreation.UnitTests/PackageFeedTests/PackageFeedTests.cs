@@ -3,7 +3,6 @@
 // Licensed under the MIT license.
 
 using Shouldly;
-using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -28,7 +27,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             packageA.Id.ShouldBe("PackageA");
             packageA.Version.ShouldBe("1.0.0");
 
-            NuspecReader nuspec = GetNuspec(packageA);
+            NuspecReader nuspec = GetNuspecReader(packageA);
 
             nuspec.Authors.ShouldBe("John Smith");
             nuspec.Description.ShouldBe("Custom Description");
@@ -40,6 +39,44 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             targetFramework.ShouldBe("net45");
 
             dependencies.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void NuspecXmlSerializesCorrectly()
+        {
+            using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
+                .Package(
+                    id: "PackageD",
+                    version: "1.2.3-beta",
+                    out Package package,
+                    developmentDependency: false)
+                    .Library("net45")
+                    .ContentFileText("file.txt", "584717ec-6132-4418-853c-1fa72778f52a", "net45", "None", copyToOutput: true, flatten: false)
+                .Save();
+
+            package.ShouldNotBeNull();
+
+            char sep = Path.DirectorySeparatorChar;
+            GetNuspec(package).ShouldBe(
+$@"<package xmlns=""http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd"">
+  <metadata minClientVersion=""2.12"">
+    <id>PackageD</id>
+    <version>1.2.3-beta</version>
+    <authors>Author</authors>
+    <description>Description</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>false</developmentDependency>
+    <serviceable>false</serviceable>
+    <dependencies>
+      <group targetFramework=""net45"" />
+      <group targetFramework=""any"" />
+    </dependencies>
+    <contentFiles>
+      <files include=""any{sep}net45{sep}file.txt"" copyToOutput=""true"" flatten=""false"" buildAction=""None"" />
+    </contentFiles>
+  </metadata>
+</package>",
+StringCompareShould.IgnoreLineEndings);
         }
 
         [Fact]
@@ -59,7 +96,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             packageA.Id.ShouldBe("PackageA");
             packageA.Version.ShouldBe("1.0.0");
 
-            NuspecReader nuspec = GetNuspec(packageA);
+            NuspecReader nuspec = GetNuspecReader(packageA);
 
             nuspec.Authors.ShouldBe("John Smith");
             nuspec.Description.ShouldBe("Custom Description");

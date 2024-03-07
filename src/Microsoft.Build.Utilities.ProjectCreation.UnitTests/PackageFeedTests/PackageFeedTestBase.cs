@@ -59,11 +59,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             });
         }
 
-        protected NuspecReader GetNuspec(Package package)
+        protected string GetNuspec(Package package)
         {
             package.FullPath.ShouldNotBeNull();
 
-            return new NuspecReader(GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase)));
+            return GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase));
+        }
+
+        protected NuspecReader GetNuspecReader(Package package)
+        {
+            return new NuspecReader(GetNuspec(package));
         }
 
         protected Assembly? LoadAssembly(string packageFullPath, string filePath)
