@@ -118,11 +118,27 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             }
         }
 
+        internal static void WriteAttributeStringIfNotNull(this XmlWriter writer, string localName, bool? value)
+        {
+            if (value.HasValue)
+            {
+                writer.WriteAttributeString(localName, value.Value ? "true" : "false");
+            }
+        }
+
         internal static void WriteElementStringIfNotNull(this XmlWriter writer, string localName, string? value)
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
                 writer.WriteElementString(localName, value);
+            }
+        }
+
+        internal static void WriteElementStringIfNotNull(this XmlWriter writer, string localName, bool? value)
+        {
+            if (value.HasValue)
+            {
+                writer.WriteElementString(localName, value.Value ? "true" : "false");
             }
         }
     }

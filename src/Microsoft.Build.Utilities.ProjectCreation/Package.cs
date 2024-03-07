@@ -462,18 +462,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             writer.WriteElementStringIfNotNull("copyright", Copyright);
             writer.WriteElementStringIfNotNull("tags", Tags);
             writer.WriteElementStringIfNotNull("projectUrl", ProjectUrl);
-            writer.WriteElementStringIfNotNull("requireLicenseAcceptance", RequireLicenseAcceptance.ToString().ToLowerInvariant());
+            writer.WriteElementStringIfNotNull("requireLicenseAcceptance", RequireLicenseAcceptance);
             writer.WriteElementStringIfNotNull("licenseUrl", LicenseUrl);
             writer.WriteElementStringIfNotNull("icon", Icon);
             writer.WriteElementStringIfNotNull("iconUrl", IconUrl);
-            writer.WriteElementStringIfNotNull("developmentDependency", DevelopmentDependency.ToString().ToLowerInvariant());
+            writer.WriteElementStringIfNotNull("developmentDependency", DevelopmentDependency);
             writer.WriteElementStringIfNotNull("language", Language);
             writer.WriteElementStringIfNotNull("title", Title);
             writer.WriteElementStringIfNotNull("tags", Tags);
             writer.WriteElementStringIfNotNull("summary", Summary);
             writer.WriteElementStringIfNotNull("owners", Owners);
             writer.WriteElementStringIfNotNull("releaseNotes", ReleaseNotes);
-            writer.WriteElementStringIfNotNull("serviceable", Serviceable.ToString().ToLowerInvariant());
+            writer.WriteElementStringIfNotNull("serviceable", Serviceable);
 
             if (PackageTypes != null && PackageTypes.Any())
             {
@@ -544,8 +544,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                     writer.WriteStartElement("files");
                     writer.WriteAttributeStringIfNotNull("include", contentFilesEntry.Include);
                     writer.WriteAttributeStringIfNotNull("exclude", contentFilesEntry.Exclude);
-                    writer.WriteAttributeStringIfNotNull("copyToOutput", contentFilesEntry.CopyToOutput.ToString()?.ToLowerInvariant());
-                    writer.WriteAttributeStringIfNotNull("flatten", contentFilesEntry.Flatten.ToString()?.ToLowerInvariant());
+                    writer.WriteAttributeStringIfNotNull("copyToOutput", contentFilesEntry.CopyToOutput);
+                    writer.WriteAttributeStringIfNotNull("flatten", contentFilesEntry.Flatten);
                     writer.WriteAttributeStringIfNotNull("buildAction", contentFilesEntry.BuildAction);
                     writer.WriteEndElement();
                 }
