@@ -63,15 +63,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
     <version>1.2.3-beta</version>
     <authors>Author</authors>
     <description>Description</description>
-    <requireLicenseAcceptance>False</requireLicenseAcceptance>
-    <developmentDependency>False</developmentDependency>
-    <serviceable>False</serviceable>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>false</developmentDependency>
+    <serviceable>false</serviceable>
     <dependencies>
       <group targetFramework=""net45"" />
       <group targetFramework=""any"" />
     </dependencies>
     <contentFiles>
-      <files include=""any\net45\file.txt"" copyToOutput=""True"" flatten=""False"" buildAction=""None"" />
+      <files include=""any\net45\file.txt"" copyToOutput=""true"" flatten=""false"" buildAction=""None"" />
     </contentFiles>
   </metadata>
 </package>");
