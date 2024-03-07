@@ -56,8 +56,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             package.ShouldNotBeNull();
 
+            char sep = Path.DirectorySeparatorChar;
             GetNuspec(package).ShouldBe(
-@"<package xmlns=""http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd"">
+$@"<package xmlns=""http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd"">
   <metadata minClientVersion=""2.12"">
     <id>PackageD</id>
     <version>1.2.3-beta</version>
@@ -71,10 +72,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
       <group targetFramework=""any"" />
     </dependencies>
     <contentFiles>
-      <files include=""any\net45\file.txt"" copyToOutput=""true"" flatten=""false"" buildAction=""None"" />
+      <files include=""any{sep}net45{sep}file.txt"" copyToOutput=""true"" flatten=""false"" buildAction=""None"" />
     </contentFiles>
   </metadata>
-</package>");
+</package>",
+StringCompareShould.IgnoreLineEndings);
         }
 
         [Fact]
