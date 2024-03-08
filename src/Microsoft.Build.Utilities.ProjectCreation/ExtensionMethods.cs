@@ -141,5 +141,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 writer.WriteElementString(localName, value.Value ? "true" : "false");
             }
         }
+
+        internal static string ReadAsText(this FileInfo file)
+        {
+            using StreamReader reader = file.OpenText();
+            return reader.ReadToEnd();
+        }
     }
 }

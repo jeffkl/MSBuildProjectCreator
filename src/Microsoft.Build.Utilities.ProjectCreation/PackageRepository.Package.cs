@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -42,6 +44,64 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public string GetManifestFilePath(string packageId, string version)
         {
             return Path.Combine(GetInstallPath(packageId, version), $"{packageId.ToLowerInvariant()}.nuspec");
+        }
+
+        /// <summary>
+        /// Creates a new package.
+        /// </summary>
+        /// <param name="nupkg">A <see cref="FileInfo"/> object that corresponds to the .nupkg file.</param>
+        /// <param name="package">Receives a <see cref="ProjectCreation.Package" /> object representing the package.</param>
+        /// <returns>The current <see cref="PackageRepository" />.</returns>
+        /// <exception cref="FileNotFoundException">The <paramref name="nupkg"/> does not exist.</exception>
+        /// <exception cref="InvalidOperationException">The package's ID or version is <c>null</c>.</exception>
+        public PackageRepository Package(FileInfo nupkg, out Package package)
+        {
+            if (!nupkg.Exists)
+            {
+                throw new FileNotFoundException("The specified .nupkg file does not exist", nupkg.FullName);
+            }
+
+            using ZipArchive zip = new ZipArchive(System.IO.File.OpenRead(nupkg.FullName), ZipArchiveMode.Read, leaveOpen: false);
+
+            ZipArchiveEntry? nuspecEntry = zip.Entries.SingleOrDefault(entry => entry.Name.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"The .nupkg file '{nupkg.FullName}' does not contain a .nuspec file");
+            using StreamReader nuspecStream = new StreamReader(nuspecEntry.Open());
+
+            NuspecReader reader = new NuspecReader(nuspecStream.ReadToEnd());
+
+            Package(
+                id: reader.Id ?? throw new InvalidOperationException($"The .nupkg file '{nupkg.FullName}' does not contain an ID"),
+                version: reader.Version ?? throw new InvalidOperationException($"The .nupkg file '{nupkg.FullName}' does not contain a version"),
+                package: out package,
+                authors: reader.Authors,
+                description: reader.Description,
+                copyright: reader.Copyright,
+                developmentDependency: reader.DevelopmentDependency,
+                icon: reader.Icon,
+                iconUrl: reader.IconUrl,
+                language: reader.Language,
+                licenseUrl: reader.LicenseUrl,
+                licenseExpression: reader.LicenseExpression,
+                licenseVersion: reader.LicenseVersion,
+                owners: reader.Owners,
+                packageTypes: reader.PackageTypes,
+                projectUrl: reader.ProjectUrl,
+                releaseNotes: reader.ReleaseNotes,
+                repositoryType: reader.RepositoryType,
+                repositoryUrl: reader.RepositoryUrl,
+                repositoryBranch: reader.RepositoryBranch,
+                repositoryCommit: reader.RepositoryCommit,
+                requireLicenseAcceptance: reader.RequireLicenseAcceptance,
+                serviceable: reader.Serviceable,
+                summary: reader.Summary,
+                tags: reader.Tags,
+                title: reader.Title);
+
+            foreach (ZipArchiveEntry entry in zip.Entries.Where(entry => entry != nuspecEntry))
+            {
+                File(entry.FullName, fi => entry.ExtractToFile(fi.FullName));
+            }
+
+            return this;
         }
 
         /// <summary>

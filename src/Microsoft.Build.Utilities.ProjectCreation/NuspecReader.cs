@@ -9,9 +9,9 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
+namespace Microsoft.Build.Utilities.ProjectCreation
 {
-    public class NuspecReader
+    internal class NuspecReader
     {
         private static readonly XNamespace NuspecNamespace = "http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd";
 

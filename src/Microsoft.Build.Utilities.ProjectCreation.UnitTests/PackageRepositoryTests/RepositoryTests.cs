@@ -227,5 +227,44 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 }
             }
         }
+
+        [Fact]
+        public void CanCreatePackageFromNupkg()
+        {
+            string feedRootPath = Path.Combine(TestRootPath, "Feed");
+            string targetFramework = "netstandard2.0";
+            string contentFileText = "b7e41f28-0e3e-4824-90d3-025da699630e";
+
+            // Create a .nupkg to use as a source
+            using (PackageFeed.Create(feedRootPath)
+                .Package("PackageA", "1.2.3", out Package originalPackage, "John Smith", "Custom Description", developmentDependency: true)
+                    .Library(targetFramework)
+                    .ContentFileText("file.txt", contentFileText, targetFramework)
+                .Save())
+            {
+                originalPackage.FullPath.ShouldNotBeNull();
+
+                using (PackageRepository.Create(TestRootPath)
+                    .Package(new FileInfo(originalPackage.FullPath), out Package newPackage))
+                {
+                    newPackage.Author.ShouldBe("John Smith");
+                    newPackage.Description.ShouldBe("Custom Description");
+                    newPackage.DevelopmentDependency.ShouldBeTrue();
+                    newPackage.Id.ShouldBe("PackageA");
+                    newPackage.Version.ShouldBe("1.2.3");
+
+                    newPackage.FullPath.ShouldNotBeNullOrEmpty();
+                    DirectoryInfo? baseDir = new FileInfo(newPackage.FullPath).Directory;
+                    baseDir.ShouldNotBeNull().ShouldExist();
+
+                    new FileInfo(Path.Combine(baseDir.FullName, "lib", targetFramework, $"{newPackage.Id}.dll"))
+                        .ShouldExist();
+
+                    new FileInfo(Path.Combine(baseDir.FullName, "contentFiles", "any", targetFramework, "file.txt"))
+                        .ShouldExist()
+                        .ReadAsText().ShouldBe(contentFileText);
+                }
+            }
+        }
     }
 }
