@@ -66,11 +66,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             return GetFileContents(package.FullPath, filePath => filePath.EndsWith($"{package.Id}.nuspec", StringComparison.OrdinalIgnoreCase));
         }
 
-        protected NuspecReader GetNuspecReader(Package package)
-        {
-            return new NuspecReader(GetNuspec(package));
-        }
-
         protected Assembly? LoadAssembly(string packageFullPath, string filePath)
         {
             byte[]? bytes = GetFileBytes(packageFullPath, filePath);
@@ -83,6 +78,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             InvalidOperationException exception = Should.Throw<InvalidOperationException>(action);
 
             exception.Message.ShouldBe(Strings.ErrorWhenAddingAnythingBeforePackage);
+        }
+
+        private protected NuspecReader GetNuspecReader(Package package)
+        {
+            return new NuspecReader(GetNuspec(package));
         }
 
         private T? ReadFile<T>(ZipArchive nupkg, string filePath, Func<Stream, ZipArchiveEntry, T> streamFunc)
