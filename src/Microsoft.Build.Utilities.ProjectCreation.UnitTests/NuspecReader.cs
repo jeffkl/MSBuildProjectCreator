@@ -62,7 +62,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public string? License => GetElement("license");
 
+        public string? LicenseExpression
+        {
+            get
+            {
+                string? licenseType = LicenseType;
+
+                if (licenseType != null && licenseType.Equals("expression", StringComparison.OrdinalIgnoreCase))
+                {
+                    return License;
+                }
+
+                return null;
+            }
+        }
+
         public string? LicenseType => GetAttribute("license", "type");
+
+        public string? LicenseUrl => GetElement("licenseUrl");
 
         public string? LicenseVersion => GetAttribute("license", "version");
 

@@ -113,16 +113,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                     copyright: "Copyright 2000",
                     developmentDependency: true,
                     icon: Path.Combine("some", "icon.jpg"),
-                    iconUrl: "https://icon.url",
+                    iconUrl: "https://icon.invalid/url",
                     language: "Pig latin",
+                    licenseUrl: "https://license.invalid/url",
                     licenseExpression: "MIT",
                     licenseVersion: "1.0.0",
                     owners: "Owner1;Owner2",
                     packageTypes: new List<string> { "Dependency", "DotnetCliTool" },
-                    projectUrl: "https://project.url",
+                    projectUrl: "https://project.invalid/url",
                     releaseNotes: "Release notes for PackageD",
                     repositoryType: "Git",
-                    repositoryUrl: "https://repository.url",
+                    repositoryUrl: "https://repository.invalid/url",
                     repositoryBranch: "Branch1000",
                     repositoryCommit: "Commit14",
                     requireLicenseAcceptance: true,
@@ -145,25 +146,53 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
                 nuspec.Description.ShouldBe("Custom description");
                 nuspec.DevelopmentDependency.ShouldBeTrue();
                 nuspec.Icon.ShouldBe(Path.Combine("some", "icon.jpg"));
-                nuspec.IconUrl.ShouldBe("https://icon.url");
+                nuspec.IconUrl.ShouldBe("https://icon.invalid/url");
                 nuspec.Id.ShouldBe("PackageD");
                 nuspec.Language.ShouldBe("Pig latin");
                 nuspec.License.ShouldBe("MIT");
+                nuspec.LicenseExpression.ShouldBe("MIT");
                 nuspec.LicenseType.ShouldBe("expression");
+                nuspec.LicenseUrl.ShouldBe("https://license.invalid/url");
                 nuspec.LicenseVersion.ShouldBe("1.0.0");
                 nuspec.Owners.ShouldBe("Owner1;Owner2");
                 nuspec.PackageTypes.ShouldBe(new[] { "Dependency", "DotnetCliTool" });
-                nuspec.ProjectUrl.ShouldBe("https://project.url");
+                nuspec.ProjectUrl.ShouldBe("https://project.invalid/url");
                 nuspec.ReleaseNotes.ShouldBe("Release notes for PackageD");
                 nuspec.RepositoryBranch.ShouldBe("Branch1000");
                 nuspec.RepositoryCommit.ShouldBe("Commit14");
                 nuspec.RepositoryType.ShouldBe("Git");
-                nuspec.RepositoryUrl.ShouldBe("https://repository.url");
+                nuspec.RepositoryUrl.ShouldBe("https://repository.invalid/url");
                 nuspec.RequireLicenseAcceptance.ShouldBeTrue();
                 nuspec.Serviceable.ShouldBeTrue();
                 nuspec.Summary.ShouldBe("Summary of PackageD");
                 nuspec.Tags.ShouldBe("Tag1 Tag2 Tag3");
                 nuspec.Title.ShouldBe("Title of PackageD");
+            }
+        }
+
+        [Fact]
+        public void LicenseExpressionPackagePropertiesCanBeNull()
+        {
+            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+                .Package(
+                    id: "PackageD",
+                    version: "1.2.3",
+                    out Package package,
+                    licenseUrl: "https://license.invalid/url",
+                    licenseExpression: null,
+                    licenseVersion: null))
+            {
+                package.ShouldNotBeNull();
+
+                FileInfo nuspecFileInfo = new FileInfo(packageRepository.GetManifestFilePath(package.Id, package.Version)).ShouldExist();
+
+                NuspecReader nuspec = new NuspecReader(nuspecFileInfo);
+
+                nuspec.License.ShouldBeNull();
+                nuspec.LicenseExpression.ShouldBeNull();
+                nuspec.LicenseType.ShouldBeNull();
+                nuspec.LicenseUrl.ShouldBe("https://license.invalid/url");
+                nuspec.LicenseVersion.ShouldBeNull();
             }
         }
 
