@@ -94,7 +94,29 @@ The above extension method would add the following item:
 ## Resolving MSBuild
 This API does not redistribute MSBuild and so it must be located at run-time.  There are three ways to do this:
 
-1. If your project is a unit test, have your test class inherit from [MSBuildTestBase](https://github.com/jeffkl/MSBuildProjectCreator/blob/main/src/MSBuildProjectCreator/MSBuildTestBase.cs)
+### 1. Module initializer (preferred)
+
+If you're targeting C# 9.0+ / .NET 5+, use a [module initializer](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/module-initializers)
+to call `MSBuildAssemblyResolver.Register()`. MSBuild assemblies will be automatically located when your assembly is loaded.
+
+```C#
+using System.Runtime.CompilerServices;
+
+internal static class MyModuleInitializer
+{
+    [ModuleInitializer]
+    internal static void InitializeMSBuild()
+    {
+        MSBuildAssemblyResolver.Register();
+    }
+}
+```
+
+### 2. Inherit from MSBuildTestBase
+
+If you're unable or don't want to use a module initializer and your project is a unit test, have your test class inherit
+from [MSBuildTestBase](https://github.com/jeffkl/MSBuildProjectCreator/blob/main/src/MSBuildProjectCreator/MSBuildTestBase.cs).
+
 ```C#
 /// <summary>
 /// A base class for all unit tests that inherits from MSBuildTestBase.
@@ -111,18 +133,12 @@ public class MyTest : MyTestBase
 {
 }
 ```
-2. Attach the [assembly resolve event handler](https://docs.microsoft.com/en-us/dotnet/standard/assembly/resolve-loads) to [MSBuildAssemblyResolver.AssemblyResolve](https://github.com/jeffkl/MSBuildProjectCreator/blob/main/src/MSBuildProjectCreator/MSBuildAssemblyResolver.cs)
 
-``` C#
-public static class MyApp
-{
-    public static MyApp()
-    {
-        AppDomain.CurrentDomain.AssemblyResolve += MSBuildAssemblyResolver.AssemblyResolve;
-    }
-}
-```
-3. Use [MSBuildLocator](https://docs.microsoft.com/en-us/visualstudio/msbuild/updating-an-existing-application?view=vs-2019#use-microsoftbuildlocator) to register an instance of MSBuild.
+### 3. Use MSBuildLocator
+
+Use [MSBuildLocator](https://docs.microsoft.com/en-us/visualstudio/msbuild/updating-an-existing-application?view=vs-2019#use-microsoftbuildlocator)
+to register an instance of MSBuild.
+
 ```C#
 public static class MyApp
 {
