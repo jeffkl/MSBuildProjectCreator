@@ -7,6 +7,9 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if NET6_0_OR_GREATER
+using System.Runtime.Loader;
+#endif
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -18,6 +21,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
 
         private static readonly ConcurrentDictionary<string, Lazy<Assembly?>> LoadedAssemblies = new ConcurrentDictionary<string, Lazy<Assembly?>>(StringComparer.OrdinalIgnoreCase);
+
+        private static readonly Lazy<object> RegisterLazy = new Lazy<object>(() =>
+        {
+            Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", MSBuildExePath);
+            Environment.SetEnvironmentVariable("MSBuildExtensionsPath", DotNetSdksPath);
+            Environment.SetEnvironmentVariable("MSBuildSDKsPath", string.IsNullOrWhiteSpace(DotNetSdksPath) ? null : Path.Combine(DotNetSdksPath, "Sdks"));
+
+#if NET6_0_OR_GREATER
+            AssemblyLoadContext.Default.Resolving += AssemblyResolve;
+#else
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+#endif
+
+            return new object();
+        });
 
         /// <summary>
         /// Gets the path to the .NET SDKs.
@@ -33,6 +51,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Gets the full path to the MSBuild executable used.
         /// </summary>
         public static string? MSBuildExePath => MSBuildDirectoryLazy.Value.MSBuildExePath;
+
+        /// <summary>
+        /// Register to resolve MSBuild related assemblies automatically.
+        /// </summary>
+        public static void Register() => _ = RegisterLazy.Value;
 
         private static Assembly? AssemblyResolve(AssemblyName requestedAssemblyName, Func<string, Assembly?> assemblyLoader)
         {

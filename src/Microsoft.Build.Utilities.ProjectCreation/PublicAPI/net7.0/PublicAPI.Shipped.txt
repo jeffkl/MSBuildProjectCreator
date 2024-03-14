@@ -293,6 +293,7 @@ static Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods.ToArrayWithSin
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.AssemblyResolve(System.Runtime.Loader.AssemblyLoadContext! assemblyLoadContext, System.Reflection.AssemblyName! requestedAssemblyName) -> System.Reflection.Assembly?
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.DotNetSdksPath.get -> string?
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.MSBuildExePath.get -> string?
+static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.Register() -> void
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.SearchPaths.get -> string![]?
 static Microsoft.Build.Utilities.ProjectCreation.PackageFeed.Create(string! rootPath) -> Microsoft.Build.Utilities.ProjectCreation.PackageFeed!
 static Microsoft.Build.Utilities.ProjectCreation.PackageFeed.Create(System.IO.DirectoryInfo! rootPath) -> Microsoft.Build.Utilities.ProjectCreation.PackageFeed!
