@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -13,17 +14,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 {
     internal class NuspecReader
     {
-        private static readonly XNamespace NuspecNamespace = "http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd";
-
         private readonly XDocument _document;
-
         private readonly XmlNamespaceManager _namespaceManager = new XmlNamespaceManager(new NameTable());
 
         public NuspecReader(string contents)
         {
             _document = XDocument.Parse(contents);
 
-            _namespaceManager.AddNamespace("ns", NuspecNamespace.NamespaceName);
+            string ns = GetNamespace(_document);
+            _namespaceManager.AddNamespace("ns", ns);
         }
 
         public NuspecReader(FileInfo fileInfo)
@@ -124,6 +123,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public string? Title => GetElement("title");
 
         public string? Version => GetElement("version");
+
+        private static string GetNamespace(XDocument document)
+        {
+            XPathNavigator navigator = document.CreateNavigator();
+            navigator.MoveToFollowing(XPathNodeType.Element);
+
+            IDictionary<string, string> namespaces = navigator.GetNamespacesInScope(XmlNamespaceScope.ExcludeXml);
+
+            if (namespaces.Count != 1)
+            {
+                throw new XmlException($"Unabled to determine nuspec XML namespace. Namespaces in scope: '{string.Join(",", new Dictionary<string, string>(namespaces))}'.");
+            }
+
+            return namespaces.Values.Single();
+        }
 
         private IEnumerable<PackageContentFileEntry> GetContentFiles()
         {
