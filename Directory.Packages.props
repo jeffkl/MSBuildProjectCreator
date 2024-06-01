@@ -2,9 +2,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <MicrosoftBuildPackageVersion>17.9.5</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net6.0'">17.3.2</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net7.0'">17.7.2</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion>17.10.4</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net6.0'">17.10.4</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net7.0'">17.10.4</MicrosoftBuildPackageVersion>
     <NuGetPackageVersion>6.7.0</NuGetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
