@@ -39,7 +39,7 @@ Microsoft.Build.Utilities.ProjectCreation.BuildMessageEventArgsCollection.Normal
 Microsoft.Build.Utilities.ProjectCreation.BuildOutput
 Microsoft.Build.Utilities.ProjectCreation.BuildOutput.Initialize(Microsoft.Build.Framework.IEventSource! eventSource) -> void
 Microsoft.Build.Utilities.ProjectCreation.BuildOutput.IsShutdown.get -> bool
-Microsoft.Build.Utilities.ProjectCreation.BuildOutput.Parameters.get -> string!
+Microsoft.Build.Utilities.ProjectCreation.BuildOutput.Parameters.get -> string?
 Microsoft.Build.Utilities.ProjectCreation.BuildOutput.Parameters.set -> void
 Microsoft.Build.Utilities.ProjectCreation.BuildOutput.ProjectResults.get -> System.Collections.Generic.IReadOnlyDictionary<string!, bool>!
 Microsoft.Build.Utilities.ProjectCreation.BuildOutput.Shutdown() -> void

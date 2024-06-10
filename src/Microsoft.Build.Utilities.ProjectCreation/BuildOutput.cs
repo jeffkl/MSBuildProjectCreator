@@ -35,7 +35,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public bool IsShutdown { get; private set; }
 
         /// <inheritdoc cref="ILogger.Parameters" />
-        public string Parameters { get; set; }
+        public string? Parameters { get; set; }
 
         /// <summary>
         /// Gets the results by project path.
