@@ -191,7 +191,7 @@ Your extension methods should extend the `ProjectCreatorTemplates` class so they
 ```C#
 public static class ExtensionMethods
 {
-    public ProjectCreator LogsMessage(this ProjectCreatorTemplates template, string text, string path = null, MessageImportance ? importance = null, string condition = null)
+    public static ProjectCreator LogsMessage(this ProjectCreatorTemplates template, string text, string path = null, MessageImportance ? importance = null, string condition = null)
     {
         return ProjectCreator.Create(path)
             .TaskMessage(text, importance, condition);
