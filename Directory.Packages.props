@@ -3,8 +3,8 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <MicrosoftBuildPackageVersion>17.10.4</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net6.0'">17.3.2</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net7.0'">17.7.2</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net6.0'">17.10.4</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net7.0'">17.10.4</MicrosoftBuildPackageVersion>
     <NuGetPackageVersion>6.7.0</NuGetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -23,7 +23,7 @@
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="6.1.30" />
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.6.139" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.6.143" />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <Compile Include="..\Shared\GlobalSuppressions.cs" />
     <AdditionalFiles Include="..\Shared\stylecop.json" />
