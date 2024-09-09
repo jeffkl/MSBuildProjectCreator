@@ -16,7 +16,6 @@ env:
   ContinuousIntegrationBuild: 'true'
   OfficialBuild: 'true'
   DotNet6Version: '6.x'
-  DotNet7Version: '7.x'
   DotNet8Version: '8.x'
 
 jobs:
@@ -26,23 +25,28 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet6Version }},.NET ${{ env.DotNet7Version }}, and .NET ${{ env.DotNet8Version }}
-      uses: actions/setup-dotnet@v3
+    - name: Install .NET ${{ env.DotNet6Version }} and .NET ${{ env.DotNet8Version }}
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           ${{ env.DotNet6Version }}
-          ${{ env.DotNet7Version }}
           ${{ env.DotNet8Version }}
+
+    - name: Install .NET ${{ env.DotNet9Version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DotNet9Version }}
+        dotnet-quality: 'preview'
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\build.binlog"
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
         name: ${{ env.ArtifactsDirectoryName }}

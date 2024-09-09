@@ -17,8 +17,8 @@ env:
   BuildPlatform: 'Any CPU'
   ContinuousIntegrationBuild: 'true'
   DotNet6Version: '6.x'
-  DotNet7Version: '7.x'
   DotNet8Version: '8.x'
+  DotNet9Version: '9.x'
 
 jobs:
   BuildAndTest:
@@ -39,17 +39,22 @@ jobs:
   
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet6Version }}, .NET ${{ env.DotNet7Version }}, and .NET ${{ env.DotNet8Version }}
-      uses: actions/setup-dotnet@v3
+    - name: Install .NET ${{ env.DotNet6Version }} and .NET ${{ env.DotNet8Version }}
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           ${{ env.DotNet6Version }}
-          ${{ env.DotNet7Version }}
           ${{ env.DotNet8Version }}
+
+    - name: Install .NET ${{ env.DotNet9Version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DotNet9Version }}
+        dotnet-quality: 'preview'
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
@@ -62,14 +67,14 @@ jobs:
       if: ${{ matrix.name != 'MacOS' }}
       run: dotnet test --logger trx --no-restore --no-build --framework net6.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net6.0.binlog"
 
-    - name: Run Unit Tests (.NET 7)
-      run: dotnet test --logger trx --no-restore --no-build --framework net7.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net7.0.binlog"
-
     - name: Run Unit Tests (.NET 8)
       run: dotnet test --logger trx --no-restore --no-build --framework net8.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net8.0.binlog"
+      
+    - name: Run Unit Tests (.NET 9)
+      run: dotnet test --logger trx --no-restore --no-build --framework net9.0 /noautorsp "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net9.0.binlog"
 
     - name: Upload Test Results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
         name: test-results-${{ matrix.name }}
@@ -77,7 +82,7 @@ jobs:
         if-no-files-found: error
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
         name: ${{ env.ArtifactsDirectoryName }}-${{ matrix.name }}
