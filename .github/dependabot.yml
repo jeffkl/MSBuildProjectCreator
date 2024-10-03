@@ -13,3 +13,8 @@ updates:
       - "jeffkl"
     labels:
       - "maintenance"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
