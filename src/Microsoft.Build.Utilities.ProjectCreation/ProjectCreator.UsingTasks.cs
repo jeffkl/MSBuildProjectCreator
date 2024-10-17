@@ -3,6 +3,9 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Construction;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -106,6 +109,58 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 output?.ToString() ?? string.Empty,
                 required?.ToString() ?? string.Empty,
                 parameterType ?? string.Empty);
+
+            return this;
+        }
+
+        public ProjectCreator UsingTaskInline(string taskName, string? code = null, string? source = null, string type = "Fragment", string language = "cs", IEnumerable<string>? references = null, IEnumerable<string>? usings = null, string? taskFactory = null, string? runtime = null, string? architecture = null, string? condition = null, string? label = null, bool? evaluate = null)
+        {
+            UsingTaskAssemblyFile(
+                taskName: taskName,
+                assemblyFile: @"$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll",
+                taskFactory: "RoslynCodeTaskFactory",
+                runtime: runtime,
+                architecture: architecture,
+                condition: condition,
+                label: label);
+
+            StringBuilder body = new();
+
+            foreach (string r in references ?? [])
+            {
+                body.AppendLine($"""<Reference Include="{r}" />""");
+            }
+
+            foreach (string u in usings ?? [])
+            {
+                body.AppendLine($"""<Using Namespace="{u}" />""");
+            }
+
+            body.Append($"<Code Type=\"{type}\" Language=\"{language}\"");
+            if (source is not null)
+            {
+                body.Append($" Source=\"{source}\"");
+            }
+
+            body.Append(">");
+
+            if (code is not null)
+            {
+                if (!code.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
+                {
+                    body.Append("<![CDATA[");
+                    body.Append(code);
+                    body.Append("]]>");
+                }
+                else
+                {
+                    body.Append(code);
+                }
+            }
+
+            body.Append("</Code>");
+
+            UsingTaskBody(body.ToString(), evaluate);
 
             return this;
         }
