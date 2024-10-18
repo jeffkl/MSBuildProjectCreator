@@ -11,5 +11,7 @@
     <Nullable>enable</Nullable>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
     <SignAssembly>true</SignAssembly>
+    <VsTestUseMSBuildOutput>true</VsTestUseMSBuildOutput>
+    <_MSBUILDTLENABLED>1</_MSBUILDTLENABLED>
   </PropertyGroup>
 </Project>
