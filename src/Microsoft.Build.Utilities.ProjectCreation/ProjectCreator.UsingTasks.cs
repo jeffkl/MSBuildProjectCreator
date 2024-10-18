@@ -5,9 +5,8 @@
 using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -171,59 +170,52 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 condition,
                 label);
 
-            XElement doc = new("Doc");
-
-            foreach (string r in references ?? [])
+            using StringWriter sw = new();
+            XmlWriterSettings settings = new()
             {
-                doc.Add(new XElement("Reference", new XAttribute("Include", r)));
-            }
-
-            foreach (string u in usings ?? [])
+                ConformanceLevel = ConformanceLevel.Fragment,
+                OmitXmlDeclaration = true,
+                Indent = false, // If we don't indent Microsoft.Build.Construction will do it for us
+            };
+            using (XmlWriter writer = XmlWriter.Create(sw, settings))
             {
-                doc.Add(new XElement("Using", new XAttribute("Namespace", u)));
-            }
-
-            XElement codeElement = new("Code", new XAttribute("Type", type), new XAttribute("Language", language));
-            doc.Add(codeElement);
-
-            if (sourcePath is not null)
-            {
-                codeElement.Add(new XAttribute("Source", sourcePath));
-            }
-
-            if (sourceCode is not null)
-            {
-                if (!sourceCode.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
+                foreach (string r in references ?? [])
                 {
-                    codeElement.Add(new XCData(sourceCode));
+                    writer.WriteStartElement("Reference");
+                    writer.WriteAttributeString("Include", r);
+                    writer.WriteEndElement(); // </Reference>
                 }
-                else
+
+                foreach (string u in usings ?? [])
                 {
-                    codeElement.Add(new XRaw(sourceCode));
+                    writer.WriteStartElement("Using");
+                    writer.WriteAttributeString("Namespace", u);
+                    writer.WriteEndElement(); // </Using>
                 }
+
+                writer.WriteStartElement("Code");
+                writer.WriteAttributeString("Type", type);
+                writer.WriteAttributeString("Language", language);
+                writer.WriteAttributeStringIfNotNull("Source", sourcePath);
+
+                if (sourceCode is not null)
+                {
+                    if (!sourceCode.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
+                    {
+                        writer.WriteCData(sourceCode);
+                    }
+                    else
+                    {
+                        writer.WriteRaw(sourceCode);
+                    }
+                }
+
+                writer.WriteEndElement(); // </Code>
             }
 
-            string body = string.Concat(doc.Descendants().Select(e => e.ToString()));
-
-            UsingTaskBody(body, evaluate);
+            UsingTaskBody(sw.ToString(), evaluate);
 
             return this;
-        }
-
-        /// <summary>
-        /// Represents a text node with no XML escaping.
-        /// </summary>
-        private class XRaw : XText
-        {
-            public XRaw(string value)
-                : base(value)
-            {
-            }
-
-            public override void WriteTo(XmlWriter writer)
-            {
-                writer.WriteRaw(Value);
-            }
         }
     }
 }
