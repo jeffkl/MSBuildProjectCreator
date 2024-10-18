@@ -3,6 +3,10 @@
 // Licensed under the MIT license.
 
 using Microsoft.Build.Construction;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -106,6 +110,110 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 output?.ToString() ?? string.Empty,
                 required?.ToString() ?? string.Empty,
                 parameterType ?? string.Empty);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a &lt;UsingTask /&gt; with the TaskFactory set to "RoslynCodeTaskFactory" and the provided
+        /// code fragment or source file as the task body.
+        /// </summary>
+        /// <remarks>
+        /// See https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-roslyncodetaskfactory for
+        /// documentation on using a RoslynCodeTaskFactory.
+        /// </remarks>
+        /// <param name="taskName">The name of the task.</param>
+        /// <param name="sourceCode">C# or VB code to use as the task body. Mutually exclusive with <paramref name="sourcePath"/>.</param>
+        /// <param name="sourcePath">Path to a source to use as the task body. Mutually exclusive with <paramref name="sourceCode"/>.</param>
+        /// <param name="type">The type of code in the task body. Defaults to "Fragment", can also be "Method" or "Class".</param>
+        /// <param name="language">The source language. Defaults to "cs", can also be "vb".</param>
+        /// <param name="references">Paths to assemblies that should be added as references during compilation.</param>
+        /// <param name="usings">The list of namespaces to include as part of the compilation.</param>
+        /// <param name="taskFactory">The TaskFactory to use. Defaults to "RoslynCodeTaskFactory".</param>
+        /// <param name="runtime">An optional runtime for the task.</param>
+        /// <param name="architecture">An optional architecture for the task.</param>
+        /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
+        /// <param name="evaluate">An optional value indicating if the body should be evaluated.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
+        public ProjectCreator UsingTaskRoslynCodeTaskFactory(
+            string taskName,
+            string? sourceCode = null,
+            string? sourcePath = null,
+            string type = "Fragment",
+            string language = "cs",
+            IEnumerable<string>? references = null,
+            IEnumerable<string>? usings = null,
+            string taskFactory = "RoslynCodeTaskFactory",
+            string? runtime = null,
+            string? architecture = null,
+            string? condition = null,
+            string? label = null,
+            bool? evaluate = null)
+        {
+            if (sourceCode is null && sourcePath is null)
+            {
+                throw new ProjectCreatorException(Strings.ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath);
+            }
+
+            if (sourceCode is not null && sourcePath is not null)
+            {
+                throw new ProjectCreatorException(Strings.ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath);
+            }
+
+            UsingTaskAssemblyFile(
+                taskName,
+                assemblyFile: @"$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll",
+                taskFactory,
+                runtime,
+                architecture,
+                condition,
+                label);
+
+            using StringWriter sw = new();
+            XmlWriterSettings settings = new()
+            {
+                ConformanceLevel = ConformanceLevel.Fragment,
+                OmitXmlDeclaration = true,
+                Indent = false, // If we don't indent Microsoft.Build.Construction will do it for us
+            };
+            using (XmlWriter writer = XmlWriter.Create(sw, settings))
+            {
+                foreach (string r in references ?? [])
+                {
+                    writer.WriteStartElement("Reference");
+                    writer.WriteAttributeString("Include", r);
+                    writer.WriteEndElement(); // </Reference>
+                }
+
+                foreach (string u in usings ?? [])
+                {
+                    writer.WriteStartElement("Using");
+                    writer.WriteAttributeString("Namespace", u);
+                    writer.WriteEndElement(); // </Using>
+                }
+
+                writer.WriteStartElement("Code");
+                writer.WriteAttributeString("Type", type);
+                writer.WriteAttributeString("Language", language);
+                writer.WriteAttributeStringIfNotNull("Source", sourcePath);
+
+                if (sourceCode is not null)
+                {
+                    if (!sourceCode.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
+                    {
+                        writer.WriteCData(sourceCode);
+                    }
+                    else
+                    {
+                        writer.WriteRaw(sourceCode);
+                    }
+                }
+
+                writer.WriteEndElement(); // </Code>
+            }
+
+            UsingTaskBody(sw.ToString(), evaluate);
 
             return this;
         }

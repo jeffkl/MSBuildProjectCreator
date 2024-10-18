@@ -165,4 +165,7 @@
   <data name="ErrorWhenPropertyGroupRequiresWhen" xml:space="preserve">
     <value>You must add a When before adding a When PropertyGroup.</value>
   </data>
+  <data name="ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath" xml:space="preserve">
+    <value>You must specify either inline source code or a path to a source file, but not both.</value>
+  </data>
 </root>
