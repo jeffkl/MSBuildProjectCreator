@@ -154,11 +154,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                         </ParameterGroup>
                         <Task>
                           <Reference Include="netstandard" />
-                    <Using Namespace="System" />
-                    <Code Type="Fragment" Language="cs"><![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");
+                          <Using Namespace="System" />
+                          <Code Type="Fragment" Language="cs"><![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");
                     Log.LogMessageFromText($"Parameter1: '{Parameter1}'", MessageImportance.High);
                     Log.LogMessageFromText($"Parameter2: '{Parameter2}'", MessageImportance.High);
-                    Parameter3 = "A value from the Roslyn CodeTaskFactory";]]></Code></Task>
+                    Parameter3 = "A value from the Roslyn CodeTaskFactory";]]></Code>
+                        </Task>
                       </UsingTask>
                     </Project>
                     """,
@@ -180,8 +181,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     <Project>
                       <UsingTask TaskName="MySample" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" TaskFactory="RoslynCodeTaskFactory">
                         <Task>
-                          <Code Type="Class" Language="vb" Source="MySample.vb">
-                          </Code>
+                          <Code Type="Class" Language="vb" Source="MySample.vb" />
                         </Task>
                       </UsingTask>
                     </Project>

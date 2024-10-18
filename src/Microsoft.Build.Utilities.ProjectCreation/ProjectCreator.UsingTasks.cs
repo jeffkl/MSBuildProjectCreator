@@ -5,7 +5,9 @@
 using Microsoft.Build.Construction;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -113,56 +115,88 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return this;
         }
 
-        public ProjectCreator UsingTaskInline(string taskName, string? code = null, string? source = null, string type = "Fragment", string language = "cs", IEnumerable<string>? references = null, IEnumerable<string>? usings = null, string? taskFactory = null, string? runtime = null, string? architecture = null, string? condition = null, string? label = null, bool? evaluate = null)
+        /// <summary>
+        /// Adds a &lt;UsingTask /&gt; with the TaskFactory set to "RoslynCodeTaskFactory" and the provided
+        /// code fragment or source file as the task body.
+        /// </summary>
+        /// <remarks>
+        /// See https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-roslyncodetaskfactory for
+        /// documentation on using a RoslynCodeTaskFactory.
+        /// </remarks>
+        /// <param name="taskName">The name of the task.</param>
+        /// <param name="code">C# or VB code to use as the task body.</param>
+        /// <param name="source">Path to a source to use as the task body.</param>
+        /// <param name="type">The type of code in the task body. Defaults to "Fragement", can also be "Method" or "Class".</param>
+        /// <param name="language">The source language. Defaults to "cs", can also be "vb".</param>
+        /// <param name="references">Paths to assemblies that should be added as references during compilation.</param>
+        /// <param name="usings">The list of namespaces to include as part of the compilation.</param>
+        /// <param name="taskFactory">The TaskFactory to use. Defaults to "RoslynCodeTaskFactory".</param>
+        /// <param name="runtime">An optional runtime for the task.</param>
+        /// <param name="architecture">An optional architecture for the task.</param>
+        /// <param name="condition">An optional condition to add to the task.</param>
+        /// <param name="label">An optional label to add to the task.</param>
+        /// <param name="evaluate">An optional value indicating if the body should be evaluated.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
+        public ProjectCreator UsingTaskInline(string taskName, string? code = null, string? source = null, string type = "Fragment", string language = "cs", IEnumerable<string>? references = null, IEnumerable<string>? usings = null, string taskFactory = "RoslynCodeTaskFactory", string? runtime = null, string? architecture = null, string? condition = null, string? label = null, bool? evaluate = null)
         {
             UsingTaskAssemblyFile(
-                taskName: taskName,
+                taskName,
                 assemblyFile: @"$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll",
-                taskFactory: "RoslynCodeTaskFactory",
-                runtime: runtime,
-                architecture: architecture,
-                condition: condition,
-                label: label);
+                "RoslynCodeTaskFactory",
+                runtime,
+                architecture,
+                condition,
+                label);
 
-            StringBuilder body = new();
+            XElement doc = new("Doc");
 
             foreach (string r in references ?? [])
             {
-                body.AppendLine($"""<Reference Include="{r}" />""");
+                doc.Add(new XElement("Reference", new XAttribute("Include", r)));
             }
 
             foreach (string u in usings ?? [])
             {
-                body.AppendLine($"""<Using Namespace="{u}" />""");
+                doc.Add(new XElement("Using", new XAttribute("Namespace", u)));
             }
 
-            body.Append($"<Code Type=\"{type}\" Language=\"{language}\"");
+            XElement codeElement = new("Code", new XAttribute("Type", type), new XAttribute("Language", language));
+            doc.Add(codeElement);
+
             if (source is not null)
             {
-                body.Append($" Source=\"{source}\"");
+                codeElement.Add(new XAttribute("Source", source));
             }
-
-            body.Append(">");
 
             if (code is not null)
             {
                 if (!code.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
                 {
-                    body.Append("<![CDATA[");
-                    body.Append(code);
-                    body.Append("]]>");
+                    codeElement.Add(new XCData(code));
                 }
                 else
                 {
-                    body.Append(code);
+                    codeElement.Add(new XRaw(code));
                 }
             }
 
-            body.Append("</Code>");
+            string body = string.Concat(doc.Descendants().Select(e => e.ToString()));
 
-            UsingTaskBody(body.ToString(), evaluate);
+            UsingTaskBody(body, evaluate);
 
             return this;
+        }
+
+        private class XRaw : XText
+        {
+            public XRaw(string value) : base(value)
+            {
+            }
+
+            public override void WriteTo(XmlWriter writer)
+            {
+                writer.WriteRaw(Value);
+            }
         }
     }
 }
