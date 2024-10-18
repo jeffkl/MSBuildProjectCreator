@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -143,11 +144,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             {
                 projects.Add(
                     ProjectCreator.Create(GetTempProjectPath())
-                        .UsingTaskRoslynCodeTaskFactory(
-                            taskName: "Sleep",
-                            sourceCode: "System.Threading.Thread.Sleep(2000);")
                         .Target("Build")
-                        .Task("Sleep")
+                        .Task(
+                            "Exec",
+                            parameters: new Dictionary<string, string?>
+                            {
+                                ["Command"] = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ping 127.0.0.1 -n 2 >NUL" : "sleep 2",
+                            })
                         .Save());
             }
 
