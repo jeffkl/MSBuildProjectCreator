@@ -143,9 +143,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             {
                 projects.Add(
                     ProjectCreator.Create(GetTempProjectPath())
-                        .UsingTaskInline(
+                        .UsingTaskRoslynCodeTaskFactory(
                             taskName: "Sleep",
-                            code: "System.Threading.Thread.Sleep(2000);")
+                            sourceCode: "System.Threading.Thread.Sleep(2000);")
                         .Target("Build")
                         .Task("Sleep")
                         .Save());

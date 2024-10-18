@@ -98,7 +98,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void UsingTaskInlineFragmentSimple(string code)
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .UsingTaskInline("MySample", code)
+                .UsingTaskRoslynCodeTaskFactory("MySample", code)
                 .Xml
                 .ShouldBe(
                     """
@@ -117,11 +117,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void UsingTaskInlineFragmentComplex()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .UsingTaskInline(
+                .UsingTaskRoslynCodeTaskFactory(
                     taskName: "MySample",
                     references: ["netstandard"],
                     usings: ["System"],
-                    code: """
+                    sourceCode: """
                     Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");
                     Log.LogMessageFromText($"Parameter1: '{Parameter1}'", MessageImportance.High);
                     Log.LogMessageFromText($"Parameter2: '{Parameter2}'", MessageImportance.High);
@@ -170,9 +170,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         public void UsingTaskInlineSource()
         {
             ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .UsingTaskInline(
+                .UsingTaskRoslynCodeTaskFactory(
                     taskName: "MySample",
-                    source: "MySample.vb",
+                    sourcePath: "MySample.vb",
                     type: "Class",
                     language: "vb")
                 .Xml

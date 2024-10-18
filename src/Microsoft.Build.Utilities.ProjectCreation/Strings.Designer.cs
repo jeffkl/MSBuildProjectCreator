@@ -160,6 +160,15 @@ namespace Microsoft.Build.Utilities.ProjectCreation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must specify either inline source code or a path to a source file, but not both..
+        /// </summary>
+        internal static string ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath {
+            get {
+                return ResourceManager.GetString("ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must add a package to a feed before adding content..
         /// </summary>
         internal static string ErrorWhenAddingAnythingBeforePackage {

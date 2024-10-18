@@ -124,9 +124,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// documentation on using a RoslynCodeTaskFactory.
         /// </remarks>
         /// <param name="taskName">The name of the task.</param>
-        /// <param name="code">C# or VB code to use as the task body.</param>
-        /// <param name="source">Path to a source to use as the task body.</param>
-        /// <param name="type">The type of code in the task body. Defaults to "Fragement", can also be "Method" or "Class".</param>
+        /// <param name="sourceCode">C# or VB code to use as the task body. Mutually exclusive with <paramref name="sourcePath"/>.</param>
+        /// <param name="sourcePath">Path to a source to use as the task body. Mutually exclusive with <paramref name="sourceCode"/>.</param>
+        /// <param name="type">The type of code in the task body. Defaults to "Fragment", can also be "Method" or "Class".</param>
         /// <param name="language">The source language. Defaults to "cs", can also be "vb".</param>
         /// <param name="references">Paths to assemblies that should be added as references during compilation.</param>
         /// <param name="usings">The list of namespaces to include as part of the compilation.</param>
@@ -137,12 +137,35 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="label">An optional label to add to the task.</param>
         /// <param name="evaluate">An optional value indicating if the body should be evaluated.</param>
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
-        public ProjectCreator UsingTaskInline(string taskName, string? code = null, string? source = null, string type = "Fragment", string language = "cs", IEnumerable<string>? references = null, IEnumerable<string>? usings = null, string taskFactory = "RoslynCodeTaskFactory", string? runtime = null, string? architecture = null, string? condition = null, string? label = null, bool? evaluate = null)
+        public ProjectCreator UsingTaskRoslynCodeTaskFactory(
+            string taskName,
+            string? sourceCode = null,
+            string? sourcePath = null,
+            string type = "Fragment",
+            string language = "cs",
+            IEnumerable<string>? references = null,
+            IEnumerable<string>? usings = null,
+            string taskFactory = "RoslynCodeTaskFactory",
+            string? runtime = null,
+            string? architecture = null,
+            string? condition = null,
+            string? label = null,
+            bool? evaluate = null)
         {
+            if (sourceCode is null && sourcePath is null)
+            {
+                throw new ProjectCreatorException(Strings.ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath);
+            }
+
+            if (sourceCode is not null && sourcePath is not null)
+            {
+                throw new ProjectCreatorException(Strings.ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath);
+            }
+
             UsingTaskAssemblyFile(
                 taskName,
                 assemblyFile: @"$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll",
-                "RoslynCodeTaskFactory",
+                taskFactory,
                 runtime,
                 architecture,
                 condition,
@@ -163,20 +186,20 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             XElement codeElement = new("Code", new XAttribute("Type", type), new XAttribute("Language", language));
             doc.Add(codeElement);
 
-            if (source is not null)
+            if (sourcePath is not null)
             {
-                codeElement.Add(new XAttribute("Source", source));
+                codeElement.Add(new XAttribute("Source", sourcePath));
             }
 
-            if (code is not null)
+            if (sourceCode is not null)
             {
-                if (!code.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
+                if (!sourceCode.AsSpan().TrimStart().StartsWith("<![CDATA[".AsSpan(), StringComparison.Ordinal))
                 {
-                    codeElement.Add(new XCData(code));
+                    codeElement.Add(new XCData(sourceCode));
                 }
                 else
                 {
-                    codeElement.Add(new XRaw(code));
+                    codeElement.Add(new XRaw(sourceCode));
                 }
             }
 
@@ -187,9 +210,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return this;
         }
 
+        /// <summary>
+        /// Represents a text node with no XML escaping.
+        /// </summary>
         private class XRaw : XText
         {
-            public XRaw(string value) : base(value)
+            public XRaw(string value)
+                : base(value)
             {
             }
 
