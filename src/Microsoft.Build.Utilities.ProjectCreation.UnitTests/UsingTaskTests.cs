@@ -4,6 +4,7 @@
 
 using Microsoft.Build.Evaluation;
 using Shouldly;
+using System.IO;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -101,9 +102,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 .UsingTaskRoslynCodeTaskFactory("MySample", code)
                 .Xml
                 .ShouldBe(
-                    """
+                    $"""
                     <Project>
-                      <UsingTask TaskName="MySample" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" TaskFactory="RoslynCodeTaskFactory">
+                      <UsingTask TaskName="MySample" AssemblyFile="{Path.Combine("$(MSBuildToolsPath)", "Microsoft.Build.Tasks.Core.dll")}" TaskFactory="RoslynCodeTaskFactory">
                         <Task>
                           <Code Type="Fragment" Language="cs"><![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");]]></Code>
                         </Task>
@@ -144,25 +145,23 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     required: false)
                 .Xml
                 .ShouldBe(
-                    """
-                    <Project>
-                      <UsingTask TaskName="MySample" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" TaskFactory="RoslynCodeTaskFactory">
-                        <ParameterGroup>
-                          <Parameter1 Output="False" Required="True" ParameterType="System.String" />
-                          <Parameter2 Output="False" Required="False" ParameterType="System.String" />
-                          <Parameter3 Output="True" Required="False" ParameterType="System.String" />
-                        </ParameterGroup>
-                        <Task>
-                          <Reference Include="netstandard" />
-                          <Using Namespace="System" />
-                          <Code Type="Fragment" Language="cs"><![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");
-                    Log.LogMessageFromText($"Parameter1: '{Parameter1}'", MessageImportance.High);
-                    Log.LogMessageFromText($"Parameter2: '{Parameter2}'", MessageImportance.High);
-                    Parameter3 = "A value from the Roslyn CodeTaskFactory";]]></Code>
-                        </Task>
-                      </UsingTask>
-                    </Project>
-                    """,
+                    $@"<Project>
+  <UsingTask TaskName=""MySample"" AssemblyFile=""{Path.Combine("$(MSBuildToolsPath)", "Microsoft.Build.Tasks.Core.dll")}"" TaskFactory=""RoslynCodeTaskFactory"">
+    <ParameterGroup>
+      <Parameter1 Output=""False"" Required=""True"" ParameterType=""System.String"" />
+      <Parameter2 Output=""False"" Required=""False"" ParameterType=""System.String"" />
+      <Parameter3 Output=""True"" Required=""False"" ParameterType=""System.String"" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include=""netstandard"" />
+      <Using Namespace=""System"" />
+      <Code Type=""Fragment"" Language=""cs""><![CDATA[Log.LogMessage(MessageImportance.High, ""Hello from an inline task created by Roslyn!"");
+Log.LogMessageFromText($""Parameter1: '{{Parameter1}}'"", MessageImportance.High);
+Log.LogMessageFromText($""Parameter2: '{{Parameter2}}'"", MessageImportance.High);
+Parameter3 = ""A value from the Roslyn CodeTaskFactory"";]]></Code>
+    </Task>
+  </UsingTask>
+</Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
 
@@ -177,9 +176,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     language: "vb")
                 .Xml
                 .ShouldBe(
-                    """
+                    $"""
                     <Project>
-                      <UsingTask TaskName="MySample" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" TaskFactory="RoslynCodeTaskFactory">
+                      <UsingTask TaskName="MySample" AssemblyFile="{Path.Combine("$(MSBuildToolsPath)", "Microsoft.Build.Tasks.Core.dll")}" TaskFactory="RoslynCodeTaskFactory">
                         <Task>
                           <Code Type="Class" Language="vb" Source="MySample.vb" />
                         </Task>
