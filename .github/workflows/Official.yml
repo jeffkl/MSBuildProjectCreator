@@ -15,7 +15,6 @@ env:
   BuildPlatform: 'Any CPU'
   ContinuousIntegrationBuild: 'true'
   OfficialBuild: 'true'
-  DotNet6Version: '6.x'
   DotNet8Version: '8.x'
 
 jobs:
@@ -29,11 +28,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet6Version }} and .NET ${{ env.DotNet8Version }}
+    - name: Install .NET ${{ env.DotNet8Version }}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          ${{ env.DotNet6Version }}
           ${{ env.DotNet8Version }}
 
     - name: Install .NET ${{ env.DotNet9Version }}

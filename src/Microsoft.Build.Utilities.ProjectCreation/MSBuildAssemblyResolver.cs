@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
 using System.Runtime.Loader;
 #endif
 
@@ -28,10 +28,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Environment.SetEnvironmentVariable("MSBuildExtensionsPath", DotNetSdksPath);
             Environment.SetEnvironmentVariable("MSBuildSDKsPath", string.IsNullOrWhiteSpace(DotNetSdksPath) ? null : Path.Combine(DotNetSdksPath, "Sdks"));
 
-#if NET6_0_OR_GREATER
-            AssemblyLoadContext.Default.Resolving += AssemblyResolve;
-#else
+#if NETFRAMEWORK
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+
+#else
+            AssemblyLoadContext.Default.Resolving += AssemblyResolve;
 #endif
 
             return new object();
@@ -78,7 +79,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                             }
 
                             AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
-#if !NET7_0_OR_GREATER
+#if NETFRAMEWORK
                             if (requestedAssemblyName.ProcessorArchitecture != System.Reflection.ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
                             {
                                 // The requested assembly has a processor architecture and the candidate assembly has a different value
