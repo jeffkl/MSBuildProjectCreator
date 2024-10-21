@@ -144,13 +144,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             {
                 projects.Add(
                     ProjectCreator.Create(GetTempProjectPath())
+                        .UsingTaskRoslynCodeTaskFactory(
+                            taskName: "Sleep",
+                            sourceCode: "System.Threading.Thread.Sleep(2000);")
                         .Target("Build")
-                        .Task(
-                            "Exec",
-                            parameters: new Dictionary<string, string?>
-                            {
-                                ["Command"] = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ping 127.0.0.1 -n 2 >NUL" : "sleep 2",
-                            })
+                        .Task("Sleep")
                         .Save());
             }
 

@@ -9,7 +9,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
     public class SdkCsprojTests : TestBase
     {
-#if !NET6_0
         [Fact]
         public void CanBuild()
         {
@@ -21,7 +20,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             result.ShouldBeTrue(buildOutput.GetConsoleLog());
         }
-#endif
 
         [Fact]
         public void CustomSdk()
