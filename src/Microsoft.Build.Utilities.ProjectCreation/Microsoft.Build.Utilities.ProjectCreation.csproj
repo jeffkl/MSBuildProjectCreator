@@ -7,7 +7,8 @@
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <NoWarn>$(NoWarn);RS0026;SA1600</NoWarn>
+    <!-- Remove NU5104 once System.CodeDom is a stable version for .NET 9 -->
+    <NoWarn>$(NoWarn);RS0026;SA1600;NU5104</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <PackageId>MSBuild.ProjectCreation</PackageId>
@@ -31,6 +32,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" Condition="'$(OfficialBuild)' != 'true'" />
     <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
+    <!-- Remove NU5104 once System.CodeDom is a stable version for .NET 9 -->
     <PackageReference Include="System.CodeDom" VersionOverride="9.0.0-rc.2.24473.5" Condition="'$(TargetFramework)' == 'net9.0'" />
     <PackageReference Include="System.IO.Compression" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="System.Text.Json" />
