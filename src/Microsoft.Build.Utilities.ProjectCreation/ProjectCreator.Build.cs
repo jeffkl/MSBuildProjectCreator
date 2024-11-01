@@ -544,7 +544,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Save();
 
             // IMPORTANT: Make a copy of the global properties here so as not to modify the ones passed in
-            Dictionary<string, string> restoreGlobalProperties = new Dictionary<string, string>(globalProperties ?? ProjectCollection.GlobalProperties);
+#if NET8_0
+            Dictionary<string, string> restoreGlobalProperties =
+#else
+            Dictionary<string, string?> restoreGlobalProperties =
+#endif
+                new(globalProperties ?? ProjectCollection.GlobalProperties);
 
             restoreGlobalProperties["ExcludeRestorePackageImports"] = "true";
             restoreGlobalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
