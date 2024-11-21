@@ -38,11 +38,24 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="loggers">An <see cref="IEnumerable{T}" /> containing <see cref="ILogger" /> items to use.</param>
         /// <param name="buildRequestDataFlags">The <see cref="BuildRequestDataFlags" /> to use.</param>
         /// <returns>A <see cref="BuildResult" /> containing details about the result of the build.</returns>
-        public static BuildResult Build(string projectFullPath, string[] targets, IDictionary<string, string> globalProperties, IEnumerable<ILogger> loggers, BuildRequestDataFlags buildRequestDataFlags)
+        public static BuildResult Build(
+            string projectFullPath,
+            string[] targets,
+#if NET8_0
+            IDictionary<string, string> globalProperties,
+#else
+            IDictionary<string, string?> globalProperties,
+#endif
+            IEnumerable<ILogger> loggers,
+            BuildRequestDataFlags buildRequestDataFlags)
         {
             BuildRequestData buildRequestData = new BuildRequestData(
                 projectFullPath,
+#if NET8_0
                 globalProperties ?? new Dictionary<string, string>(),
+#else
+                globalProperties ?? new Dictionary<string, string?>(),
+#endif
                 toolsVersion: null,
                 targets ?? Array.Empty<string>(),
                 hostServices: null,
