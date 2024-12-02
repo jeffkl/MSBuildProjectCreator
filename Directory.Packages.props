@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <MicrosoftBuildPackageVersion>17.12.6</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net8.0' ">17.11.4</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net8.0' ">17.12.6</MicrosoftBuildPackageVersion>
     <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
     <SystemTextJsonVersion Condition="'$(TargetFramework)' == 'net6.0'">8.0.5</SystemTextJsonVersion>
   </PropertyGroup>
@@ -13,7 +13,7 @@
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
-    <PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" />
+    <PackageVersion Include="Microsoft.IO.Redist" Version="6.1.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.11.2177" />
     <PackageVersion Include="Shouldly" Version="4.2.1" />
