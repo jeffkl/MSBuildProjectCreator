@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <MicrosoftBuildPackageVersion>17.12.6</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net8.0' ">17.12.6</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net8.0' ">17.11.4</MicrosoftBuildPackageVersion>
     <SystemTextJsonVersion>9.0.0</SystemTextJsonVersion>
   </PropertyGroup>
   <ItemGroup>
