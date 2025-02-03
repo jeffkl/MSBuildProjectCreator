@@ -4,7 +4,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <MicrosoftBuildPackageVersion>17.12.6</MicrosoftBuildPackageVersion>
     <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net8.0' ">17.11.4</MicrosoftBuildPackageVersion>
-    <SystemTextJsonVersion>9.0.0</SystemTextJsonVersion>
+    <SystemTextJsonVersion>9.0.1</SystemTextJsonVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AssemblyShader" Version="1.1.3" />
@@ -24,7 +24,7 @@
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Build.Artifacts" Version="6.1.48" />
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.7.112" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.7.115" />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <Compile Include="..\Shared\GlobalSuppressions.cs" />
     <AdditionalFiles Include="..\Shared\stylecop.json" />
