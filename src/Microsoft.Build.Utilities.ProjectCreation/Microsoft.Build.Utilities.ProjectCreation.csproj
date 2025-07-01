@@ -34,7 +34,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
     <PackageReference Include="System.IO.Compression" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
+    <PackageReference Include="System.ValueTuple" VersionOverride="4.6.1" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Strings.resx">
