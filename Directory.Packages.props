@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <MicrosoftBuildPackageVersion>17.12.6</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion>17.14.8</MicrosoftBuildPackageVersion>
     <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net8.0' ">17.11.4</MicrosoftBuildPackageVersion>
     <SystemTextJsonVersion>9.0.1</SystemTextJsonVersion>
   </PropertyGroup>
