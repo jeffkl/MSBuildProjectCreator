@@ -29,13 +29,13 @@ jobs:
         fetch-depth: 0
 
     - name: Install .NET ${{ env.DotNet8Version }}
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           ${{ env.DotNet8Version }}
 
     - name: Install .NET ${{ env.DotNet9Version }}
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.DotNet9Version }}
         dotnet-quality: 'preview'
