@@ -15,7 +15,7 @@ env:
   BuildPlatform: 'Any CPU'
   ContinuousIntegrationBuild: 'true'
   OfficialBuild: 'true'
-  DotNet8Version: '8.x'
+  DotNet9Version: '9.x'
 
 jobs:
   build:
@@ -24,21 +24,15 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
-
-    - name: Install .NET ${{ env.DotNet8Version }}
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: |
-          ${{ env.DotNet8Version }}
 
     - name: Install .NET ${{ env.DotNet9Version }}
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: ${{ env.DotNet9Version }}
-        dotnet-quality: 'preview'
+        dotnet-version: |
+          ${{ env.DotNet9Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\build.binlog"
