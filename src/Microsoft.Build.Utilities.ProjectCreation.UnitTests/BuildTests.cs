@@ -390,5 +390,27 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "312D2E6ABDDC4735B437A016CED1A68E" && i.Importance == MessageImportance.High, buildOutput.GetConsoleLog());
         }
+
+        [Fact]
+        public void RestoreUsesGlobalPropertiesFromCreate()
+        {
+            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            {
+                ["SomeGlobalProperty"] = "04BB4AFE8AE14B7A8E3511B5F2CD442B",
+            };
+
+            ProjectCreator
+                .Create(
+                    path: Path.Combine(TestRootPath, "project1.proj"),
+                    globalProperties: globalProperties)
+                .Target("Restore")
+                    .TaskMessage("$(SomeGlobalProperty)", MessageImportance.High)
+                    .TaskError("SomeGlobalProperty was not defined", condition: "'$(SomeGlobalProperty)' == ''")
+                .TryRestore(out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+            buildOutput.MessageEvents.High.ShouldContain(i => i.Message == "04BB4AFE8AE14B7A8E3511B5F2CD442B" && i.Importance == MessageImportance.High, buildOutput.GetConsoleLog());
+        }
     }
 }

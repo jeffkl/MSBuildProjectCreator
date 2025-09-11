@@ -549,7 +549,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 #else
             Dictionary<string, string?> restoreGlobalProperties =
 #endif
-                new(globalProperties ?? ProjectCollection.GlobalProperties);
+                new(globalProperties ?? _globalProperties ?? ProjectCollection.GlobalProperties);
 
             restoreGlobalProperties["ExcludeRestorePackageImports"] = "true";
             restoreGlobalProperties["MSBuildRestoreSessionId"] = Guid.NewGuid().ToString("D");
