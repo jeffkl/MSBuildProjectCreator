@@ -232,7 +232,7 @@ NuGet and MSBuild are very tightly coupled and a lot of times you need packages 
 2. Package feed - This allows you to create a file-based package feed of actual `.nupkg` files.
 
 ## Package Repository
-Create a package repository if you want to generate packages as if they've already been installed.  If you want to create actual `.nupkg` packages, see [Package Feed]
+Create a package repository if you want to generate packages as if they've already been installed.  If you want to create actual `.nupkg` packages, see [Package Feed](#Package-Feed)
 
 ### Examples
 
@@ -302,7 +302,7 @@ using PackageRepository packageRepository = PackageRepository.Create(TestRootPat
 ```
 
 ## Package Feed
-Create a package feed if you want to generate `.nupkg` packages that can be installed by NuGet.  If you want to create a repository of packages as if they've already been installed, see [Package Repository].
+Create a package feed if you want to generate `.nupkg` packages that can be installed by NuGet.  If you want to create a repository of packages as if they've already been installed, see [Package Repository](#Package-Repository).
 
 ### Example
 
