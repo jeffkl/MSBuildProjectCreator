@@ -21,7 +21,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 #if  NET8_0 || NETFRAMEWORK
             "8.0.100";
 #elif  NET9_0 || NETFRAMEWORK
-            "9.0.0";
+            "9.0.100";
+#elif  NET10_0 || NETFRAMEWORK
+            "10.0.100";
 #else
     #error Unknown target framework!
 #endif
@@ -34,6 +36,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             "net8.0";
 #elif NET9_0
             "net9.0";
+#elif NET10_0
+            "net10.0";
 #elif NETFRAMEWORK
             "net472";
 #else

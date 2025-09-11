@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net472;net8.0;net9.0;net10.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <ArtifactsPath>..\..\artifacts\$(MSBuildProjectName)</ArtifactsPath>
     <CopyArtifactsAfterTargets>Pack</CopyArtifactsAfterTargets>
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!-- Remove NU5104 once System.CodeDom is a stable version for .NET 9 -->
-    <NoWarn>$(NoWarn);RS0026;SA1600;NU5104</NoWarn>
+    <NoWarn>$(NoWarn);RS0026;SA1600</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <PackageId>MSBuild.ProjectCreation</PackageId>
     <Description>A fluent interface for generating and building MSBuild project files.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>jeffkl</Authors>
     <Copyright>Copyright (c) Jeff Kluge. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -33,7 +33,6 @@
     <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
     <PackageReference Include="System.IO.Compression" Condition="'$(TargetFramework)' == 'net472'" />
-    <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ env:
   BuildPlatform: 'Any CPU'
   ContinuousIntegrationBuild: 'true'
   OfficialBuild: 'true'
-  DotNet9Version: '9.x'
+  DotNet10Version: '10.x'
 
 jobs:
   build:
@@ -28,11 +28,12 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet9Version }}
+    - name: Install .NET ${{ env.DotNet10Version }}
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
-          ${{ env.DotNet9Version }}
+          ${{ env.DotNet10Version }}
+        dotnet-quality: 'preview'
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}\build.binlog"
