@@ -28,7 +28,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             File.ReadAllText(solutionFileFullPath).ShouldBe(
                 @$"Microsoft Visual Studio Solution File, Format Version 12.00
-Project(""{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}"") = ""{project1Name}"", ""{project1FullPath}"", ""{{{projectInSolution.Id.ToString().ToUpperInvariant()}}}""
+Project(""{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}"") = ""{project1Name}"", ""{project1FullPath.Replace('/', '\\')}"", ""{{{projectInSolution.Id.ToString().ToUpperInvariant()}}}""
 EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution

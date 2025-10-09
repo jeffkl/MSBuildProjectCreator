@@ -211,6 +211,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="SolutionCreator" />.</returns>
         public SolutionCreator TryProject(ProjectCreator project, SolutionFolderModel? folder, out SolutionProjectModel projectInSolution, string? projectTypeName = null)
         {
+            if (string.IsNullOrWhiteSpace(project.FullPath))
+            {
+                throw new InvalidOperationException("The project must have a valid path before it can be added to the solution.");
+            }
+
             project.Save();
 
             projectInSolution = _lastProject = _solutionModel.AddProject(project.FullPath, projectTypeName, folder);
