@@ -22,11 +22,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
             ProjectCreator project1 = ProjectCreator.Templates.SdkCsproj(project1FullPath);
 
-            SolutionCreator solution = SolutionCreator.Create()
+            SolutionCreator solution = SolutionCreator.Create(solutionFileFullPath)
                 .TryProject(project1, projectInSolution: out SolutionProjectModel projectInSolution)
-                .Save(solutionFileFullPath);
+                .Save();
 
-            File.ReadAllText(solutionFileFullPath).ShouldBe(@$"Microsoft Visual Studio Solution File, Format Version 12.00
+            File.ReadAllText(solutionFileFullPath).ShouldBe(
+                @$"Microsoft Visual Studio Solution File, Format Version 12.00
 Project(""{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}"") = ""{project1Name}"", ""{project1FullPath}"", ""{{{projectInSolution.Id.ToString().ToUpperInvariant()}}}""
 EndProject
 Global
@@ -34,7 +35,21 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
-", StringCompareShould.IgnoreLineEndings);
+",
+                StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void CanBuild()
+        {
+            ProjectCreator project1 = ProjectCreator.Templates.SdkCsproj(path: Path.Combine(TestRootPath, "project1", "project1.csproj"));
+
+            SolutionCreator.Create(Path.Combine(TestRootPath, "solution1.sln"))
+                .Configuration("Debug")
+                .Configuration("Release")
+                .Platform("Any CPU")
+                .Project(project1)
+                .TryBuild(out _);
         }
     }
 }

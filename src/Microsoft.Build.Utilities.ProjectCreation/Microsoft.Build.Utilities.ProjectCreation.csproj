@@ -8,8 +8,6 @@
     <DefaultArtifactsFileMatch>*nupkg</DefaultArtifactsFileMatch>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>$(NoWarn);RS0026;SA1600</NoWarn>
-
-    <NoWarn>$(NoWarn);RS0016;CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <PackageId>MSBuild.ProjectCreation</PackageId>

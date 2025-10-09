@@ -7,7 +7,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     public partial class ProjectCreator
     {
         /// <summary>
-        /// Gets a set of project templates that can be used to generate complete projects.
+        /// Gets a set of templates that can be used to generate complete projects.
         /// </summary>
         public static ProjectCreatorTemplates Templates { get; } = new ProjectCreatorTemplates();
     }

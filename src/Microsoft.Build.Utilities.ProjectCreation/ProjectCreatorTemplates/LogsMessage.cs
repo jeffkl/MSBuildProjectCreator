@@ -5,7 +5,6 @@
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
 
-// ReSharper disable once CheckNamespace
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class ProjectCreatorTemplates

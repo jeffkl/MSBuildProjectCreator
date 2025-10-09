@@ -225,6 +225,22 @@ And the resulting project would look like this:
 </Project>
 ```
 
+# Visual Studio Solutions
+You can create Visual Studio solutions with the `SolutionCreator` class.
+This class is a wrapper around the [VS-SolutionPersistence] library which supports both `.sln` and `.slnx` solution file formats.
+
+The following example creates a solution with two projects:
+```C#
+ProjectCreator project1 = ProjectCreator.Templates.SdkCsproj(path: Path.Combine(Environment.CurrentDirectory, "project1", "project1.csproj"));
+
+SolutionCreator.Create(Path.Combine(Environment.CurrentDirectory, "solution1.sln"))
+    .Configuration("Debug")
+    .Configuration("Release")
+    .Platform("Any CPU")
+    .Project(project1)
+    .Save();
+```
+
 # Package Repositories and Feeds
 NuGet and MSBuild are very tightly coupled and a lot of times you need packages available when building projects.  This API offers two solutions:
 
