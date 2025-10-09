@@ -290,7 +290,6 @@ static Microsoft.Build.Utilities.ProjectCreation.BuildOutput.Create() -> Microso
 static Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods.AsEnumerable<T>(this T? item) -> System.Collections.Generic.IEnumerable<T!>!
 static Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods.Merge(this System.Collections.Generic.IDictionary<string!, string?>? first, System.Collections.Generic.IDictionary<string!, string?>! second) -> System.Collections.Generic.IDictionary<string!, string?>!
 static Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods.Merge(this System.Collections.Generic.IDictionary<string!, string?>? first, System.Collections.Generic.IDictionary<string!, string?>! second, System.Collections.Generic.IEqualityComparer<string!>! comparer) -> System.Collections.Generic.IDictionary<string!, string?>!
-static Microsoft.Build.Utilities.ProjectCreation.ExtensionMethods.ToArrayWithSingleElement<T>(this T! item) -> T![]!
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.AssemblyResolve(System.Runtime.Loader.AssemblyLoadContext! assemblyLoadContext, System.Reflection.AssemblyName! requestedAssemblyName) -> System.Reflection.Assembly?
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.DotNetSdksPath.get -> string?
 static Microsoft.Build.Utilities.ProjectCreation.MSBuildAssemblyResolver.MSBuildExePath.get -> string?

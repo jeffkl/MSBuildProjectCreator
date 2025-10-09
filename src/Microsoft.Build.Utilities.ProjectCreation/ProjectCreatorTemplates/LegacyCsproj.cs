@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-// ReSharper disable once CheckNamespace
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
     /// <summary>

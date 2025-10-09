@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" Condition="'$(OfficialBuild)' != 'true'" />
     <PackageReference Include="Microsoft.IO.Redist" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Runtime" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.SolutionPersistence" />
     <PackageReference Include="System.IO.Compression" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="System.ValueTuple" VersionOverride="4.5.0" Condition="'$(TargetFramework)' == 'net472'" ExcludeAssets="Compile" />
   </ItemGroup>
@@ -55,6 +56,6 @@
   
   <ItemGroup>
     <None Include="PublicAPI\**" />
-    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.*.txt"  />
+    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.*.txt" />
   </ItemGroup>
 </Project>

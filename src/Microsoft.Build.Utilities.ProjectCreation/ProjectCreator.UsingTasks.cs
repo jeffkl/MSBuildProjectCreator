@@ -104,7 +104,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 _lastUsingTask.AddParameterGroup();
             }
 
-            // ReSharper disable once PossibleNullReferenceException
             _lastUsingTask!.ParameterGroup!.AddParameter(
                 name,
                 output?.ToString() ?? string.Empty,

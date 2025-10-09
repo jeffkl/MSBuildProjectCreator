@@ -74,22 +74,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Gets the current object as an array of objects.
-        /// </summary>
-        /// <typeparam name="T">The type of the object.</typeparam>
-        /// <param name="item">The item to make into an array.</param>
-        /// <returns>An array of T objects.</returns>
-        [DebuggerStepThrough]
-        public static T[] ToArrayWithSingleElement<T>(this T item)
-            where T : class
-        {
-            return new[]
-            {
-                item,
-            };
-        }
-
-        /// <summary>
         /// Creates an entry in the current <see cref="ZipArchive" /> based on the specified <see cref="Stream" />.
         /// </summary>
         /// <param name="archive">The <see cref="ZipArchive" /> to create the entry in.</param>
