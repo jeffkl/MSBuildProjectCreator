@@ -19,7 +19,7 @@ Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.AllEvents.get
 Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.BuildEventArgsCollection() -> void
 Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.ErrorEvents.get -> System.Collections.Generic.IReadOnlyCollection<Microsoft.Build.Framework.BuildErrorEventArgs!>!
 Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.Errors.get -> System.Collections.Generic.IReadOnlyCollection<string!>!
-Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.GetConsoleLog(Microsoft.Build.Framework.LoggerVerbosity verbosity = Microsoft.Build.Framework.LoggerVerbosity.Normal) -> string!
+Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.GetConsoleLog(Microsoft.Build.Framework.LoggerVerbosity verbosity = Microsoft.Build.Framework.LoggerVerbosity.Normal, bool showSummary = true, bool performanceSummary = false, bool errorsOnly = false, bool warningsOnly = false, bool showItemAndPropertyList = true, bool showCommandLine = false, bool showTimestamp = false, bool showEventId = false) -> string!
 Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.MessageEvents.get -> Microsoft.Build.Utilities.ProjectCreation.BuildMessageEventArgsCollection!
 Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.Messages.get -> Microsoft.Build.Utilities.ProjectCreation.BuildMessageCollection!
 Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.WarningEvents.get -> System.Collections.Generic.IReadOnlyCollection<Microsoft.Build.Framework.BuildWarningEventArgs!>!

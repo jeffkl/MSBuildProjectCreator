@@ -16,11 +16,31 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             BuildEngine buildEngine = GetBuildEngineWithEvents(i =>
             {
-                i.LogErrorEvent(new BuildErrorEventArgs(null, "A6DAB901460D483FBDF3A0980B14C46F", "48F7F352E2914991827100BCEB69331F", 3, 4, 0, 0, "D988473FF8634A16A0CD8FE94FF20D53", null, null));
-                i.LogWarningEvent(new BuildWarningEventArgs(null, "AE1B25881A694A70B2EA299C04625596", "07006F38A63E420AAB4124EBE58081BC", 1, 2, 0, 0, "3A3DD4A40DA44BA5BBB123E105EE1F71", null, null));
-                i.LogMessageEvent(new BuildMessageEventArgs("61BD637C7D704D4B98C25805E3111152", null, null, MessageImportance.High));
-                i.LogMessageEvent(new BuildMessageEventArgs("B02496FA4D3348A6997DC918EBF7455B", null, null, MessageImportance.Normal));
-                i.LogMessageEvent(new BuildMessageEventArgs("2C254C4346A347AE94AE5E7FB6C03B0C", null, null, MessageImportance.Low));
+                i.LogErrorEvent(
+                    new BuildErrorEventArgs(null, "A6DAB901460D483FBDF3A0980B14C46F", "48F7F352E2914991827100BCEB69331F", 3, 4, 0, 0, "D988473FF8634A16A0CD8FE94FF20D53", null, null)
+                    {
+                        BuildEventContext = BuildEventContext.Invalid,
+                    });
+                i.LogWarningEvent(
+                    new BuildWarningEventArgs(null, "AE1B25881A694A70B2EA299C04625596", "07006F38A63E420AAB4124EBE58081BC", 1, 2, 0, 0, "3A3DD4A40DA44BA5BBB123E105EE1F71", null, null)
+                    {
+                        BuildEventContext = BuildEventContext.Invalid,
+                    });
+                i.LogMessageEvent(
+                    new BuildMessageEventArgs("61BD637C7D704D4B98C25805E3111152", null, null, MessageImportance.High)
+                    {
+                        BuildEventContext = BuildEventContext.Invalid,
+                    });
+                i.LogMessageEvent(
+                    new BuildMessageEventArgs("B02496FA4D3348A6997DC918EBF7455B", null, null, MessageImportance.Normal)
+                    {
+                        BuildEventContext = BuildEventContext.Invalid,
+                    });
+                i.LogMessageEvent(
+                    new BuildMessageEventArgs("2C254C4346A347AE94AE5E7FB6C03B0C", null, null, MessageImportance.Low)
+                    {
+                        BuildEventContext = BuildEventContext.Invalid,
+                    });
             });
 
             buildEngine.GetConsoleLog()

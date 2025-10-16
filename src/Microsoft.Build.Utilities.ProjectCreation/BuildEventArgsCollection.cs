@@ -2,6 +2,7 @@
 //
 // Licensed under the MIT license.
 
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using System;
@@ -108,8 +109,16 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Gets the current build output in the format of a console log.
         /// </summary>
         /// <param name="verbosity">The logger verbosity to use.</param>
+        /// <param name="showSummary">Optional parameter indicating whether or not to show an error and warning summary at the end.</param>
+        /// <param name="performanceSummary">Optional parameter indicating whether or not to show time spent in tasks, targets and projects.</param>
+        /// <param name="errorsOnly">Optional parameter indicating whether or not to show only errors.</param>
+        /// <param name="warningsOnly">Optional parameter indicating whether or not to show only warnings.</param>
+        /// <param name="showItemAndPropertyList">Optional parameter indicating whether or not to show a list of items and properties at the start of each project build.</param>
+        /// <param name="showCommandLine">Optional parameter indicating whether or not to show <see cref="TaskCommandLineEventArgs" /> messages.</param>
+        /// <param name="showTimestamp">Optional parameter indicating whether or not to show the timestamp as a prefix to any message.</param>
+        /// <param name="showEventId">Optional parameter indicating whether or not to show eventId for started events, finished events, and messages.</param>
         /// <returns>The build output in the format of a console log.</returns>
-        public string GetConsoleLog(LoggerVerbosity verbosity = LoggerVerbosity.Normal)
+        public string GetConsoleLog(LoggerVerbosity verbosity = LoggerVerbosity.Normal, bool showSummary = true, bool performanceSummary = false, bool errorsOnly = false, bool warningsOnly = false, bool showItemAndPropertyList = true, bool showCommandLine = false, bool showTimestamp = false, bool showEventId = false)
         {
             if (_lastConsoleOutput != null && verbosity == _lastVerbosity)
             {
@@ -118,65 +127,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             _lastVerbosity = verbosity;
 
-            StringBuilder sb = new StringBuilder(AllEvents.Count * 300);
-
-            ConsoleLogger logger = new ConsoleLogger(verbosity, message => sb.Append(message), _ => { }, () => { });
-
-            foreach (BuildEventArgs buildEventArgs in AllEvents)
-            {
-                switch (buildEventArgs)
-                {
-                    case BuildMessageEventArgs buildMessageEventArgs:
-                        logger.MessageHandler(logger, buildMessageEventArgs);
-                        break;
-
-                    case BuildErrorEventArgs buildErrorEventArgs:
-                        logger.ErrorHandler(logger, buildErrorEventArgs);
-                        break;
-
-                    case BuildWarningEventArgs buildWarningEventArgs:
-                        logger.WarningHandler(logger, buildWarningEventArgs);
-                        break;
-
-                    case BuildStartedEventArgs buildStartedEventArgs:
-                        logger.BuildStartedHandler(logger, buildStartedEventArgs);
-                        break;
-
-                    case BuildFinishedEventArgs buildFinishedEventArgs:
-                        logger.BuildFinishedHandler(logger, buildFinishedEventArgs);
-                        break;
-
-                    case ProjectStartedEventArgs projectStartedEventArgs:
-                        logger.ProjectStartedHandler(logger, projectStartedEventArgs);
-                        break;
-
-                    case ProjectFinishedEventArgs projectFinishedEventArgs:
-                        logger.ProjectFinishedHandler(logger, projectFinishedEventArgs);
-                        break;
-
-                    case TargetStartedEventArgs targetStartedEventArgs:
-                        logger.TargetStartedHandler(logger, targetStartedEventArgs);
-                        break;
-
-                    case TargetFinishedEventArgs targetFinishedEventArgs:
-                        logger.TargetFinishedHandler(logger, targetFinishedEventArgs);
-                        break;
-
-                    case TaskStartedEventArgs taskStartedEventArgs:
-                        logger.TaskStartedHandler(logger, taskStartedEventArgs);
-                        break;
-
-                    case TaskFinishedEventArgs taskFinishedEventArgs:
-                        logger.TaskFinishedHandler(logger, taskFinishedEventArgs);
-                        break;
-
-                    case CustomBuildEventArgs customBuildEventArgs:
-                        logger.CustomEventHandler(logger, customBuildEventArgs);
-                        break;
-                }
-            }
-
-            _lastConsoleOutput = sb.ToString();
+            _lastConsoleOutput = ConsoleLoggerStringBuilder.GetConsoleLogAsString(AllEvents, verbosity, showSummary, performanceSummary, errorsOnly, warningsOnly, showItemAndPropertyList, showCommandLine, showTimestamp, showEventId);
 
             ConsoleOutputCreated?.Invoke(this, verbosity);
 

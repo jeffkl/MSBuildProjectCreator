@@ -2,8 +2,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <MicrosoftBuildPackageVersion>17.14.8</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net8.0' ">17.11.4</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion>17.14.28</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net8.0'">17.11.48</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion Condition="'$(TargetFramework)' == 'net10.0'">17.15.0-preview-25277-114</MicrosoftBuildPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AssemblyShader" Version="1.1.3" />
