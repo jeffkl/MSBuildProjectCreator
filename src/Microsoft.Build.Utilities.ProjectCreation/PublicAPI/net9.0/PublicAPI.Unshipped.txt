@@ -1,2 +1,1 @@
 ﻿#nullable enable
-Microsoft.Build.Utilities.ProjectCreation.BuildEventArgsCollection.GetConsoleLog(Microsoft.Build.Framework.LoggerVerbosity verbosity = Microsoft.Build.Framework.LoggerVerbosity.Normal, bool showSummary = true, bool performanceSummary = false, bool errorsOnly = false, bool warningsOnly = false, bool showItemAndPropertyList = true, bool showCommandLine = false, bool showTimestamp = false, bool showEventId = false) -> string!
