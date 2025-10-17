@@ -159,9 +159,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 BuildParameters buildParameters = new BuildParameters
                 {
                     EnableNodeReuse = false,
+                    Loggers = loggers,
+                    LogTaskInputs = true,
                     MaxNodeCount = Environment.ProcessorCount,
                     ResetCaches = true,
-                    Loggers = loggers,
                 };
 
                 BuildManager.DefaultBuildManager.BeginBuild(buildParameters);

@@ -37,6 +37,44 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void BuildCanConsumePackageWithGeneratePathProperty()
+        {
+            string binLogPath = Path.Combine(TestRootPath, "test.binlog");
+
+            using (PackageRepository.Create(TestRootPath)
+                    .Package("PackageB", "1.0", out Package packageB)
+                        .Library(TargetFramework)
+                    .Package("PackageA", "1.0.0", out Package packageA)
+                        .Dependency(packageB, TargetFramework)
+                        .Library(TargetFramework))
+            {
+                using (ProjectCollection projectCollection = new ProjectCollection())
+                {
+                    projectCollection.RegisterLogger(new BinaryLogger
+                    {
+                        Parameters = $"LogFile={binLogPath}",
+                    });
+
+                    ProjectCreator.Templates.SdkCsproj(
+                            path: Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj"),
+                            targetFramework: TargetFramework,
+                            projectCollection: projectCollection)
+                        .ItemPackageReference(
+                            packageA,
+                            metadata: new Dictionary<string, string?>
+                            {
+                                ["GeneratePathProperty"] = bool.TrueString,
+                            })
+                        .TryBuild(restore: true, out bool result, out BuildOutput buildOutput)
+                        .TryGetPropertyValue("PkgPackageA", out string packagePath);
+
+                    result.ShouldBeTrue(buildOutput.GetConsoleLog());
+                    packagePath.ShouldNotBeEmpty();
+                }
+            }
+        }
+
+        [Fact]
         public void BuildOutputContainsOutOfProcMessages()
         {
             const int messageCount = 100;
