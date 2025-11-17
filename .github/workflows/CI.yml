@@ -43,18 +43,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet8Version }} and ${{ env.DotNet9Version }}
+    - name: Install .NET ${{ env.DotNet8Version }}, ${{ env.DotNet9Version }}, and ${{ env.DotNet10Version }}
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           ${{ env.DotNet8Version }}
           ${{ env.DotNet9Version }}
-
-    - name: Install .NET ${{ env.DotNet10Version }}
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: ${{ env.DotNet10Version }}
-        dotnet-quality: 'preview'
+          ${{ env.DotNet10Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
