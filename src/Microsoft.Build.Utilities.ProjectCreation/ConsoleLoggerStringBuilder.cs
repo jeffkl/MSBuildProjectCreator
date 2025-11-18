@@ -147,6 +147,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 foreach (BuildEventArgs buildEventArgs in events)
                 {
+                    if (buildEventArgs.BuildEventContext is null)
+                    {
+                        buildEventArgs.BuildEventContext = BuildEventContext.Invalid;
+                    }
+
                     AnyEventRaised?.Invoke(this, buildEventArgs);
 
                     switch (buildEventArgs)
