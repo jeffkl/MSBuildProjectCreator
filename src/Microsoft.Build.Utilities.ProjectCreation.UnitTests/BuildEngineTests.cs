@@ -111,6 +111,23 @@ B02496FA4D3348A6997DC918EBF7455B
             args.Code.ShouldBe(expectedCode);
         }
 
+        [Fact]
+        public void WithTask()
+        {
+            BuildEngine buildEngine = BuildEngine.Create();
+
+            var task = new TestTask
+            {
+                BuildEngine = buildEngine,
+            };
+
+            bool result = task.Execute();
+
+            result.ShouldBeTrue();
+
+            buildEngine.GetConsoleLog().ShouldContain("Test Message", customMessage: buildEngine.GetConsoleLog());
+        }
+
         private BuildEngine GetBuildEngineWithEvents(Action<IBuildEngine> action)
         {
             BuildEngine buildEngine = BuildEngine.Create();
@@ -118,6 +135,16 @@ B02496FA4D3348A6997DC918EBF7455B
             action(buildEngine);
 
             return buildEngine;
+        }
+
+        private class TestTask : Task
+        {
+            public override bool Execute()
+            {
+                Log.LogMessageFromText("Test Message", MessageImportance.High);
+
+                return true;
+            }
         }
     }
 }
