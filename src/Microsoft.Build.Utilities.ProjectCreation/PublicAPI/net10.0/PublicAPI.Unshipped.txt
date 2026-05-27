@@ -1,1 +1,2 @@
 ﻿#nullable enable
+Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.TryBuild(System.Collections.Generic.IDictionary<string!, string!>? globalProperties, out bool result) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!

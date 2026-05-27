@@ -24,6 +24,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         private BuildFinishedEventArgs? _buildFinished;
 
+        private IEventSource? _eventSource;
+
         private BuildOutput()
         {
             Parameters = string.Empty;
@@ -70,6 +72,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <inheritdoc cref="ILogger.Initialize" />
         public void Initialize(IEventSource eventSource)
         {
+            _eventSource = eventSource;
+
             eventSource.BuildFinished += OnBuildFinished;
             eventSource.ProjectFinished += OnProjectFinished;
             eventSource.AnyEventRaised += OnAnyEventRaised;
@@ -78,6 +82,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <inheritdoc cref="ILogger.Shutdown" />
         public void Shutdown()
         {
+            _eventSource?.BuildFinished -= OnBuildFinished;
+            _eventSource?.ProjectFinished -= OnProjectFinished;
+            _eventSource?.AnyEventRaised -= OnAnyEventRaised;
+
             IsShutdown = true;
         }
 

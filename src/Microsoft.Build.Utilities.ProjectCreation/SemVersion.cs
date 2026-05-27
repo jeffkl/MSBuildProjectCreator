@@ -48,12 +48,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// A semantic version implementation.
     /// Conforms with v2.0.0 of http://semver.org
     /// </summary>
-#if NETSTANDARD
-    public sealed class SemVersion : IComparable<SemVersion>, IComparable
-#else
     [Serializable]
     internal sealed class SemVersion : IComparable<SemVersion>, IComparable, ISerializable
-#endif
     {
         private static readonly Regex ParseEx =
 
@@ -62,14 +58,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 @"(?>\.(?<patch>\d+))?" +
                 @"(?>\-(?<pre>[0-9A-Za-z\-\.]+))?" +
                 @"(?>\+(?<build>[0-9A-Za-z\-\.]+))?$",
-#if NETSTANDARD
-                RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture,
-#else
                 RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture,
-#endif
                 TimeSpan.FromSeconds(0.5));
 
-#if !NETSTANDARD
         /// <summary>
         /// Deserialize a <see cref="SemVersion"/>.
         /// </summary>
@@ -86,7 +77,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             Prerelease = semVersion.Prerelease;
             Build = semVersion.Build;
         }
-#endif
 
         /// <summary>
         /// Constructs a new instance of the <see cref="SemVersion" /> class.

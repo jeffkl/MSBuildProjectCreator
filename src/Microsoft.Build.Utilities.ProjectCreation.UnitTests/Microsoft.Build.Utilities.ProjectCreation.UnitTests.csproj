@@ -1,19 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net472;net8.0;net10.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <Import Project="..\Microsoft.Build.Utilities.ProjectCreation\build\MSBuild.ProjectCreation.props" Condition="'$(TargetFramework)' == 'net472'" />
   <ItemGroup>
-    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AssemblyShader" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" ShadeDependencies="NuGet.Frameworks" />
     <PackageReference Include="Shouldly" />
-    <PackageReference Include="System.CodeDom" VersionOverride="9.0.0" Condition="'$(TargetFramework)' == 'net9.0'" ExcludeAssets="All" />
-    <PackageReference Include="System.CodeDom" VersionOverride="10.0.0" Condition="'$(TargetFramework)' == 'net10.0'" ExcludeAssets="All" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="System.CodeDom" Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net10.0'" ExcludeAssets="Runtime" />
+    <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
@@ -21,5 +18,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Build.Utilities.ProjectCreation\Microsoft.Build.Utilities.ProjectCreation.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="System.Text.Json" VersionOverride="10.0.3" />
+    <PackageReference Include="System.Text.Encodings.Web" VersionOverride="10.0.3" />
+    
+    <SuggestedBindingRedirects Include="System.Text.Encodings.Web, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" MaxVersion="10.0.0.3" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32516.85
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11523.13 main
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Build.Utilities.ProjectCreation", "src\Microsoft.Build.Utilities.ProjectCreation\Microsoft.Build.Utilities.ProjectCreation.csproj", "{0CCB62BE-922F-480F-B8EA-823CB8A9CBDC}"
 EndProject
@@ -22,7 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{8339FD67
 		NuGet.config = NuGet.config
 		README.md = README.md
 		version.json = version.json
-		xunit.runner.json = xunit.runner.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3F239E9A-CEB8-410A-BA63-4F860B9566E6}"

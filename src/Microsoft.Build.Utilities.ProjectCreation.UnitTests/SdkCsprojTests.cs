@@ -10,13 +10,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
     public class SdkCsprojTests : TestBase
     {
         [Fact]
-        public void CanBuild()
+        public void CanRestoreAndBuild()
         {
             ProjectCreator.Templates.SdkCsproj(
-                    targetFramework: TargetFramework,
-                    path: GetTempFileName(".csproj"))
-                .Save()
-                .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
+                        targetFramework: TargetFramework,
+                        path: GetTempFileName(".csproj"))
+                    .Save()
+                    .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 
             result.ShouldBeTrue(buildOutput.GetConsoleLog());
         }

@@ -17,17 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     internal static class BuildManagerHost
     {
-        /// <summary>
-        /// Gets a value indicating if the current runtime is .NET Core or .NET Framework.
-        /// </summary>
-        private static readonly Lazy<bool> IsDotNetCoreLazy = new Lazy<bool>(() => !RuntimeInformation.FrameworkDescription.Contains("Framework"));
-
         private static readonly object LockObject = new object();
-
-        /// <summary>
-        /// Gets a value indicating the full path to the loaded Microsoft.Build.dll
-        /// </summary>
-        private static readonly Lazy<FileInfo> MSBuildAssemblyFullPathLazy = new Lazy<FileInfo>(() => new FileInfo(typeof(BuildManager).Assembly.Location));
 
         /// <summary>
         /// Executes a build for the specified project.
@@ -84,74 +74,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return Build(buildRequestData, loggers);
         }
 
-        /// <summary>
-        /// Sets the host for MSBuild to launch nodes.  For .NET Core this is dotnet.exe and for .NET Framework this is MSBuild.exe.
-        /// This is a workaround for https://github.com/dotnet/msbuild/issues/6782
-        /// </summary>
-        /// <param name="buildManager">The current <see cref="BuildManager" />.</param>
-        public static void SetCurrentHost(BuildManager buildManager)
-        {
-            if (!IsDotNetCoreLazy.Value)
-            {
-                return;
-            }
-
-            string hostExePath = Path.Combine(Path.GetFullPath(Path.Combine(MSBuildAssemblyFullPathLazy.Value.DirectoryName!, "..", "..")), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet");
-
-            if (!File.Exists(hostExePath))
-            {
-                return;
-            }
-
-            Type buildManagerType = buildManager.GetType();
-
-            FieldInfo? nodeManagerFieldInfo = buildManagerType.GetField("_nodeManager", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (nodeManagerFieldInfo == null)
-            {
-                return;
-            }
-
-            object? nodeManager = nodeManagerFieldInfo.GetValue(buildManager);
-
-            if (nodeManager == null)
-            {
-                return;
-            }
-
-            Type nodeManagerType = nodeManager.GetType();
-
-            FieldInfo? outOfProcNodeProviderFieldInfo = nodeManagerType.GetField("_outOfProcNodeProvider", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (outOfProcNodeProviderFieldInfo == null)
-            {
-                return;
-            }
-
-            object? outOfProcNodeProvider = outOfProcNodeProviderFieldInfo.GetValue(nodeManager);
-
-            if (outOfProcNodeProvider == null)
-            {
-                return;
-            }
-
-            Type? nodeProviderOutOfProcBaseType = outOfProcNodeProvider.GetType().BaseType;
-
-            if (nodeProviderOutOfProcBaseType == null)
-            {
-                return;
-            }
-
-            FieldInfo? currentHostFieldInfo = nodeProviderOutOfProcBaseType.GetField("CurrentHost", BindingFlags.Static | BindingFlags.NonPublic);
-
-            if (currentHostFieldInfo == null)
-            {
-                return;
-            }
-
-            currentHostFieldInfo.SetValue(outOfProcNodeProvider, hostExePath);
-        }
-
         private static BuildResult Build(BuildRequestData buildRequestData, IEnumerable<ILogger> loggers)
         {
             lock (LockObject)
@@ -169,8 +91,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 try
                 {
                     BuildSubmission buildSubmission = BuildManager.DefaultBuildManager.PendBuildRequest(buildRequestData);
-
-                    SetCurrentHost(BuildManager.DefaultBuildManager);
 
                     BuildResult buildResult = buildSubmission.Execute();
 
