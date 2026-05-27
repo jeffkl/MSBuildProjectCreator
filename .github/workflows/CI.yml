@@ -17,17 +17,18 @@ env:
   BuildPlatform: 'Any CPU'
   ContinuousIntegrationBuild: 'true'
   DotNet8Version: '8.x'
-  DotNet9Version: '9.x'
   DotNet10Version: '10.x'
 
 jobs:
   BuildAndTest:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-2025, windows-2025-vs2026, ubuntu-latest, macos-latest]
         include:
-          - os: windows-latest
-            name: Windows
+          - os: windows-2025
+            name: Windows VS2022
+          - os: windows-2025-vs2026
+            name: Windows VS2026
           - os: ubuntu-latest
             name: Linux
           - os: macos-latest
@@ -43,26 +44,22 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet8Version }}, ${{ env.DotNet9Version }}, and ${{ env.DotNet10Version }}
+    - name: Install .NET ${{ env.DotNet8Version }} and ${{ env.DotNet10Version }}
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           ${{ env.DotNet8Version }}
-          ${{ env.DotNet9Version }}
           ${{ env.DotNet10Version }}
 
     - name: Build Solution
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
 
     - name: Run Unit Tests (.NET Framework)
-      if: ${{ matrix.name == 'Windows' }}
+      if: ${{ matrix.name == 'Windows VS2022' || matrix.name == 'Windows VS2026' }}
       run: dotnet test --no-restore --no-build --framework net472 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
 
     - name: Run Unit Tests (.NET 8)
       run: dotnet test --no-restore --no-build --framework net8.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net8.0.binlog"
-      
-    - name: Run Unit Tests (.NET 9)
-      run: dotnet test --no-restore --no-build --framework net9.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net9.0.binlog"
 
     - name: Run Unit Tests (.NET 10)
       run: dotnet test --no-restore --no-build --framework net10.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net10.0.binlog"

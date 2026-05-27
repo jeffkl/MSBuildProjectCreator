@@ -188,9 +188,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void CanRestoreAndBuildMultipleTimes()
         {
-            ProjectCreator projectCreator = ProjectCreator.Templates.SdkCsproj(
-                path: GetTempFileName(".csproj"),
-                targetFramework: TargetFramework)
+            ProjectCreator projectCreator = ProjectCreator.Create(
+                    path: GetTempFileName(".csproj"))
+                .Target("Restore")
+                    .TaskMessage("Restoring...", MessageImportance.High)
+                .Target("Build")
+                    .TaskMessage("Building...", MessageImportance.High)
                 .Save()
                 .TryBuild(restore: true, "Build", out bool result, out BuildOutput buildOutput);
 

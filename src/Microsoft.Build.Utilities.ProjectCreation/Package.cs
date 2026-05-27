@@ -468,8 +468,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             writer.WriteElementStringIfNotNull("iconUrl", IconUrl);
             writer.WriteElementStringIfNotNull("developmentDependency", DevelopmentDependency);
             writer.WriteElementStringIfNotNull("language", Language);
-            writer.WriteElementStringIfNotNull("title", Title);
-            writer.WriteElementStringIfNotNull("tags", Tags);
             writer.WriteElementStringIfNotNull("summary", Summary);
             writer.WriteElementStringIfNotNull("owners", Owners);
             writer.WriteElementStringIfNotNull("releaseNotes", ReleaseNotes);

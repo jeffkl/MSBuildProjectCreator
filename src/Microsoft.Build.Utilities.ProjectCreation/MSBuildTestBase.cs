@@ -8,7 +8,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// Provides a base class for unit test classes that use MSBuild. This class resolves MSBuild related assemblies automatically.
     /// </summary>
     /// <remarks>
-    /// Prefer calling <see cref="MSBuildAssemblyResolver.Register"/> from a <c>ModuleInitalizerAttribute</c> if your target framework
+    /// Prefer calling <see cref="MSBuildAssemblyResolver.Register"/> from a <see cref="System.Runtime.CompilerServices.ModuleInitializerAttribute"/> if your target framework
     /// supports one. This base class is provided for backwards compatibility with older versions of .NET.
     /// </remarks>
     public abstract class MSBuildTestBase

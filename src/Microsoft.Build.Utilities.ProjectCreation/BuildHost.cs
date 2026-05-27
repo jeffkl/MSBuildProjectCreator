@@ -165,17 +165,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw buildResult.Exception;
             }
 
-            if (targetOutputs != null)
-            {
-                foreach (KeyValuePair<string, TargetResult> targetResult in buildResult.ResultsByTarget)
-                {
-                    targetOutputs[targetResult.Key] = targetResult.Value;
-                }
-            }
-            else
-            {
-                targetOutputs = buildResult.ResultsByTarget;
-            }
+            targetOutputs = buildResult.ResultsByTarget;
 
             return buildResult.OverallResult == BuildResultCode.Success;
 

@@ -36,7 +36,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
-        /// Gets the full path to the specified package' <c>.nupsec</c> in the current <see cref="PackageRepository" />.
+        /// Gets the full path to the specified package' <c>.nuspec</c> in the current <see cref="PackageRepository" />.
         /// </summary>
         /// <param name="packageId">The ID of the package.</param>
         /// <param name="version">The version of the package.</param>

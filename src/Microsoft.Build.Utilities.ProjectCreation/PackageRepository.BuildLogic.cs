@@ -295,12 +295,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             if (string.IsNullOrWhiteSpace(extension))
             {
-                throw new ArgumentNullException(extension);
+                throw new ArgumentNullException(nameof(extension));
             }
 
             if (string.IsNullOrWhiteSpace(folderName))
             {
-                throw new ArgumentNullException(folderName);
+                throw new ArgumentNullException(nameof(folderName));
             }
 
             project = ProjectCreator.Create(

@@ -21,8 +21,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             GlobalPackagesFolder = Path.Combine(rootPath, ".nuget", "packages");
 
-            _nugetPackagesGlobalFolderBackup = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
-
             Environment.SetEnvironmentVariable("NUGET_PACKAGES", null);
 
             NuGetConfigPath = Path.Combine(rootPath, "NuGet.config");

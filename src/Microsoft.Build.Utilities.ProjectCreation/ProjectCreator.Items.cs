@@ -29,6 +29,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return ItemInclude(
                 itemType: "Compile",
                 include: include,
+                exclude: exclude,
                 metadata: metadata.Merge(new Dictionary<string, string?>
                 {
                     { "DependentUpon", dependentUpon! },

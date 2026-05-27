@@ -44,9 +44,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private string? _lastConsoleOutput = null;
 
         /// <summary>
-        ///  Stores the <see cref="LoggerVerbosity" /> of the last console output.
+        /// Stores the parameters used to generate the last console output for cache invalidation.
         /// </summary>
-        private LoggerVerbosity _lastVerbosity = LoggerVerbosity.Normal;
+        private (LoggerVerbosity Verbosity, bool ShowSummary, bool PerformanceSummary, bool ErrorsOnly, bool WarningsOnly, bool ShowItemAndPropertyList, bool ShowCommandLine, bool ShowTimestamp, bool ShowEventId) _lastConsoleLogParameters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildEventArgsCollection" /> class.
@@ -120,12 +120,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The build output in the format of a console log.</returns>
         public string GetConsoleLog(LoggerVerbosity verbosity = LoggerVerbosity.Normal, bool showSummary = true, bool performanceSummary = false, bool errorsOnly = false, bool warningsOnly = false, bool showItemAndPropertyList = true, bool showCommandLine = false, bool showTimestamp = false, bool showEventId = false)
         {
-            if (_lastConsoleOutput != null && verbosity == _lastVerbosity)
+            var currentParameters = (verbosity, showSummary, performanceSummary, errorsOnly, warningsOnly, showItemAndPropertyList, showCommandLine, showTimestamp, showEventId);
+
+            if (_lastConsoleOutput != null && currentParameters == _lastConsoleLogParameters)
             {
                 return _lastConsoleOutput;
             }
 
-            _lastVerbosity = verbosity;
+            _lastConsoleLogParameters = currentParameters;
 
             _lastConsoleOutput = ConsoleLoggerStringBuilder.GetConsoleLogAsString(AllEvents, verbosity, showSummary, performanceSummary, errorsOnly, warningsOnly, showItemAndPropertyList, showCommandLine, showTimestamp, showEventId);
 

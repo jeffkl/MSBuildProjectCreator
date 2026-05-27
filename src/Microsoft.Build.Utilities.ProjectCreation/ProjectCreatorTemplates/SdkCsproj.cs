@@ -71,7 +71,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         public ProjectCreator SdkCsproj(
             IEnumerable<string>? targetFrameworks,
             string? path = null,
-            string sdk = "Microsoft.NET.Sdk",
+            string sdk = ProjectCreatorConstants.SdkCsprojDefaultSdk,
             string? outputType = null,
             Action<ProjectCreator>? projectCreator = null,
             string? defaultTargets = null,

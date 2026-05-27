@@ -15,33 +15,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             WriteGlobalJson();
         }
 
-        public string DotNetSdkVersion
-        {
-            get =>
-#if  NET8_0 || NETFRAMEWORK
-            "8.0.100";
-#elif  NET9_0 || NETFRAMEWORK
-            "9.0.100";
-#elif  NET10_0 || NETFRAMEWORK
-            "10.0.100";
-#else
-    #error Unknown target framework!
-#endif
-        }
-
         public string TargetFramework
         {
             get =>
 #if NET8_0
             "net8.0";
-#elif NET9_0
-            "net9.0";
 #elif NET10_0
             "net10.0";
 #elif NETFRAMEWORK
             "net472";
 #else
-    #error Unknown target framework!
+#error Unknown target framework!
 #endif
         }
 
@@ -85,10 +69,29 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 Path.Combine(TestRootPath, "global.json"),
                 $@"{{
   ""sdk"": {{
-    ""version"": ""{DotNetSdkVersion}"",
+    ""version"": ""{GetDotNetSdkVersionString()}"",
     ""rollForward"": ""latestMinor""
   }}
 }}");
+            string GetDotNetSdkVersionString()
+            {
+#if NET8_0
+            return "8.0.100";
+#elif NET10_0
+            return "10.0.100";
+#elif NETFRAMEWORK
+                System.Diagnostics.FileVersionInfo fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(MSBuildAssemblyResolver.MSBuildExePath);
+
+                return fileVersionInfo.FileMajorPart switch
+                {
+                    17 => "8.0.100",
+                    18 => "10.0.100",
+                    _ => throw new InvalidOperationException($"Unexpected MSBuild version: {fileVersionInfo.FileMajorPart}"),
+                };
+#else
+#error Unknown target framework!
+#endif
+            }
         }
     }
 }

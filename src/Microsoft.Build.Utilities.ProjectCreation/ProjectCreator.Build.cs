@@ -144,7 +144,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="globalProperties">Global properties to use when building the target.</param>
         /// <param name="result">A value indicating the result of the build.</param>
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
-        public ProjectCreator TryBuild(Dictionary<string, string>? globalProperties, out bool result)
+        public ProjectCreator TryBuild(IDictionary<string, string>? globalProperties, out bool result)
         {
             return TryBuild(restore: false, globalProperties: globalProperties, out result);
         }

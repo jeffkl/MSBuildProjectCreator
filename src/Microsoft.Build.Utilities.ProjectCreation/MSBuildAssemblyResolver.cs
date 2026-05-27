@@ -3,11 +3,11 @@
 // Licensed under the MIT license.
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-#if NET8_0_OR_GREATER
+#if !NETFRAMEWORK
 using System.Runtime.Loader;
 #endif
 
@@ -20,7 +20,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     {
         private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
 
-        private static readonly ConcurrentDictionary<string, Lazy<Assembly?>> LoadedAssemblies = new ConcurrentDictionary<string, Lazy<Assembly?>>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Lazy<Assembly?>> LoadedAssemblies = new Dictionary<string, Lazy<Assembly?>>(StringComparer.OrdinalIgnoreCase);
 
         private static readonly Lazy<object> RegisterLazy = new Lazy<object>(() =>
         {
@@ -65,45 +65,30 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 return null;
             }
 
-            foreach (FileInfo candidateAssemblyFile in SearchPaths.SelectMany(searchPath => AssemblyExtensions.Select(extension => new FileInfo(Path.Combine(searchPath, $"{requestedAssemblyName.Name}{extension}")))))
+            lock (LoadedAssemblies)
             {
-                Lazy<Assembly?> assemblyLazy = LoadedAssemblies.GetOrAdd(
-                    candidateAssemblyFile.FullName,
-                    _ =>
+                if (!LoadedAssemblies.TryGetValue(requestedAssemblyName.FullName, out Lazy<Assembly?>? assemblyLazy))
+                {
+                    assemblyLazy = new Lazy<Assembly?>(() =>
                     {
-                        return new Lazy<Assembly?>(() =>
+                        foreach (FileInfo candidateAssemblyFile in SearchPaths.SelectMany(searchPath => AssemblyExtensions.Select(extension => new FileInfo(Path.Combine(searchPath, $"{requestedAssemblyName.Name}{extension}")))))
                         {
                             if (!candidateAssemblyFile.Exists)
                             {
-                                return null;
+                                continue;
                             }
-
-                            AssemblyName candidateAssemblyName = AssemblyName.GetAssemblyName(candidateAssemblyFile.FullName);
-#if NETFRAMEWORK
-                            if (requestedAssemblyName.ProcessorArchitecture != System.Reflection.ProcessorArchitecture.None && requestedAssemblyName.ProcessorArchitecture != candidateAssemblyName.ProcessorArchitecture)
-                            {
-                                // The requested assembly has a processor architecture and the candidate assembly has a different value
-                                return null;
-                            }
-
-                            if (requestedAssemblyName.Flags.HasFlag(AssemblyNameFlags.PublicKey) && !requestedAssemblyName.GetPublicKeyToken()!.SequenceEqual(candidateAssemblyName.GetPublicKeyToken()!))
-                            {
-                                // Requested assembly has a public key but it doesn't match the candidate assembly public key
-                                return null;
-                            }
-#endif
 
                             return assemblyLoader(candidateAssemblyFile.FullName);
-                        });
+                        }
+
+                        return null;
                     });
 
-                if (assemblyLazy.Value != null)
-                {
-                    return assemblyLazy.Value;
+                    LoadedAssemblies.Add(requestedAssemblyName.FullName, assemblyLazy);
                 }
-            }
 
-            return null;
+                return assemblyLazy.Value;
+            }
         }
     }
 }
