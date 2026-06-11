@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -20,9 +20,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     {
         private static readonly string[] AssemblyExtensions = { ".dll", ".exe" };
 
-        private static readonly Dictionary<string, Lazy<Assembly?>> LoadedAssemblies = new Dictionary<string, Lazy<Assembly?>>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Lazy<Assembly?>> LoadedAssemblies = new(StringComparer.OrdinalIgnoreCase);
 
-        private static readonly Lazy<object> RegisterLazy = new Lazy<object>(() =>
+        private static readonly Lazy<object> RegisterLazy = new(() =>
         {
             Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", MSBuildExePath);
             Environment.SetEnvironmentVariable("MSBuildExtensionsPath", DotNetSdksPath);

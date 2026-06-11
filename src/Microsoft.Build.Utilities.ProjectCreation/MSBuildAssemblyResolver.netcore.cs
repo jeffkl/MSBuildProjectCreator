@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -17,11 +17,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public static partial class MSBuildAssemblyResolver
     {
-        private static readonly Regex DotNetListSdksRegex = new Regex("^(?<Name>(?<Version>\\d+\\.\\d+\\.\\d{3,4})(?<Tag>[-\\.\\w]*)) \\[(?<Directory>.*)\\]\\r?$", RegexOptions.Multiline);
+        private static readonly Regex DotNetListSdksRegex = new("^(?<Name>(?<Version>\\d+\\.\\d+\\.\\d{3,4})(?<Tag>[-\\.\\w]*)) \\[(?<Directory>.*)\\]\\r?$", RegexOptions.Multiline);
 
-        private static readonly Lazy<string?> DotNetSdksPathLazy = new Lazy<string?>(GetDotNetBasePath);
+        private static readonly Lazy<string?> DotNetSdksPathLazy = new(GetDotNetBasePath);
 
-        private static readonly Lazy<(string[]? SearchPaths, string? MSBuildExePath)> MSBuildDirectoryLazy = new Lazy<(string[]?, string?)>(
+        private static readonly Lazy<(string[]? SearchPaths, string? MSBuildExePath)> MSBuildDirectoryLazy = new(
             () =>
             {
                 if (!string.IsNullOrWhiteSpace(DotNetSdksPath))
@@ -46,7 +46,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private static string? GetDotNetBasePath()
         {
-            using Process process = new Process
+            using Process process = new()
             {
                 EnableRaisingEvents = true,
                 StartInfo = new ProcessStartInfo

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -48,10 +48,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     fileInfo.Directory!.Create();
 
-                    using (Stream stream = System.IO.File.Create(fileInfo.FullName))
-                    {
-                        AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace!, className!, assemblyVersion, targetFramework);
-                    }
+                    using Stream stream = System.IO.File.Create(fileInfo.FullName);
+                    AssemblyCreator.Create(stream, Path.GetFileNameWithoutExtension(filename), @namespace!, className!, assemblyVersion, targetFramework);
                 });
         }
     }

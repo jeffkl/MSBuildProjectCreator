@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -93,27 +93,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                     StringCompareShould.IgnoreLineEndings);
         }
 
-        [Theory]
-        [InlineData("""Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");""")]
-        [InlineData("""<![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");]]>""")]
-        public void UsingTaskInlineFragmentSimple(string code)
-        {
-            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
-                .UsingTaskRoslynCodeTaskFactory("MySample", code)
-                .Xml
-                .ShouldBe(
-                    $"""
-                    <Project>
-                      <UsingTask TaskName="MySample" AssemblyFile="{Path.Combine("$(MSBuildToolsPath)", "Microsoft.Build.Tasks.Core.dll")}" TaskFactory="RoslynCodeTaskFactory">
-                        <Task>
-                          <Code Type="Fragment" Language="cs"><![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");]]></Code>
-                        </Task>
-                      </UsingTask>
-                    </Project>
-                    """,
-                    StringCompareShould.IgnoreLineEndings);
-        }
-
         [Fact]
         public void UsingTaskInlineFragmentComplex()
         {
@@ -162,6 +141,27 @@ Parameter3 = ""A value from the Roslyn CodeTaskFactory"";]]></Code>
     </Task>
   </UsingTask>
 </Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Theory]
+        [InlineData("""Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");""")]
+        [InlineData("""<![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");]]>""")]
+        public void UsingTaskInlineFragmentSimple(string code)
+        {
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .UsingTaskRoslynCodeTaskFactory("MySample", code)
+                .Xml
+                .ShouldBe(
+                    $"""
+                    <Project>
+                      <UsingTask TaskName="MySample" AssemblyFile="{Path.Combine("$(MSBuildToolsPath)", "Microsoft.Build.Tasks.Core.dll")}" TaskFactory="RoslynCodeTaskFactory">
+                        <Task>
+                          <Code Type="Fragment" Language="cs"><![CDATA[Log.LogMessage(MessageImportance.High, "Hello from an inline task created by Roslyn!");]]></Code>
+                        </Task>
+                      </UsingTask>
+                    </Project>
+                    """,
                     StringCompareShould.IgnoreLineEndings);
         }
 

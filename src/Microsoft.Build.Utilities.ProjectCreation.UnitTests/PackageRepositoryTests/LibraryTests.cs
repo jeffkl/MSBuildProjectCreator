@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -15,12 +15,10 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         [Fact]
         public void BasicLibrary()
         {
-            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                .Library("net45"))
-            {
-                VerifyAssembly(packageRepository, packageA, "net45");
-            }
+                .Library("net45");
+            VerifyAssembly(packageRepository, packageA, "net45");
         }
 
         [Fact]
@@ -28,38 +26,32 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageRepositoryT
         {
             const string assemblyVersion = "2.3.4.5";
 
-            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
-                .Library("net45", assemblyVersion: assemblyVersion))
-            {
-                VerifyAssembly(packageRepository, packageA, "net45", version: "2.3.4.5");
-            }
+                .Library("net45", assemblyVersion: assemblyVersion);
+            VerifyAssembly(packageRepository, packageA, "net45", version: "2.3.4.5");
         }
 
         [Fact]
         public void MultipleLibrariesMultipleTargetFrameworks()
         {
-            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
                 .Library("net45")
-                .Library("netstandard2.0"))
-            {
-                VerifyAssembly(packageRepository, packageA, "net45");
-                VerifyAssembly(packageRepository, packageA, "netstandard2.0");
-            }
+                .Library("netstandard2.0");
+            VerifyAssembly(packageRepository, packageA, "net45");
+            VerifyAssembly(packageRepository, packageA, "netstandard2.0");
         }
 
         [Fact]
         public void MultipleLibrariesSameTargetFramework()
         {
-            using (PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
+            using PackageRepository packageRepository = PackageRepository.Create(TestRootPath)
                 .Package("PackageA", "1.0.0", out Package packageA)
                 .Library("net45", filename: null)
-                .Library("net45", filename: "CustomAssembly.dll"))
-            {
-                VerifyAssembly(packageRepository, packageA, "net45");
-                VerifyAssembly(packageRepository, packageA, "net45", assemblyFileName: "CustomAssembly.dll");
-            }
+                .Library("net45", filename: "CustomAssembly.dll");
+            VerifyAssembly(packageRepository, packageA, "net45");
+            VerifyAssembly(packageRepository, packageA, "net45", assemblyFileName: "CustomAssembly.dll");
         }
 
         private void VerifyAssembly(PackageRepository packageRepository, Package package, string targetFramework, string? assemblyFileName = null, string? version = null)

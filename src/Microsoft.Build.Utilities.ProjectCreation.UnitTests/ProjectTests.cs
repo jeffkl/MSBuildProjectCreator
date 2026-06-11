@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -26,7 +26,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void ProjectIsReEvaluated()
         {
-            ProjectCollection projectCollection = new ProjectCollection();
+            ProjectCollection projectCollection = new();
 
             ProjectCreator creator = ProjectCreator.Create(projectCollection: projectCollection);
 
@@ -59,7 +59,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void ProjectWithGlobalPropertiesFromProjectCollection()
         {
-            ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
+            ProjectCollection projectCollection = new(new Dictionary<string, string>
             {
                 ["Property1"] = "5DFF776EBCFF4173B0E14160C2191402",
             });
@@ -105,7 +105,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void TryGetProjectWithProjectCollection()
         {
-            ProjectCollection expectedProjectCollection = new ProjectCollection(new Dictionary<string, string>
+            ProjectCollection expectedProjectCollection = new(new Dictionary<string, string>
             {
                 ["Foo"] = "CF3478738DC04B3C9358FE0D23456BCD",
             });

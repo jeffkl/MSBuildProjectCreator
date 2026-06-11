@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -15,7 +15,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     internal class NuspecReader
     {
         private readonly XDocument _document;
-        private readonly XmlNamespaceManager _namespaceManager = new XmlNamespaceManager(new NameTable());
+        private readonly XmlNamespaceManager _namespaceManager = new(new NameTable());
 
         public NuspecReader(string contents)
         {
@@ -139,6 +139,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return namespaces.Values.Single();
         }
 
+        private string? GetAttribute(string elementName, string attributeName)
+        {
+            return _document.XPathSelectElement($"//ns:package/ns:metadata/ns:{elementName}", _namespaceManager)?.Attribute(attributeName)?.Value;
+        }
+
         private IEnumerable<PackageContentFileEntry> GetContentFiles()
         {
             foreach (XElement file in _document.XPathSelectElements("//ns:package/ns:metadata/ns:contentFiles/ns:files", _namespaceManager))
@@ -170,11 +175,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         private string? GetElement(string name)
         {
             return _document.XPathSelectElement($"//ns:package/ns:metadata/ns:{name}", _namespaceManager)?.Value;
-        }
-
-        private string? GetAttribute(string elementName, string attributeName)
-        {
-            return _document.XPathSelectElement($"//ns:package/ns:metadata/ns:{elementName}", _namespaceManager)?.Attribute(attributeName)?.Value;
         }
     }
 }

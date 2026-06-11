@@ -2,14 +2,11 @@
 //
 // Licensed under the MIT license.
 
-using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Microsoft.Build.Utilities.ProjectCreation
 {
@@ -21,32 +18,32 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores all build events.
         /// </summary>
-        private readonly ConcurrentQueue<BuildEventArgs> _allEvents = new ConcurrentQueue<BuildEventArgs>();
+        private readonly ConcurrentQueue<BuildEventArgs> _allEvents = new();
 
         /// <summary>
         /// Stores the errors that were logged.
         /// </summary>
-        private readonly List<BuildErrorEventArgs> _errorEvents = new List<BuildErrorEventArgs>();
+        private readonly List<BuildErrorEventArgs> _errorEvents = new();
 
         /// <summary>
         /// Stores the messages that were logged.
         /// </summary>
-        private readonly List<BuildMessageEventArgs> _messageEvents = new List<BuildMessageEventArgs>(50);
+        private readonly List<BuildMessageEventArgs> _messageEvents = new(50);
 
         /// <summary>
         /// Stores the warnings that were logged.
         /// </summary>
-        private readonly List<BuildWarningEventArgs> _warningEvents = new List<BuildWarningEventArgs>();
-
-        /// <summary>
-        /// Stores the last console output.
-        /// </summary>
-        private string? _lastConsoleOutput = null;
+        private readonly List<BuildWarningEventArgs> _warningEvents = new();
 
         /// <summary>
         /// Stores the parameters used to generate the last console output for cache invalidation.
         /// </summary>
         private (LoggerVerbosity Verbosity, bool ShowSummary, bool PerformanceSummary, bool ErrorsOnly, bool WarningsOnly, bool ShowItemAndPropertyList, bool ShowCommandLine, bool ShowTimestamp, bool ShowEventId) _lastConsoleLogParameters;
+
+        /// <summary>
+        /// Stores the last console output.
+        /// </summary>
+        private string? _lastConsoleOutput = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildEventArgsCollection" /> class.

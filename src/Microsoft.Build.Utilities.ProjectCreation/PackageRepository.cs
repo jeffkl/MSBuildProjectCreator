@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -25,45 +25,43 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             NuGetConfigPath = Path.Combine(rootPath, "NuGet.config");
 
-            XmlWriterSettings settings = new XmlWriterSettings
+            XmlWriterSettings settings = new()
             {
                 Indent = true,
                 OmitXmlDeclaration = true,
             };
 
-            using (XmlWriter? writer = XmlWriter.Create(NuGetConfigPath, settings))
+            using XmlWriter? writer = XmlWriter.Create(NuGetConfigPath, settings);
+            writer.WriteStartElement("configuration");
+
+            writer.WriteStartElement("config");
+            writer.WriteStartElement("add");
+            writer.WriteAttributeString("key", "globalPackagesFolder");
+            writer.WriteAttributeString("value", GlobalPackagesFolder);
+            writer.WriteEndElement(); // </add>
+            writer.WriteEndElement(); // </config>
+
+            writer.WriteStartElement("packageSources");
+            writer.WriteElementString("clear", string.Empty);
+
+            if (feeds != null)
             {
-                writer.WriteStartElement("configuration");
+                int i = 1;
 
-                writer.WriteStartElement("config");
-                writer.WriteStartElement("add");
-                writer.WriteAttributeString("key", "globalPackagesFolder");
-                writer.WriteAttributeString("value", GlobalPackagesFolder);
-                writer.WriteEndElement(); // </add>
-                writer.WriteEndElement(); // </config>
-
-                writer.WriteStartElement("packageSources");
-                writer.WriteElementString("clear", string.Empty);
-
-                if (feeds != null)
+                foreach (Uri? feed in feeds.Where(i => i != null))
                 {
-                    int i = 1;
+                    string feedName = feed.IsFile ? $"Local{i++}" : feed.Host;
 
-                    foreach (Uri? feed in feeds.Where(i => i != null))
-                    {
-                        string feedName = feed.IsFile ? $"Local{i++}" : feed.Host;
-
-                        writer.WriteStartElement("add");
-                        writer.WriteAttributeString("key", feedName);
-                        writer.WriteAttributeString("value", feed.IsFile ? feed.LocalPath : feed.ToString());
-                        writer.WriteEndElement();
-                    }
+                    writer.WriteStartElement("add");
+                    writer.WriteAttributeString("key", feedName);
+                    writer.WriteAttributeString("value", feed.IsFile ? feed.LocalPath : feed.ToString());
+                    writer.WriteEndElement();
                 }
-
-                writer.WriteEndElement(); // </packageSources>
-
-                writer.WriteEndElement(); // </configuration>
             }
+
+            writer.WriteEndElement(); // </packageSources>
+
+            writer.WriteEndElement(); // </configuration>
         }
 
         /// <summary>
@@ -82,7 +80,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <param name="rootPath">The root directory to create a package repository directory in.</param>
         /// <param name="feeds">Optional feeds to include in the configuration.</param>
         /// <returns>A <see cref="PackageRepository" /> object that is used to construct an NuGet package repository.</returns>
-        public static PackageRepository Create(string rootPath, params Uri[] feeds) => new PackageRepository(rootPath, feeds);
+        public static PackageRepository Create(string rootPath, params Uri[] feeds) => new(rootPath, feeds);
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -29,7 +29,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
 
             return ReadFile(nupkg, filePath, (stream, archiveEntry) =>
             {
-                using BinaryReader binaryReader = new BinaryReader(stream);
+                using BinaryReader binaryReader = new(stream);
 
                 return binaryReader.ReadBytes((int)archiveEntry.Length);
             });
@@ -85,6 +85,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             return new NuspecReader(GetNuspec(package));
         }
 
+        private ZipArchive GetPackageArchive(string fullPath)
+        {
+            return new ZipArchive(File.OpenRead(fullPath), ZipArchiveMode.Read, leaveOpen: false);
+        }
+
         private T? ReadFile<T>(ZipArchive nupkg, string filePath, Func<Stream, ZipArchiveEntry, T> streamFunc)
         {
             ZipArchiveEntry? archiveEntry = nupkg.GetEntry(filePath);
@@ -108,11 +113,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
             using Stream fileStream = archiveEntry.Open();
 
             return streamFunc(fileStream, archiveEntry);
-        }
-
-        private ZipArchive GetPackageArchive(string fullPath)
-        {
-            return new ZipArchive(File.OpenRead(fullPath), ZipArchiveMode.Read, leaveOpen: false);
         }
     }
 }

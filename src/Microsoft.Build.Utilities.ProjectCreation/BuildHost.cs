@@ -1,10 +1,9 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
-using Microsoft.Build.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -32,7 +31,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             BuildRequestDataFlags buildRequestDataFlags = BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports;
 
-            return BuildProjectFromFullPath(projectFullPath, ["Restore"], restoreGlobalProperties, [.. projectCollection.Loggers, buildOutput], buildRequestDataFlags, out targetOutputs);
+            return BuildProjectFromFullPath(projectFullPath, ["Restore"], restoreGlobalProperties, buildRequestDataFlags, out targetOutputs);
         }
 
         public static bool TryBuild(
@@ -100,7 +99,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 }
             }
 
-            return BuildProjectFromFullPath(projectFullPath, targets, globalProperties, [.. projectCollection.Loggers, buildOutput], BuildRequestDataFlags.None, out targetOutputs);
+            return BuildProjectFromFullPath(projectFullPath, targets, globalProperties, BuildRequestDataFlags.None, out targetOutputs);
         }
 
         private static bool Build(
@@ -113,61 +112,32 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             targetOutputs = null;
 
-            return BuildProjectFromProjectInstance(projectInstance, targets, globalProperties, [.. projectCollection.Loggers, buildOutput], BuildRequestDataFlags.None, out targetOutputs);
-        }
-
-        private static bool BuildProjectFromProjectInstance(
-            ProjectInstance projectInstance,
-            string[] targets,
-            IDictionary<string, string>? globalProperties,
-            IEnumerable<ILogger> loggers,
-            BuildRequestDataFlags buildRequestDataFlags,
-            out IDictionary<string, TargetResult>? targetOutputs)
-        {
-            targetOutputs = null;
-
-            BuildResult buildResult = BuildManagerHost.Build(
-                projectInstance,
-                targets,
-                globalProperties ?? EmptyGlobalProperties,
-                loggers,
-                buildRequestDataFlags);
-
-            if (buildResult.Exception != null)
-            {
-                throw buildResult.Exception;
-            }
-
-            targetOutputs = buildResult.ResultsByTarget;
-
-            return buildResult.OverallResult == BuildResultCode.Success;
+            return BuildProjectFromProjectInstance(projectInstance, targets, globalProperties, BuildRequestDataFlags.None, out targetOutputs);
         }
 
         private static bool BuildProjectFromFullPath(
             string projectFullPath,
             string[] targets,
             IDictionary<string, string>? globalProperties,
-            IEnumerable<ILogger> loggers,
             BuildRequestDataFlags buildRequestDataFlags,
             out IDictionary<string, TargetResult>? targetOutputs)
         {
             targetOutputs = null;
 
-            BuildResult buildResult = BuildManagerHost.Build(
+            BuildResult? buildResult = BuildManagerHost.Build(
                 projectFullPath,
                 targets,
                 GetGlobalProperties(globalProperties),
-                loggers,
                 buildRequestDataFlags);
 
-            if (buildResult.Exception != null)
+            if (buildResult?.Exception != null)
             {
                 throw buildResult.Exception;
             }
 
-            targetOutputs = buildResult.ResultsByTarget;
+            targetOutputs = buildResult?.ResultsByTarget;
 
-            return buildResult.OverallResult == BuildResultCode.Success;
+            return buildResult?.OverallResult == BuildResultCode.Success;
 
 #if NET8_0
             IDictionary<string, string>
@@ -194,6 +164,31 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 return finalGlobalProperties;
 #endif
             }
+        }
+
+        private static bool BuildProjectFromProjectInstance(
+            ProjectInstance projectInstance,
+            string[] targets,
+            IDictionary<string, string>? globalProperties,
+            BuildRequestDataFlags buildRequestDataFlags,
+            out IDictionary<string, TargetResult>? targetOutputs)
+        {
+            targetOutputs = null;
+
+            BuildResult? buildResult = BuildManagerHost.Build(
+                projectInstance,
+                targets,
+                globalProperties ?? EmptyGlobalProperties,
+                buildRequestDataFlags);
+
+            if (buildResult?.Exception != null)
+            {
+                throw buildResult.Exception;
+            }
+
+            targetOutputs = buildResult?.ResultsByTarget;
+
+            return buildResult?.OverallResult == BuildResultCode.Success;
         }
     }
 }

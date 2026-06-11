@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -40,14 +40,14 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public void OnBuildFinished(bool succeeded, string? message = null, string? helpKeyword = null)
         {
-            BuildFinishedEventArgs args = new BuildFinishedEventArgs(message, helpKeyword, succeeded);
+            BuildFinishedEventArgs args = new(message, helpKeyword, succeeded);
             BuildFinished?.Invoke(this, args);
             OnAnyEventRaised(args);
         }
 
         public void OnErrorRaised(string message, string? code = null, string? file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string? helpKeyword = null, string? senderName = null)
         {
-            BuildErrorEventArgs args = new BuildErrorEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName)
+            BuildErrorEventArgs args = new(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName)
             {
                 BuildEventContext = BuildEventContext.Invalid,
             };
@@ -58,7 +58,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public void OnMessageRaised(string message, MessageImportance importance = MessageImportance.Normal)
         {
-            BuildMessageEventArgs args = new BuildMessageEventArgs(message, null, null, importance)
+            BuildMessageEventArgs args = new(message, null, null, importance)
             {
                 BuildEventContext = BuildEventContext.Invalid,
             };
@@ -69,7 +69,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public void OnProjectFinished(string projectFile, bool succeeded, string? message = null, string? helpKeyword = null)
         {
-            ProjectFinishedEventArgs args = new ProjectFinishedEventArgs(message, helpKeyword, projectFile, succeeded)
+            ProjectFinishedEventArgs args = new(message, helpKeyword, projectFile, succeeded)
             {
                 BuildEventContext = BuildEventContext.Invalid,
             };
@@ -80,7 +80,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 
         public void OnWarningRaised(string message, string? code = null, string? file = null, int lineNumber = -1, int columnNumber = -1, int endLineNumber = -1, int endColumnNumber = -1, string? helpKeyword = null, string? senderName = null)
         {
-            BuildWarningEventArgs args = new BuildWarningEventArgs(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName)
+            BuildWarningEventArgs args = new(null, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName)
             {
                 BuildEventContext = BuildEventContext.Invalid,
             };

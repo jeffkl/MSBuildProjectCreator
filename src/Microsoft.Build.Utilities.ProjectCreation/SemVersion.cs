@@ -1,4 +1,4 @@
-﻿#pragma warning disable SA1636 // File header copyright text should match
+#pragma warning disable SA1636 // File header copyright text should match
 #pragma warning disable SA1642 // Constructor summary documentation should begin with standard text
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable SA1503 // Braces should not be omitted
@@ -53,7 +53,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     {
         private static readonly Regex ParseEx =
 
-            new Regex(@"^(?<major>\d+)" +
+            new(@"^(?<major>\d+)" +
                 @"(?>\.(?<minor>\d+))?" +
                 @"(?>\.(?<patch>\d+))?" +
                 @"(?>\-(?<pre>[0-9A-Za-z\-\.]+))?" +

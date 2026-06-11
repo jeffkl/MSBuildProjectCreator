@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -17,7 +17,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <summary>
         /// Stores the results by project.
         /// </summary>
-        private readonly ConcurrentDictionary<string, bool> _resultsByProject = new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, bool> _resultsByProject = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Stores the <see cref="BuildFinishedEventArgs" /> that were logged when the build finished.

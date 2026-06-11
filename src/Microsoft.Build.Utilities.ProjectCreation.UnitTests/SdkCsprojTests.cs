@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -52,6 +52,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void TargetFrameworksNullDoesNothing()
+        {
+            ProjectCreator.Templates.SdkCsproj(
+                    targetFrameworks: null)
+                .Xml
+                .ShouldBe(
+                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
         public void TargetFrameworksWithMultipleValues()
         {
             ProjectCreator.Templates.SdkCsproj(
@@ -85,18 +97,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   <PropertyGroup>
     <TargetFramework>8A683D24C9CE489C804C79897BC1A44C</TargetFramework>
   </PropertyGroup>
-</Project>",
-                    StringCompareShould.IgnoreLineEndings);
-        }
-
-        [Fact]
-        public void TargetFrameworksNullDoesNothing()
-        {
-            ProjectCreator.Templates.SdkCsproj(
-                    targetFrameworks: null)
-                .Xml
-                .ShouldBe(
-                    $@"<Project Sdk=""{ProjectCreatorConstants.SdkCsprojDefaultSdk}"">
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
         }
