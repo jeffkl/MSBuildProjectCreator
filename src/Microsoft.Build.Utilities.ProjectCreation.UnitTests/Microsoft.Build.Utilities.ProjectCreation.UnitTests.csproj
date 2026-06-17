@@ -7,6 +7,9 @@
   <Import Project="..\Microsoft.Build.Utilities.ProjectCreation\build\MSBuild.ProjectCreation.props" Condition="'$(TargetFramework)' == 'net472'" />
   <ItemGroup>
     <PackageReference Include="AssemblyShader" />
+    <PackageReference Include="Microsoft.Build" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" ShadeDependencies="NuGet.Frameworks" />
     <PackageReference Include="MSBuild.StructuredLogger" />
     <PackageReference Include="Shouldly" />
