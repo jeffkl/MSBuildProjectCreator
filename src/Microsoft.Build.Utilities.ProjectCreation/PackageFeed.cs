@@ -24,6 +24,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Converts the current <see cref="PackageFeed" /> to a <see cref="Uri" />.
+        /// </summary>
+        /// <param name="packageFeed">The <see cref="PackageFeed" /> to convert.</param>
+        public static implicit operator Uri(PackageFeed packageFeed) => new(packageFeed._rootPath.FullName);
+
+        /// <summary>
         /// Creates a new <see cref="PackageFeed" /> instance at the specified path.
         /// </summary>
         /// <param name="rootPath">The root directory to create the feed at.</param>
@@ -44,7 +50,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="rootPath">The root directory to create the feed at.</param>
         /// <returns>A <see cref="PackageFeed" /> object used to create a package feed.</returns>
-        /// /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <see langword="null" /> or a string that is empty or consists only of whitespace.</exception>
+        /// ///
+        /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <see langword="null" /> or a string that is empty or consists only of whitespace.</exception>
         public static PackageFeed Create(string rootPath)
         {
             if (string.IsNullOrEmpty(rootPath))
@@ -54,12 +61,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
             return new PackageFeed(Directory.CreateDirectory(rootPath));
         }
-
-        /// <summary>
-        /// Converts the current <see cref="PackageFeed" /> to a <see cref="Uri" />.
-        /// </summary>
-        /// <param name="packageFeed">The <see cref="PackageFeed" /> to convert.</param>
-        public static implicit operator Uri(PackageFeed packageFeed) => new(packageFeed._rootPath.FullName);
 
         /// <inheritdoc />
         public void Dispose()
