@@ -56,7 +56,7 @@ jobs:
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
 
     - name: Run Unit Tests (.NET Framework)
-      if: ${{ (matrix.name == 'Windows VS2022' || matrix.name == 'Windows VS2026') && !cancelled() && steps.build.outcome == 'success' }}
+      if: ${{ startsWith(matrix.name, 'Windows') && !cancelled() && steps.build.outcome == 'success' }}
       run: dotnet test --no-restore --no-build --framework net472 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
 
     - name: Run Unit Tests (.NET 8)
