@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -55,7 +55,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             string fileName = $"{Guid.NewGuid():N}.txt";
 
-            FileInfo sourceFileInfo = new FileInfo(Path.Combine(TestRootPath, fileName));
+            FileInfo sourceFileInfo = new(Path.Combine(TestRootPath, fileName));
 
             string relativePath = Path.Combine("tools", "net46", fileName);
 
@@ -81,7 +81,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         {
             Should.Throw<FileNotFoundException>(() =>
             {
-                FileInfo fileInfo = new FileInfo(Path.Combine(TestRootPath, "foo.txt"));
+                FileInfo fileInfo = new(Path.Combine(TestRootPath, "foo.txt"));
 
                 PackageFeed.Create(FeedRootPath)
                     .Package("PackageA", "1.0.0")

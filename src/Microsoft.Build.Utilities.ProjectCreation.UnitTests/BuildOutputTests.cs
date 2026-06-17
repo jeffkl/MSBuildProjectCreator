@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -127,7 +127,7 @@ FA7FCCBE43B741998BAB399E74F2997D
         [Fact]
         public void ResultsByProject()
         {
-            Dictionary<string, bool> projects = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase)
+            Dictionary<string, bool> projects = new(StringComparer.OrdinalIgnoreCase)
             {
                 { Path.Combine("DA920698", "E40D", "4D8F", "89D8", "B85D870C4214"), true },
                 { Path.Combine("53C78698", "F360", "491F", "8025", "B323782DD912"), false },
@@ -154,7 +154,7 @@ FA7FCCBE43B741998BAB399E74F2997D
 
         private BuildOutput GetProjectLoggerWithEvents(Action<MockEventSource> eventSourceActions)
         {
-            MockEventSource eventSource = new MockEventSource();
+            MockEventSource eventSource = new();
 
             BuildOutput buildOutput = BuildOutput.Create();
 

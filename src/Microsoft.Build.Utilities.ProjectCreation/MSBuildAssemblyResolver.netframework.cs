@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -16,9 +16,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public static partial class MSBuildAssemblyResolver
     {
-        private static readonly Lazy<string?> DotNetSdksPathLazy = new Lazy<string?>(() => null);
+        private static readonly Lazy<string?> DotNetSdksPathLazy = new(() => null);
 
-        private static readonly Lazy<(string[]? SearchPaths, string? MSBuildExePath)> MSBuildDirectoryLazy = new Lazy<(string[]?, string?)>(
+        private static readonly Lazy<(string[]? SearchPaths, string? MSBuildExePath)> MSBuildDirectoryLazy = new(
             () =>
             {
                 string? msbuildBinPath = null;

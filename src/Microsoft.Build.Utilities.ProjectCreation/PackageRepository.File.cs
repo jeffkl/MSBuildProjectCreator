@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -10,17 +10,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class PackageRepository
     {
-        /// <summary>
-        /// Adds a text file to the package.
-        /// </summary>
-        /// <param name="relativePath">The relative path of the text file within the package.</param>
-        /// <param name="contents">The contents of the text file.</param>
-        /// <returns>The current <see cref="PackageRepository" />.</returns>
-        public PackageRepository FileText(string relativePath, string contents)
-        {
-            return File(relativePath, file => System.IO.File.WriteAllText(file.FullName, contents));
-        }
-
         /// <summary>
         /// Adds a custom file to the package.
         /// </summary>
@@ -47,6 +36,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return File(relativePath, destinationFileInfo => sourceFileInfo.CopyTo(destinationFileInfo.FullName));
         }
 
+        /// <summary>
+        /// Adds a text file to the package.
+        /// </summary>
+        /// <param name="relativePath">The relative path of the text file within the package.</param>
+        /// <param name="contents">The contents of the text file.</param>
+        /// <returns>The current <see cref="PackageRepository" />.</returns>
+        public PackageRepository FileText(string relativePath, string contents)
+        {
+            return File(relativePath, file => System.IO.File.WriteAllText(file.FullName, contents));
+        }
+
         private PackageRepository File(string relativePath, Action<FileInfo> writeAction)
         {
             if (LastPackage == null)
@@ -54,7 +54,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw new InvalidOperationException(Strings.ErrorWhenAddingLibraryRequiresPackage);
             }
 
-            FileInfo fileInfo = new FileInfo(Path.Combine(LastPackage.Directory!, relativePath));
+            FileInfo fileInfo = new(Path.Combine(LastPackage.Directory!, relativePath));
 
             if (fileInfo.Exists)
             {

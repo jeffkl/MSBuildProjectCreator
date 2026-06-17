@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -42,6 +42,41 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests.PackageFeedTests
         }
 
         [Fact]
+        public void BasicPackageWithDependency()
+        {
+            using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
+                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", developmentDependency: true)
+                    .Library("net45")
+                    .Dependency("net45", "PackageB", "2.0.0")
+                .Save();
+
+            Package packageA = packageFeed.Packages.ShouldHaveSingleItem();
+
+            packageA.Author.ShouldBe("John Smith");
+            packageA.Description.ShouldBe("Custom Description");
+            packageA.DevelopmentDependency.ShouldBeTrue();
+            packageA.Id.ShouldBe("PackageA");
+            packageA.Version.ShouldBe("1.0.0");
+
+            NuspecReader nuspec = GetNuspecReader(packageA);
+
+            nuspec.Authors.ShouldBe("John Smith");
+            nuspec.Description.ShouldBe("Custom Description");
+            nuspec.Id.ShouldBe("PackageA");
+            nuspec.Version.ShouldBe("1.0.0");
+
+            (string? targetFramework, System.Collections.Generic.IEnumerable<PackageDependency>? dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
+
+            targetFramework.ShouldBe("net45");
+
+            PackageDependency dependency = dependencies.ShouldHaveSingleItem();
+
+            dependency.Id.ShouldBe("PackageB");
+            dependency.Version.ShouldBe("2.0.0");
+            dependency.ExcludeAssets.ShouldBe("Build, Analyzers");
+        }
+
+        [Fact]
         public void NuspecXmlSerializesCorrectly()
         {
             using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
@@ -77,41 +112,6 @@ $@"<package xmlns=""http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd"">
   </metadata>
 </package>",
 StringCompareShould.IgnoreLineEndings);
-        }
-
-        [Fact]
-        public void BasicPackageWithDependency()
-        {
-            using PackageFeed packageFeed = PackageFeed.Create(FeedRootPath)
-                .Package("PackageA", "1.0.0", out _, "John Smith", "Custom Description", developmentDependency: true)
-                    .Library("net45")
-                    .Dependency("net45", "PackageB", "2.0.0")
-                .Save();
-
-            Package packageA = packageFeed.Packages.ShouldHaveSingleItem();
-
-            packageA.Author.ShouldBe("John Smith");
-            packageA.Description.ShouldBe("Custom Description");
-            packageA.DevelopmentDependency.ShouldBeTrue();
-            packageA.Id.ShouldBe("PackageA");
-            packageA.Version.ShouldBe("1.0.0");
-
-            NuspecReader nuspec = GetNuspecReader(packageA);
-
-            nuspec.Authors.ShouldBe("John Smith");
-            nuspec.Description.ShouldBe("Custom Description");
-            nuspec.Id.ShouldBe("PackageA");
-            nuspec.Version.ShouldBe("1.0.0");
-
-            (string? targetFramework, System.Collections.Generic.IEnumerable<PackageDependency>? dependencies) = nuspec.DependencyGroups.ToList().ShouldHaveSingleItem();
-
-            targetFramework.ShouldBe("net45");
-
-            PackageDependency dependency = dependencies.ShouldHaveSingleItem();
-
-            dependency.Id.ShouldBe("PackageB");
-            dependency.Version.ShouldBe("2.0.0");
-            dependency.ExcludeAssets.ShouldBe("Build, Analyzers");
         }
 
         [Fact]

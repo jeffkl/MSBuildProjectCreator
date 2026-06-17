@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -94,6 +94,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             return entry;
         }
 
+        internal static string ReadAsText(this FileInfo file)
+        {
+            using StreamReader reader = file.OpenText();
+            return reader.ReadToEnd();
+        }
+
         internal static void WriteAttributeStringIfNotNull(this XmlWriter writer, string localName, string? value)
         {
             if (!string.IsNullOrEmpty(value))
@@ -124,12 +130,6 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             {
                 writer.WriteElementString(localName, value.Value ? "true" : "false");
             }
-        }
-
-        internal static string ReadAsText(this FileInfo file)
-        {
-            using StreamReader reader = file.OpenText();
-            return reader.ReadToEnd();
         }
     }
 }

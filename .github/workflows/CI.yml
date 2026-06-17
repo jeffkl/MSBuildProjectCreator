@@ -23,9 +23,9 @@ jobs:
   BuildAndTest:
     strategy:
       matrix:
-        os: [windows-2025, windows-2025-vs2026, ubuntu-latest, macos-latest]
+        os: [windows-2022, windows-2025-vs2026, ubuntu-latest, macos-latest]
         include:
-          - os: windows-2025
+          - os: windows-2022
             name: Windows VS2022
           - os: windows-2025-vs2026
             name: Windows VS2026
@@ -52,16 +52,19 @@ jobs:
           ${{ env.DotNet10Version }}
 
     - name: Build Solution
+      id: build
       run: dotnet build "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/build.binlog"
 
     - name: Run Unit Tests (.NET Framework)
-      if: ${{ matrix.name == 'Windows VS2022' || matrix.name == 'Windows VS2026' }}
+      if: ${{ startsWith(matrix.name, 'Windows') && !cancelled() && steps.build.outcome == 'success' }}
       run: dotnet test --no-restore --no-build --framework net472 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
 
     - name: Run Unit Tests (.NET 8)
+      if: ${{ !cancelled() && steps.build.outcome == 'success' }}
       run: dotnet test --no-restore --no-build --framework net8.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net8.0.binlog"
 
     - name: Run Unit Tests (.NET 10)
+      if: ${{ !cancelled() && steps.build.outcome == 'success' }}
       run: dotnet test --no-restore --no-build --framework net10.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net10.0.binlog"
 
     - name: Upload Artifacts

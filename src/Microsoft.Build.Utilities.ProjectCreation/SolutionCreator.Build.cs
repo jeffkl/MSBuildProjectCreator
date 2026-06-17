@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -56,17 +56,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="SolutionCreator" />.</returns>
         public SolutionCreator TryBuild(bool restore, string target, IDictionary<string, string>? globalProperties, out bool result)
         {
-            if (restore)
-            {
-                TryRestore(out result);
+            BuildOutput buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-
-            result = Build([target], globalProperties, out _, out _);
+            result = Build(restore, [target], globalProperties, buildOutput, out _);
 
             return this;
         }
@@ -168,17 +160,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="SolutionCreator" />.</returns>
         public SolutionCreator TryBuild(bool restore, IDictionary<string, string>? globalProperties, out bool result)
         {
-            if (restore)
-            {
-                TryRestore(out result);
+            BuildOutput buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-
-            result = Build(null, globalProperties: globalProperties, out _, out _);
+            result = Build(restore, targets: null, globalProperties: globalProperties, buildOutput, out _);
 
             return this;
         }
@@ -491,21 +475,33 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             targetOutputs = null;
 
-            if (restore)
+            lock (BuildManagerHost.LockObject)
             {
-                if (!Restore(globalProperties, buildOutput, out targetOutputs))
+                BuildManagerHost.BeginBuild([.. ProjectCollection.Loggers, buildOutput]);
+
+                try
                 {
-                    return false;
+                    if (restore)
+                    {
+                        if (!Restore(globalProperties, buildOutput, out targetOutputs))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Save();
+                    }
+
+                    bool result = BuildHost.TryBuild(FullPath, ProjectCollection, buildOutput, out targetOutputs, targets: targets);
+
+                    return result;
+                }
+                finally
+                {
+                    BuildManagerHost.EndBuild();
                 }
             }
-            else
-            {
-                Save();
-            }
-
-            bool result = BuildHost.TryBuild(FullPath, ProjectCollection, buildOutput, out targetOutputs, targets: targets);
-
-            return result;
         }
 
         private bool Restore(IDictionary<string, string>? globalProperties, BuildOutput buildOutput, out IDictionary<string, TargetResult>? targetOutputs)

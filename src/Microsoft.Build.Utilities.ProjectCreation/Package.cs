@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -15,13 +15,13 @@ namespace Microsoft.Build.Utilities.ProjectCreation
     /// </summary>
     public class Package : IComparer<Package>, IEqualityComparer<Package>, IComparable<Package>
     {
-        private readonly HashSet<PackageContentFileEntry> _contentFiles = new HashSet<PackageContentFileEntry>();
+        private readonly HashSet<PackageContentFileEntry> _contentFiles = new();
 
-        private readonly Dictionary<string, HashSet<PackageDependency>> _dependencies = new Dictionary<string, HashSet<PackageDependency>>();
+        private readonly Dictionary<string, HashSet<PackageDependency>> _dependencies = new();
 
-        private readonly Dictionary<string, Func<Stream>> _files = new Dictionary<string, Func<Stream>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Func<Stream>> _files = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly HashSet<string> _targetFrameworks = new HashSet<string>();
+        private readonly HashSet<string> _targetFrameworks = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Package" /> class.

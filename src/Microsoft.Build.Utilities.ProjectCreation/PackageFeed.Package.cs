@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -9,7 +9,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class PackageFeed
     {
-        private readonly HashSet<Package> _packages = new HashSet<Package>();
+        private readonly HashSet<Package> _packages = new();
 
         private Package? _lastPackage;
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -27,7 +27,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// Converts the current <see cref="PackageFeed" /> to a <see cref="Uri" />.
         /// </summary>
         /// <param name="packageFeed">The <see cref="PackageFeed" /> to convert.</param>
-        public static implicit operator Uri(PackageFeed packageFeed) => new Uri(packageFeed._rootPath.FullName);
+        public static implicit operator Uri(PackageFeed packageFeed) => new(packageFeed._rootPath.FullName);
 
         /// <summary>
         /// Creates a new <see cref="PackageFeed" /> instance at the specified path.
@@ -50,7 +50,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// </summary>
         /// <param name="rootPath">The root directory to create the feed at.</param>
         /// <returns>A <see cref="PackageFeed" /> object used to create a package feed.</returns>
-        /// /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <see langword="null" /> or a string that is empty or consists only of whitespace.</exception>
+        /// ///
+        /// <exception cref="ArgumentNullException"><paramref name="rootPath" /> is <see langword="null" /> or a string that is empty or consists only of whitespace.</exception>
         public static PackageFeed Create(string rootPath)
         {
             if (string.IsNullOrEmpty(rootPath))
@@ -86,23 +87,17 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                 using (FileStream fileStream = System.IO.File.OpenWrite(package.FullPath))
                 {
-                    using (ZipArchive nupkg = new ZipArchive(fileStream, ZipArchiveMode.Create))
+                    using ZipArchive nupkg = new(fileStream, ZipArchiveMode.Create);
+                    foreach (KeyValuePair<string, Func<Stream>> file in package.Files)
                     {
-                        foreach (KeyValuePair<string, Func<Stream>> file in package.Files)
-                        {
-                            using (Stream? stream = file.Value())
-                            {
-                                ZipArchiveEntry? entry = nupkg.CreateEntryFromStream(file.Key, stream);
-                            }
-                        }
-
-                        ZipArchiveEntry? nuspec = nupkg.CreateEntry($"{package.Id.ToLowerInvariant()}.nuspec");
-
-                        using (Stream nuspecStream = nuspec.Open())
-                        {
-                            package.WriteNuspec(nuspecStream);
-                        }
+                        using Stream? stream = file.Value();
+                        ZipArchiveEntry? entry = nupkg.CreateEntryFromStream(file.Key, stream);
                     }
+
+                    ZipArchiveEntry? nuspec = nupkg.CreateEntry($"{package.Id.ToLowerInvariant()}.nuspec");
+
+                    using Stream nuspecStream = nuspec.Open();
+                    package.WriteNuspec(nuspecStream);
                 }
 
                 package.Saved = true;

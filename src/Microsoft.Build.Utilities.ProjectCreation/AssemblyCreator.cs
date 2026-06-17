@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -28,7 +28,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>A <see cref="MemoryStream" /> that represents the assembly.</returns>
         public static MemoryStream Create(string name, string @namespace, string className, string assemblyVersion, string targetFramework)
         {
-            MemoryStream stream = new MemoryStream();
+            MemoryStream stream = new();
 
             Create(stream, name, @namespace, className, assemblyVersion, targetFramework);
 

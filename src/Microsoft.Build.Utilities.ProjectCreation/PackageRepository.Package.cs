@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -12,7 +12,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 {
     public partial class PackageRepository
     {
-        private readonly HashSet<Package> _packages = new HashSet<Package>();
+        private readonly HashSet<Package> _packages = new();
 
         /// <summary>
         /// Gets the current packages in the repository.
@@ -61,12 +61,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 throw new FileNotFoundException("The specified .nupkg file does not exist", nupkg.FullName);
             }
 
-            using ZipArchive zip = new ZipArchive(System.IO.File.OpenRead(nupkg.FullName), ZipArchiveMode.Read, leaveOpen: false);
+            using ZipArchive zip = new(System.IO.File.OpenRead(nupkg.FullName), ZipArchiveMode.Read, leaveOpen: false);
 
             ZipArchiveEntry? nuspecEntry = zip.Entries.SingleOrDefault(entry => entry.Name.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException($"The .nupkg file '{nupkg.FullName}' does not contain a .nuspec file");
-            using StreamReader nuspecStream = new StreamReader(nuspecEntry.Open());
+            using StreamReader nuspecStream = new(nuspecEntry.Open());
 
-            NuspecReader reader = new NuspecReader(nuspecStream.ReadToEnd());
+            NuspecReader reader = new(nuspecStream.ReadToEnd());
 
             Package(
                 id: reader.Id ?? throw new InvalidOperationException($"The .nupkg file '{nupkg.FullName}' does not contain an ID"),
@@ -277,7 +277,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
             using (TextWriter? writer = System.IO.File.CreateText(Path.Combine(directory.FullName, ".nupkg.metadata")))
             {
                 writer.WriteLine(
-@"{ 
+@"{
   ""version"": 2,
   ""contentHash"": """"
 }");
@@ -290,10 +290,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             if (LastPackage != null)
             {
-                using (Stream? stream = System.IO.File.OpenWrite(GetManifestFilePath(LastPackage.Id, LastPackage.Version)))
-                {
-                    LastPackage.WriteNuspec(stream);
-                }
+                using Stream? stream = System.IO.File.OpenWrite(GetManifestFilePath(LastPackage.Id, LastPackage.Version));
+                LastPackage.WriteNuspec(stream);
             }
         }
     }

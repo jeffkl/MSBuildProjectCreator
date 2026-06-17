@@ -1,10 +1,10 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
-using System;
+using Microsoft.Build.Framework;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -57,17 +57,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryBuild(bool restore, string target, IDictionary<string, string>? globalProperties, out bool result)
         {
-            if (restore)
-            {
-                TryRestore(out result);
+            BuildOutput buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-
-            result = Build([target], globalProperties, out _, out _);
+            result = Build(restore: false, [target], globalProperties, buildOutput, out _);
 
             return this;
         }
@@ -169,17 +161,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         /// <returns>The current <see cref="ProjectCreator" />.</returns>
         public ProjectCreator TryBuild(bool restore, IDictionary<string, string>? globalProperties, out bool result)
         {
-            if (restore)
-            {
-                TryRestore(out result);
+            BuildOutput buildOutput = BuildOutput.Create();
 
-                if (!result)
-                {
-                    return this;
-                }
-            }
-
-            result = Build(null, globalProperties: globalProperties, out _, out _);
+            result = Build(restore: false, targets: null, globalProperties, buildOutput, out _);
 
             return this;
         }
@@ -476,7 +460,21 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             buildOutput = BuildOutput.Create();
 
-            result = Restore(globalProperties, buildOutput, out targetOutputs);
+            IEnumerable<ILogger> loggers = [.. ProjectCollection.Loggers, buildOutput];
+
+            lock (BuildManagerHost.LockObject)
+            {
+                BuildManagerHost.BeginBuild(loggers);
+
+                try
+                {
+                    result = Restore(globalProperties, buildOutput, out targetOutputs);
+                }
+                finally
+                {
+                    BuildManagerHost.EndBuild();
+                }
+            }
 
             return this;
         }
@@ -492,32 +490,44 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             targetOutputs = null;
 
-            if (restore)
+            lock (BuildManagerHost.LockObject)
             {
-                if (!Restore(globalProperties, buildOutput, out targetOutputs))
+                BuildManagerHost.BeginBuild([.. ProjectCollection.Loggers, buildOutput]);
+
+                try
                 {
-                    return false;
+                    if (restore)
+                    {
+                        if (!Restore(globalProperties, buildOutput, out targetOutputs))
+                        {
+                            return false;
+                        }
+                    }
+
+                    ProjectInstance projectInstance;
+
+                    if (globalProperties != null)
+                    {
+                        TryGetProject(out Project project, globalProperties);
+
+                        projectInstance = project.CreateProjectInstance();
+                    }
+                    else
+                    {
+                        projectInstance = ProjectInstance;
+                    }
+
+                    bool result = BuildHost.TryBuild(projectInstance, ProjectCollection, buildOutput, out targetOutputs, targets: targets);
+
+                    ResetProjectInstance();
+
+                    return result;
+                }
+                finally
+                {
+                    BuildManagerHost.EndBuild();
                 }
             }
-
-            ProjectInstance projectInstance;
-
-            if (globalProperties != null)
-            {
-                TryGetProject(out Project project, globalProperties);
-
-                projectInstance = project.CreateProjectInstance();
-            }
-            else
-            {
-                projectInstance = ProjectInstance;
-            }
-
-            bool result = BuildHost.TryBuild(projectInstance, ProjectCollection, buildOutput, out targetOutputs, targets: targets);
-
-            ResetProjectInstance();
-
-            return result;
         }
 
         private bool Restore(IDictionary<string, string>? globalProperties, BuildOutput buildOutput, out IDictionary<string, TargetResult>? targetOutputs)

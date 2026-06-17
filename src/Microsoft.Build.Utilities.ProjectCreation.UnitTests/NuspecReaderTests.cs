@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -26,7 +26,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
   </metadata>
 </package>";
 
-            NuspecReader nuspec = new NuspecReader(contents);
+            NuspecReader nuspec = new(contents);
 
             nuspec.License.ShouldBe("LICENSE");
             nuspec.LicenseExpression.ShouldBeNull();
@@ -53,7 +53,7 @@ $@"<package xmlns=""{xmlns}"">
   </metadata>
 </package>";
 
-            NuspecReader nuspec = new NuspecReader(contents);
+            NuspecReader nuspec = new(contents);
 
             nuspec.Id.ShouldBe("PackageL");
             nuspec.Version.ShouldBe("16.4.60");

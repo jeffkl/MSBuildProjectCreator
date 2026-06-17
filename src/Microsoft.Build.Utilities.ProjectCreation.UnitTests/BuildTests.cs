@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -6,12 +6,12 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
+using Microsoft.Build.Logging.StructuredLogger;
 using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
@@ -37,15 +37,87 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void BinaryLogContainsNuGetGeneratedFiles()
+        {
+            string binLogPath = Path.Combine(TestRootPath, "test.binlog");
+            string projectPath = Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj");
+
+            using (PackageRepository.Create(TestRootPath)
+                    .Package("PackageA", "1.0.0", out Package packageA)
+                        .Library(TargetFramework))
+            {
+                string projectExtensionsPath;
+
+                using (ProjectCollection projectCollection = new ProjectCollection())
+                {
+                    projectCollection.RegisterLogger(new Logging.BinaryLogger
+                    {
+                        Parameters = $"LogFile={binLogPath}",
+                    });
+
+                    ProjectCreator.Templates.SdkCsproj(
+                            path: projectPath,
+                            targetFramework: TargetFramework,
+                            projectCollection: projectCollection)
+                        .ItemPackageReference(packageA)
+                        .TryBuild(restore: true, out bool result, out BuildOutput buildOutput)
+                        .TryGetPropertyValue("MSBuildProjectExtensionsPath", out projectExtensionsPath);
+
+                    result.ShouldBeTrue(buildOutput.GetConsoleLog());
+                }
+
+                Logging.StructuredLogger.Build binaryLog = BinaryLog.ReadBuild(binLogPath);
+
+                binaryLog.SourceFiles.ShouldContain(i => i.FullPath.Equals(Path.Combine(projectExtensionsPath, "ClassLibraryA.csproj.nuget.g.props")));
+            }
+        }
+
+        [Fact]
+        public void BuildCanConsumePackageWithGeneratePathProperty()
+        {
+            string projectPath = Path.Combine(TestRootPath, "ClassLibraryA", "ClassLibraryA.csproj");
+
+            using (PackageRepository.Create(TestRootPath)
+                    .Package("PackageB", "1.0", out Package packageB)
+                        .Library(TargetFramework)
+                    .Package("PackageA", "1.0.0", out Package packageA)
+                        .Dependency(packageB, TargetFramework)
+                        .Library(TargetFramework))
+            {
+                string projectExtensionsPath;
+
+                using ProjectCollection projectCollection = new ProjectCollection();
+
+                ProjectCreator.Templates.SdkCsproj(
+                        path: projectPath,
+                        targetFramework: TargetFramework,
+                        projectCollection: projectCollection)
+                    .ItemPackageReference(
+                        packageA,
+                        metadata: new Dictionary<string, string?>
+                        {
+                            ["GeneratePathProperty"] = bool.TrueString,
+                        })
+                    .TryBuild(restore: true, out bool result, out BuildOutput buildOutput)
+                    .TryGetPropertyValue("PkgPackageA", out string packagePath)
+                    .TryGetPropertyValue("MSBuildProjectExtensionsPath", out projectExtensionsPath);
+
+                result.ShouldBeTrue(buildOutput.GetConsoleLog());
+
+                packagePath.ShouldEndWith(Path.Combine(".nuget", "packages", "packagea", "1.0.0"));
+            }
+        }
+
+        [Fact]
         public void BuildOutputContainsOutOfProcMessages()
         {
             const int messageCount = 100;
 
-            List<ProjectCreator> projects = new List<ProjectCreator>(messageCount);
+            List<ProjectCreator> projects = new(messageCount);
 
             for (int i = 0; i < messageCount; i++)
             {
-                FileInfo projectPath = new FileInfo(Path.Combine(TestRootPath, $"Project{i}", $"Project{i}.proj"));
+                FileInfo projectPath = new(Path.Combine(TestRootPath, $"Project{i}", $"Project{i}.proj"));
 
                 projectPath.Directory!.Create();
 
@@ -112,7 +184,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void BuildWithGlobalProperties()
         {
-            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            Dictionary<string, string> globalProperties = new()
             {
                 ["Property1"] = "D7BBABDFB2D142D3A75E0C1A33E33780",
             };
@@ -138,7 +210,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         {
             int maxBuilds = Environment.ProcessorCount * 2;
 
-            List<ProjectCreator> projects = new List<ProjectCreator>(maxBuilds);
+            List<ProjectCreator> projects = new(maxBuilds);
 
             for (int i = 0; i < maxBuilds; i++)
             {
@@ -210,9 +282,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             string binLogPath = Path.Combine(TestRootPath, "test.binlog");
             string fileLogPath = Path.Combine(TestRootPath, "test.log");
 
-            using (ProjectCollection projectCollection = new ProjectCollection())
+            using (ProjectCollection projectCollection = new())
             {
-                projectCollection.RegisterLogger(new BinaryLogger
+                projectCollection.RegisterLogger(new Logging.BinaryLogger
                 {
                     Parameters = $"LogFile={binLogPath}",
                 });
@@ -251,9 +323,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             string binLogPath = Path.Combine(TestRootPath, "test.binlog");
             string fileLogPath = Path.Combine(TestRootPath, "test.log");
 
-            using (ProjectCollection projectCollection = new ProjectCollection())
+            using (ProjectCollection projectCollection = new())
             {
-                projectCollection.RegisterLogger(new BinaryLogger
+                projectCollection.RegisterLogger(new Logging.BinaryLogger
                 {
                     Parameters = $"LogFile={binLogPath}",
                 });
@@ -294,7 +366,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void ProjectWithGlobalPropertiesUsedDuringBuild()
         {
-            ProjectCollection projectCollection = new ProjectCollection(new Dictionary<string, string>
+            ProjectCollection projectCollection = new(new Dictionary<string, string>
             {
                 ["Property1"] = "F6EBAC88A10E453B9AF8FA656A574737",
             });
@@ -323,7 +395,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void RestoreAndBuildUseDifferentGlobalPropertiesWhenGlobalPropertiesSpecified()
         {
-            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            Dictionary<string, string> globalProperties = new()
             {
                 ["Something"] = bool.TrueString,
             };
@@ -351,12 +423,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void RestoreAndBuildUseDifferentGlobalPropertiesWhenProjectCollectionSpecified()
         {
-            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            Dictionary<string, string> globalProperties = new()
             {
                 ["Something"] = bool.TrueString,
             };
 
-            using ProjectCollection projectCollection = new ProjectCollection(globalProperties);
+            using ProjectCollection projectCollection = new(globalProperties);
 
             ProjectCreator.Create(
                     path: GetTempFileName(".csproj"),
@@ -397,7 +469,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         [Fact]
         public void RestoreUsesGlobalPropertiesFromCreate()
         {
-            Dictionary<string, string> globalProperties = new Dictionary<string, string>
+            Dictionary<string, string> globalProperties = new()
             {
                 ["SomeGlobalProperty"] = "04BB4AFE8AE14B7A8E3511B5F2CD442B",
             };

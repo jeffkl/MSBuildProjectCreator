@@ -1,4 +1,4 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
@@ -24,7 +24,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         internal static string GetConsoleLogAsString(IReadOnlyCollection<BuildEventArgs> events, LoggerVerbosity verbosity = LoggerVerbosity.Normal, bool showSummary = true, bool performanceSummary = false, bool errorsOnly = false, bool warningsOnly = false, bool showItemAndPropertyList = true, bool showCommandLine = false, bool showTimestamp = false, bool showEventId = false)
         {
-            StringBuilder stringBuilder = new StringBuilder(events.Count * (int)verbosity * 100);
+            StringBuilder stringBuilder = new(events.Count * (int)verbosity * 100);
 
             ConsoleLoggerStringBuilder consoleLoggerStringBuilder = new(stringBuilder);
 
@@ -97,9 +97,9 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
         private string ReplayEventsAndGetLogString(IReadOnlyCollection<BuildEventArgs> events, LoggerVerbosity verbosity = LoggerVerbosity.Normal, bool showSummary = true, bool performanceSummary = false, bool errorsOnly = false, bool warningsOnly = false, bool showItemAndPropertyList = true, bool showCommandLine = false, bool showTimestamp = false, bool showEventId = false)
         {
-            ReplayEventSource eventSource = new ReplayEventSource();
+            ReplayEventSource eventSource = new();
 
-            ConsoleLogger logger = new ConsoleLogger(verbosity, OnWrite, OnColorSet, OnColorReset)
+            ConsoleLogger logger = new(verbosity, OnWrite, OnColorSet, OnColorReset)
             {
                 Parameters = GetLoggerParameters(showSummary, performanceSummary, errorsOnly, warningsOnly, showItemAndPropertyList, showCommandLine, showTimestamp, showEventId),
             };

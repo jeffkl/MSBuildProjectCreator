@@ -1,10 +1,9 @@
-﻿// Copyright (c) Jeff Kluge. All rights reserved.
+// Copyright (c) Jeff Kluge. All rights reserved.
 //
 // Licensed under the MIT license.
 
 using Shouldly;
 using System.IO;
-using System.Xml.Linq;
 
 namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
 {
