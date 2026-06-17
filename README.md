@@ -241,6 +241,86 @@ SolutionCreator.Create(Path.Combine(Environment.CurrentDirectory, "solution1.sln
     .Save();
 ```
 
+# Global.json Files
+You can create `global.json` files with the `GlobalJsonCreator` class to control SDK versions and MSBuild SDK references in your test projects.
+
+## Examples
+
+### Basic global.json with SDK version
+```C#
+GlobalJsonCreator.Create(
+        directory: Environment.CurrentDirectory,
+        sdkVersion: "8.0.100")
+    .Save();
+```
+
+This generates:
+```json
+{
+  "sdk": {
+    "version": "8.0.100"
+  }
+}
+```
+
+### With SDK roll-forward policy and prerelease
+```C#
+GlobalJsonCreator.Create(
+        directory: Environment.CurrentDirectory,
+        sdkVersion: "8.0.100",
+        rollForward: GlobalJsonSdkRollForward.LatestMinor,
+        allowPrerelease: true)
+    .Save();
+```
+
+This generates:
+```json
+{
+  "sdk": {
+    "version": "8.0.100",
+    "rollForward": "latestMinor",
+    "allowPrerelease": true
+  }
+}
+```
+
+### With MSBuild SDKs
+```C#
+GlobalJsonCreator.Create(
+        directory: Environment.CurrentDirectory,
+        sdkVersion: "8.0.100")
+    .MSBuildSdk("Microsoft.Build.NoTargets", "3.7.0")
+    .MSBuildSdk("Microsoft.Build.Traversal", "4.1.0")
+    .Save();
+```
+
+This generates:
+```json
+{
+  "sdk": {
+    "version": "8.0.100"
+  },
+  "msbuild-sdks": {
+    "Microsoft.Build.NoTargets": "3.7.0",
+    "Microsoft.Build.Traversal": "4.1.0"
+  }
+}
+```
+
+### Get JSON without saving
+```C#
+string json = GlobalJsonCreator.Create(
+        directory: Environment.CurrentDirectory,
+        sdkVersion: "8.0.100")
+    .MSBuildSdk("My.Custom.Sdk", "1.0.0")
+    .ToJson();
+
+// Or use implicit string conversion
+string json2 = GlobalJsonCreator.Create(
+        directory: Environment.CurrentDirectory,
+        sdkVersion: "8.0.100");
+```
+
 # Package Repositories and Feeds
 NuGet and MSBuild are very tightly coupled and a lot of times you need packages available when building projects.  This API offers two solutions:
 

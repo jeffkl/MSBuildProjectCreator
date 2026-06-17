@@ -1,2 +1,16 @@
 ﻿#nullable enable
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.FullPath.get -> string!
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.MSBuildSdk(string! name, string! version) -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator!
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.Save() -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator!
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.ToJson() -> string!
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward.Disable = 4 -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward.LatestFeature = 1 -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward.LatestMajor = 3 -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward.LatestMinor = 2 -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward
+Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward.LatestPatch = 0 -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward
 Microsoft.Build.Utilities.ProjectCreation.ProjectCreator.TryBuild(System.Collections.Generic.IDictionary<string!, string!>? globalProperties, out bool result) -> Microsoft.Build.Utilities.ProjectCreation.ProjectCreator!
+static Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.Create(string? directory, string! sdkVersion, Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward? rollForward = null, bool? allowPrerelease = null) -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator!
+static Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.Create(System.IO.DirectoryInfo! directory, string! sdkVersion, Microsoft.Build.Utilities.ProjectCreation.GlobalJsonSdkRollForward? rollForward = null, bool? allowPrerelease = null) -> Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator!
+static Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator.implicit operator string!(Microsoft.Build.Utilities.ProjectCreation.GlobalJsonCreator! creator) -> string!
