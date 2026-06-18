@@ -502,6 +502,12 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         {
                             return false;
                         }
+
+                        bool buildResult = BuildHost.TryBuild(FullPath, ProjectCollection, buildOutput, out targetOutputs, targets: targets, globalProperties: globalProperties);
+
+                        ResetProjectInstance();
+
+                        return buildResult;
                     }
 
                     ProjectInstance projectInstance;
