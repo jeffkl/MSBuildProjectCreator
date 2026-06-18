@@ -177,6 +177,28 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         }
 
         /// <summary>
+        /// Adds a &lt;PackageVersion /&gt; item to the current item group.
+        /// </summary>
+        /// <param name="include">The name of the package to version.</param>
+        /// <param name="version">The version of the package to reference.</param>
+        /// <param name="metadata">An optional <see cref="IDictionary{String,String}" /> containing metadata for the item.</param>
+        /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
+        public ProjectCreator ItemPackageVersion(string include, string version, IDictionary<string, string?>? metadata = null, string? condition = null, string? label = null)
+        {
+            return ItemInclude(
+                itemType: "PackageVersion",
+                include: include,
+                metadata: metadata.Merge(new Dictionary<string, string?>
+                {
+                    { "Version", version },
+                }),
+                condition: condition,
+                label: label);
+        }
+
+        /// <summary>
         /// Adds a &lt;ProjectReference /&gt; item to the current item group.
         /// </summary>
         /// <param name="project">A <see cref="Project" /> to get the full path from.</param>

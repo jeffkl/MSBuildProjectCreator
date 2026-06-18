@@ -23,5 +23,18 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             return ItemPackageReference(package.Id, package.Version, includeAssets, excludeAssets, privateAssets, metadata, condition, label);
         }
+
+        /// <summary>
+        /// Adds a &lt;PackageVersion /&gt; item to the current item group.
+        /// </summary>
+        /// <param name="package">The <see cref="Package" /> of the package to version.</param>
+        /// <param name="metadata">An optional <see cref="IDictionary{String,String}" /> containing metadata for the item.</param>
+        /// <param name="condition">An optional condition to add to the item.</param>
+        /// <param name="label">An optional label to add to the item.</param>
+        /// <returns>The current <see cref="ProjectCreator" />.</returns>
+        public ProjectCreator ItemPackageVersion(Package package, IDictionary<string, string?>? metadata = null, string? condition = null, string? label = null)
+        {
+            return ItemPackageVersion(package.Id, package.Version, metadata, condition, label);
+        }
     }
 }

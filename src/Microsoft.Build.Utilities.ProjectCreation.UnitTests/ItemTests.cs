@@ -5,6 +5,7 @@
 using Microsoft.Build.Evaluation;
 using Shouldly;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xunit;
 
@@ -214,6 +215,75 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
       <ExcludeAssets>86D60FA951834BC4816C498549A6F236</ExcludeAssets>
       <PrivateAssets>4E5C92D014734A8B9CE23198715B6C63</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void PackageVersion()
+        {
+            string feedRootPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(feedRootPath);
+
+            PackageFeed.Templates.SinglePackage(feedRootPath, out Package package);
+
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemPackageVersion(package)
+                .Xml.ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <PackageVersion Include=""SomePackage"">
+      <Version>1.0.0</Version>
+    </PackageVersion>
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void PackageVersionWithConditionAndLabel()
+        {
+            string feedRootPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(feedRootPath);
+
+            PackageFeed.Templates.SinglePackage(feedRootPath, out Package package);
+
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemPackageVersion(package, condition: "623C8EF659D946FBBF61CBF7F767C19A", label: "label")
+                .Xml.ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <PackageVersion Include=""SomePackage"" Condition=""623C8EF659D946FBBF61CBF7F767C19A"" Label=""label"">
+      <Version>1.0.0</Version>
+    </PackageVersion>
+  </ItemGroup>
+</Project>",
+                    StringCompareShould.IgnoreLineEndings);
+        }
+
+        [Fact]
+        public void PackageVersionWithMetadata()
+        {
+            string feedRootPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(feedRootPath);
+
+            PackageFeed.Templates.SinglePackage(feedRootPath, out Package package);
+
+            ProjectCreator.Create(projectFileOptions: NewProjectFileOptions.None)
+                .ItemPackageVersion(
+                    package,
+                    metadata: new Dictionary<string, string?>
+                    {
+                        { "Custom", "1A6A6B7A09B64A4F9D71A56AA19B9A0A" },
+                    })
+                .Xml.ShouldBe(
+                    @"<Project>
+  <ItemGroup>
+    <PackageVersion Include=""SomePackage"">
+      <Custom>1A6A6B7A09B64A4F9D71A56AA19B9A0A</Custom>
+      <Version>1.0.0</Version>
+    </PackageVersion>
   </ItemGroup>
 </Project>",
                     StringCompareShould.IgnoreLineEndings);
