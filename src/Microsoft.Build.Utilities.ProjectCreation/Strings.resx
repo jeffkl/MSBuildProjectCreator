@@ -168,4 +168,7 @@
   <data name="ErrorUsingTaskRoslynCodeTaskFactoryRequiresSourceCodeOrSourcePath" xml:space="preserve">
     <value>You must specify either inline source code or a path to a source file, but not both.</value>
   </data>
+  <data name="ErrorGlobalJsonDirectoryNotSpecified" xml:space="preserve">
+    <value>A directory must be specified before the global.json can be saved.</value>
+  </data>
 </root>
