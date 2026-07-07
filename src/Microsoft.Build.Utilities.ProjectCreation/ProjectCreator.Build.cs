@@ -59,7 +59,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             BuildOutput buildOutput = BuildOutput.Create();
 
-            result = Build(restore: false, [target], globalProperties, buildOutput, out _);
+            result = Build(restore, [target], globalProperties, buildOutput, out _);
 
             return this;
         }
@@ -163,7 +163,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
         {
             BuildOutput buildOutput = BuildOutput.Create();
 
-            result = Build(restore: false, targets: null, globalProperties, buildOutput, out _);
+            result = Build(restore, targets: null, globalProperties, buildOutput, out _);
 
             return this;
         }
