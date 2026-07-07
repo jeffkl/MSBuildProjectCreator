@@ -277,6 +277,52 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
         }
 
         [Fact]
+        public void TryBuildWithRestoreAndTargetWithoutBuildOutputRestoresBeforeBuild()
+        {
+            string markerPath = Path.Combine(TestRootPath, $"{Guid.NewGuid():N}.restore-marker");
+
+            ProjectCreator.Create(path: GetTempFileName(".proj"))
+                .Target("Restore")
+                    .Task(
+                        "WriteLinesToFile",
+                        parameters: new Dictionary<string, string?>
+                        {
+                            ["File"] = markerPath,
+                            ["Lines"] = "restored",
+                            ["Overwrite"] = bool.TrueString,
+                        })
+                .Target("Build")
+                    .TaskError("Restore target did not run.", condition: $"!Exists('{markerPath}')")
+                .Save()
+                .TryBuild(restore: true, target: "Build", globalProperties: null, out bool result);
+
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void TryBuildWithRestoreWithoutBuildOutputRestoresBeforeBuild()
+        {
+            string markerPath = Path.Combine(TestRootPath, $"{Guid.NewGuid():N}.restore-marker");
+
+            ProjectCreator.Create(path: GetTempFileName(".proj"), defaultTargets: "Build")
+                .Target("Restore")
+                    .Task(
+                        "WriteLinesToFile",
+                        parameters: new Dictionary<string, string?>
+                        {
+                            ["File"] = markerPath,
+                            ["Lines"] = "restored",
+                            ["Overwrite"] = bool.TrueString,
+                        })
+                .Target("Build")
+                    .TaskError("Restore target did not run.", condition: $"!Exists('{markerPath}')")
+                .Save()
+                .TryBuild(restore: true, globalProperties: null, out bool result);
+
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
         public void ProjectCollectionLoggersWork()
         {
             string binLogPath = Path.Combine(TestRootPath, "test.binlog");
