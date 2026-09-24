@@ -22,6 +22,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             "net8.0";
 #elif NET10_0
             "net10.0";
+#elif NET11_0
+            "net11.0";
 #elif NETFRAMEWORK
             "net472";
 #else
@@ -70,15 +72,27 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
                 $@"{{
   ""sdk"": {{
     ""version"": ""{GetDotNetSdkVersionString()}"",
-    ""rollForward"": ""latestMinor""
+    ""rollForward"": ""latestMinor"",
+    ""allowPrelease"": ""{GetAllowPrereleaseString()}"",
   }}
 }}");
+            string GetAllowPrereleaseString()
+            {
+#if NET11_0
+                return "true";
+#else
+                return "false";
+#endif
+            }
+
             string GetDotNetSdkVersionString()
             {
 #if NET8_0
             return "8.0.100";
 #elif NET10_0
             return "10.0.100";
+#elif NET11_0
+            return "10.0.100-rc";
 #elif NETFRAMEWORK
                 System.Diagnostics.FileVersionInfo fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(MSBuildAssemblyResolver.MSBuildExePath);
 

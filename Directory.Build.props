@@ -11,6 +11,9 @@
     <Nullable>enable</Nullable>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
     <SignAssembly>true</SignAssembly>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <VsTestUseMSBuildOutput>true</VsTestUseMSBuildOutput>
     <_MSBUILDTLENABLED>1</_MSBUILDTLENABLED>
   </PropertyGroup>
