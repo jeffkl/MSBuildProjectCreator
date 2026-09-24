@@ -164,6 +164,7 @@ PublishScripts/
 *.nuget.g.props
 *.nuget.g.targets
 project.assets.json
+.nuget/
 
 # Microsoft Azure Build Output
 csx/

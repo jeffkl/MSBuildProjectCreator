@@ -18,6 +18,7 @@ env:
   ContinuousIntegrationBuild: 'true'
   DotNet8Version: '8.x'
   DotNet10Version: '10.x'
+  DotNet11Version: '11.x'
 
 jobs:
   BuildAndTest:
@@ -44,12 +45,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install .NET ${{ env.DotNet8Version }} and ${{ env.DotNet10Version }}
-      uses: actions/setup-dotnet@v5
+    - name: Install .NET ${{ env.DotNet8Version }}, ${{ env.DotNet10Version }} and ${{ env.DotNet11Version }}
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: |
           ${{ env.DotNet8Version }}
           ${{ env.DotNet10Version }}
+          ${{ env.DotNet11Version }}
 
     - name: Build Solution
       id: build
@@ -57,15 +59,19 @@ jobs:
 
     - name: Run Unit Tests (.NET Framework)
       if: ${{ startsWith(matrix.name, 'Windows') && !cancelled() && steps.build.outcome == 'success' }}
-      run: dotnet test --no-restore --no-build --framework net472 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net472.binlog"
+      run: dotnet test --no-restore --no-build --framework net472 --configuration ${{ env.BuildConfiguration }} --show-stdout Failed --show-stderr Failed
 
     - name: Run Unit Tests (.NET 8)
       if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-      run: dotnet test --no-restore --no-build --framework net8.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net8.0.binlog"
+      run: dotnet test --no-restore --no-build --framework net8.0 --configuration ${{ env.BuildConfiguration }} --show-stdout Failed --show-stderr Failed
 
     - name: Run Unit Tests (.NET 10)
       if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-      run: dotnet test --no-restore --no-build --framework net10.0 "/Property:Platform=${{ env.BuildPlatform }};Configuration=${{ env.BuildConfiguration }}" "/BinaryLogger:${{ env.ArtifactsDirectoryName }}/test-net10.0.binlog"
+      run: dotnet test --no-restore --no-build --framework net10.0 --configuration ${{ env.BuildConfiguration }} --show-stdout Failed --show-stderr Failed
+
+    - name: Run Unit Tests (.NET 11)
+      if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+      run: dotnet test --no-restore --no-build --framework net11.0 --configuration ${{ env.BuildConfiguration }} --show-stdout Failed --show-stderr Failed
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v7
