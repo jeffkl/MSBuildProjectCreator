@@ -493,7 +493,7 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                         Save();
                     }
 
-                    bool result = BuildHost.TryBuild(FullPath, ProjectCollection, buildOutput, out targetOutputs, targets: targets);
+                    bool result = BuildHost.TryBuild(FullPath, ProjectCollection, buildOutput, out targetOutputs, targets: targets, globalProperties: globalProperties);
 
                     return result;
                 }
