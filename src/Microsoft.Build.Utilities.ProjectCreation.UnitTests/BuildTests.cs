@@ -205,6 +205,116 @@ namespace Microsoft.Build.Utilities.ProjectCreation.UnitTests
             buildOutputWithGlobalProperties.MessageEvents.High.ShouldHaveSingleItem(buildOutputWithGlobalProperties.GetConsoleLog()).Message.ShouldBe("Value = D7BBABDFB2D142D3A75E0C1A33E33780", buildOutputWithGlobalProperties.GetConsoleLog());
         }
 
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void BuildInheritsGlobalProperties(bool restore, bool useCollectionProperties)
+        {
+            Dictionary<string, string> globalProperties = new()
+            {
+                ["Property1"] = "inherited value",
+            };
+            using ProjectCollection projectCollection = new(useCollectionProperties ? globalProperties : new Dictionary<string, string>());
+
+            ProjectCreator.Create(
+                    path: GetTempProjectPath(),
+                    projectCollection: projectCollection,
+                    globalProperties: useCollectionProperties ? null : globalProperties)
+                .Property("Property1", "project value")
+                .Target("Restore")
+                    .TaskMessage("Restore value = $(Property1)", MessageImportance.High)
+                .Target("Build")
+                    .TaskMessage("Build value = $(Property1)", MessageImportance.High)
+                .Save()
+                .TryBuild(restore: restore, target: "Build", out bool result, out BuildOutput buildOutput);
+
+            result.ShouldBeTrue(buildOutput.GetConsoleLog());
+            buildOutput.MessageEvents.High.ShouldContain(message => message.Message == "Build value = inherited value", buildOutput.GetConsoleLog());
+            if (restore)
+            {
+                buildOutput.MessageEvents.High.ShouldContain(message => message.Message == "Restore value = inherited value", buildOutput.GetConsoleLog());
+            }
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void BuildTimeGlobalPropertiesDoNotChangeCreatorDefaults(bool restore, bool useEmptyProperties)
+        {
+            Dictionary<string, string> creatorProperties = new()
+            {
+                ["Property1"] = "creator value",
+            };
+            Dictionary<string, string> buildProperties = new();
+            if (!useEmptyProperties)
+            {
+                buildProperties["Property1"] = "build value";
+            }
+
+            using ProjectCollection projectCollection = new();
+            ProjectCreator creator = ProjectCreator.Create(
+                    path: GetTempProjectPath(),
+                    projectCollection: projectCollection,
+                    globalProperties: creatorProperties)
+                .Property("Property1", "project value")
+                .Target("Restore")
+                    .TaskMessage("Restore value = $(Property1)", MessageImportance.High)
+                .Target("Build")
+                    .TaskMessage("Build value = $(Property1)", MessageImportance.High)
+                .Save()
+                .TryBuild(restore: restore, target: "Build", globalProperties: buildProperties, out bool overrideResult, out BuildOutput overrideOutput)
+                .TryGetPropertyValue("Property1", out string propertyAfterOverride)
+                .TryBuild(restore: restore, target: "Build", out bool defaultResult, out BuildOutput defaultOutput);
+
+            string expectedOverride = useEmptyProperties ? "project value" : "build value";
+            overrideResult.ShouldBeTrue(overrideOutput.GetConsoleLog());
+            overrideOutput.MessageEvents.High.ShouldContain(message => message.Message == $"Build value = {expectedOverride}", overrideOutput.GetConsoleLog());
+            if (restore)
+            {
+                overrideOutput.MessageEvents.High.ShouldContain(message => message.Message == $"Restore value = {expectedOverride}", overrideOutput.GetConsoleLog());
+            }
+
+            propertyAfterOverride.ShouldBe("creator value");
+            defaultResult.ShouldBeTrue(defaultOutput.GetConsoleLog());
+            defaultOutput.MessageEvents.High.ShouldContain(message => message.Message == "Build value = creator value", defaultOutput.GetConsoleLog());
+            creator.Project.GlobalProperties.ShouldBe(creatorProperties);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void BuildWithGlobalPropertiesCanBeRepeated(bool evaluateBeforeBuild)
+        {
+            Dictionary<string, string> globalProperties = new()
+            {
+                ["Property1"] = "collection value",
+            };
+            using ProjectCollection projectCollection = new(globalProperties);
+            string projectPath = GetTempProjectPath();
+            ProjectCreator creator = ProjectCreator.Create(path: projectPath, projectCollection: projectCollection)
+                .Target("Build")
+                    .TaskMessage("Value = $(Property1)", MessageImportance.High)
+                .Save();
+            if (evaluateBeforeBuild)
+            {
+                creator.Project.GetPropertyValue("Property1").ShouldBe("collection value");
+            }
+
+            creator
+                .TryBuild("Build", globalProperties, out bool firstResult, out BuildOutput firstOutput)
+                .TryGetPropertyValue("Property1", out string propertyAfterBuild)
+                .TryBuild("Build", globalProperties, out bool secondResult, out BuildOutput secondOutput);
+
+            firstResult.ShouldBeTrue(firstOutput.GetConsoleLog());
+            secondResult.ShouldBeTrue(secondOutput.GetConsoleLog());
+            propertyAfterBuild.ShouldBe("collection value");
+            projectCollection.GetLoadedProjects(projectPath).ShouldHaveSingleItem();
+        }
+
         [Fact]
         public void CanBuildLotsOfProjects()
         {

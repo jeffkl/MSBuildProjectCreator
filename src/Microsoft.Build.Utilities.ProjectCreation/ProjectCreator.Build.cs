@@ -5,6 +5,7 @@
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -498,6 +499,8 @@ namespace Microsoft.Build.Utilities.ProjectCreation
                 {
                     if (restore)
                     {
+                        globalProperties ??= _globalProperties ?? ProjectCollection.GlobalProperties;
+
                         if (!Restore(globalProperties, buildOutput, out targetOutputs))
                         {
                             return false;
@@ -514,9 +517,11 @@ namespace Microsoft.Build.Utilities.ProjectCreation
 
                     if (globalProperties != null)
                     {
-                        TryGetProject(out Project project, globalProperties);
-
-                        projectInstance = project.CreateProjectInstance();
+                        projectInstance = new ProjectInstance(
+                            RootElement,
+                            globalProperties,
+                            string.IsNullOrEmpty(RootElement.ToolsVersion) ? null : RootElement.ToolsVersion,
+                            ProjectCollection);
                     }
                     else
                     {
